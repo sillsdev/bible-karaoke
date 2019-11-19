@@ -1,0 +1,80 @@
+{
+  "name": "bible-karaoke",
+  "description": "Create 'karaoke-style' videos of Bible passages to help users become comfortable at reading the Bible in another language.",
+  "author": {
+    "name": "DigiServe",
+    "email": "info@digiserve.org",
+    "url": "https://digiserve.org"
+  },
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@blueprintjs/core": "^3.18.1",
+    "@blueprintjs/select": "^3.10.0",
+    "bbk": "github:Hiro-Nakamura/bible-karaoke-cli",
+    "electron-is-dev": "^1.1.0",
+    "ffbinaries": "^1.1.4",
+    "font-list": "^1.2.2",
+    "mobx": "^5.14.0",
+    "mobx-react": "^6.1.3",
+    "puppeteer": "^1.20.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.2.0",
+    "shelljs": "^0.8.3",
+    "tempy": "^0.3.0"
+  },
+  "scripts": {
+    "electron-dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "start": "rescripts start",
+    "build": "rescripts build",
+    "test": "rescripts test",
+    "eject": "react-scripts eject",
+    "postinstall": "electron-builder install-app-deps",
+    "preelectron-pack": "yarn build",
+    "electron-pack-mac": "electron-builder -m",
+    "electron-pack-win": "electron-builder -w"
+  },
+  "main": "public/electron.js",
+  "homepage": "./",
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@rescripts/cli": "^0.0.13",
+    "@rescripts/rescript-env": "^0.0.11",
+    "concurrently": "^5.0.0",
+    "cross-env": "^6.0.3",
+    "electron": "^7.1.1",
+    "electron-builder": "^21.2.0",
+    "typescript": "^3.7.2",
+    "wait-on": "^3.3.0"
+  },
+  "build": {
+    "appId": "org.digiserve.bible-karaoke",
+    "productName": "Bible Karaoke",
+    "copyright": "Copyright © 2019 ${author}",
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  }
+}
