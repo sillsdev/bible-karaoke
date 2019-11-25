@@ -1,0 +1,39 @@
+@import '~@blueprintjs/core/lib/css/blueprint.css';
+html,
+body,
+#root {
+	height: 100%;
+}
+
+.app {
+  height: 100%;
+  background-color: #30404d;
+  &__container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 0;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  &__footer {
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    
+    &-progress {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+    &-wrapper {
+      display: block;
+      width: 100%;
+    }
+  }
+}
+

@@ -1,0 +1,38 @@
+@import "~@blueprintjs/core/src/common/_colors.scss";
+
+.accordion {
+  background-color: $dark-gray3;
+  padding: 10px 0;
+  &__card {
+    margin: 20px;
+    p {
+      margin-bottom: 15px;
+    }
+  }
+  &__card-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  &__card-footer {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+  }
+}
+
+.card {
+  &__option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    >* {
+      margin: 0 0 10px 10px;
+    }
+    &-label {
+      min-width: 100px;
+    }
+  }
+}
