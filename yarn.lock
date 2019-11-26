@@ -2316,7 +2316,7 @@ batch@0.6.1:
 
 "bbk@github:Hiro-Nakamura/bible-karaoke-cli":
   version "0.1.0-alpha"
-  resolved "https://codeload.github.com/Hiro-Nakamura/bible-karaoke-cli/tar.gz/dc166e1b3ceb5b8ed727a1857966dfcc2f226e9e"
+  resolved "https://codeload.github.com/Hiro-Nakamura/bible-karaoke-cli/tar.gz/c70e78cc8490ef77911a7aef4ddfd37cd218e41d"
   dependencies:
     async "^3.1.0"
     chalk "^2.4.2"
@@ -4506,9 +4506,9 @@ execa@^1.0.0:
     strip-eof "^1.0.0"
 
 execa@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/execa/-/execa-3.3.0.tgz#7e348eef129a1937f21ecbbd53390942653522c1"
-  integrity sha512-j5Vit5WZR/cbHlqU97+qcnw9WHRCIL4V1SVe75VcHcD1JRBdt8fv0zw89b7CQHQdUHTt2VjuhcF5ibAgVOxqpg==
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/execa/-/execa-3.4.0.tgz#c08ed4550ef65d858fac269ffc8572446f37eb89"
+  integrity sha512-r9vdGQk4bmCuK1yKQu1KTwcT2zwfWdbdaXfCtAh+5nU/4fSX+JAb7vZGvI5naJrQlvONrEB20jeruESI69530g==
   dependencies:
     cross-spawn "^7.0.0"
     get-stream "^5.0.0"
