@@ -25,14 +25,14 @@
     "shelljs": "^0.8.3"
   },
   "scripts": {
-    "electron-dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron-dev": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\"",
     "start": "rescripts start",
     "build": "rescripts build",
     "test": "rescripts test",
     "eject": "react-scripts eject",
     "postinstall": "electron-builder install-app-deps",
-    "preelectron-pack-mac": "yarn build",
-    "preelectron-pack-win": "yarn build",
+    "preelectron-pack-mac": "npm run build",
+    "preelectron-pack-win": "npm run build",
     "electron-pack-mac": "electron-builder -m",
     "electron-pack-win": "electron-builder -w"
   },
