@@ -15,7 +15,7 @@ let hearThisProjects;
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 880,
-    height: 960,
+    height: 970,
     webPreferences: { nodeIntegration: true },
   });
   mainWindow.loadURL(

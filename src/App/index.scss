@@ -15,7 +15,6 @@ body,
   }
   h1 {
     text-align: center;
-    margin-bottom: 20px;
   }
   &__footer {
     margin: 20px;
@@ -34,6 +33,11 @@ body,
       display: block;
       width: 100%;
     }
+  }
+  &__info {
+    text-align: center;
+    color: #aaa;
+    margin-bottom: 20px;
   }
 }
 

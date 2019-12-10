@@ -1,6 +1,7 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
 import { Intent, H1, H6, Classes, Callout, ProgressBar } from '@blueprintjs/core';
+import { version } from '../../package.json';
 import Accordion from './components/Accordion';
 import { cards } from './components/cards';
 import ActionButton from './components/ActionButton';
@@ -130,6 +131,7 @@ class App extends React.PureComponent {
       <div className='app bp3-dark'>
         <div className='app__container'>
           <H1>Bible Karaoke</H1>
+          <div className="app__info">Version {version}</div>
           <Accordion cards={cards} />
           <div className='app__footer'>{this.renderFooter()}</div>
         </div>
