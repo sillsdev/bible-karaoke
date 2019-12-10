@@ -3,7 +3,7 @@ const fontList = require('font-list');
 const karaoke = require('./karaoke');
 const { getProjectStructure } = require('./hear-this');
 
-const { app, ipcMain, shell } = electron;
+const { app, ipcMain, shell, Menu } = electron;
 const BrowserWindow = electron.BrowserWindow;
 
 const path = require('path');
@@ -27,7 +27,10 @@ function createWindow() {
     // Open the DevTools.
     //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
     mainWindow.webContents.openDevTools();
+  } else {
+    Menu.setApplicationMenu(null);
   }
+
   mainWindow.on('closed', () => (mainWindow = null));
 }
 
