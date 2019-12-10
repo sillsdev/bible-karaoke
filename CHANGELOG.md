@@ -6,6 +6,11 @@
 * :thumbsup: Improvement
 * :boom: Bug fix
 
+## v0.2.1
+
+* :thumbsup: Removed application menu (unused)
+* :thumbsup: Display application version number
+
 ## v0.2.0
 
 * :boom: Miscellaneous files in the HearThis project directory are now (correctly) ignored
