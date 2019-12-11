@@ -83,7 +83,7 @@ function makeBook(projectName, name) {
 
 function makeChapter(projectName, bookName, name) {
   let chapter = new Chapter();
-  chapter.name = (parseInt(name) + 1).toString();
+  chapter.name = name === '0' ? 'Intro' : (parseInt(name)).toString();
   let chapterFiles = fs.readdirSync(
     path.join(DEFAULT_DATA_DIR, projectName, bookName, name),
   );

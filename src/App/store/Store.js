@@ -26,7 +26,11 @@ class Store {
     }
     // Name the video by book and chapter (e.g. 'Mark2.mp4')
     const dirs = this.hearThisFolder.split(/[/\\]/);
-    return `${dirs[dirs.length - 2]}${dirs[dirs.length - 1]}.mp4`;
+    let chapter = dirs[dirs.length - 1];
+    if (chapter === '0') {
+      chapter = 'Intro';
+    }
+    return `${dirs[dirs.length - 2]} ${chapter}.mp4`;
   }
 
   @computed
