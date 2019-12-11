@@ -6,6 +6,10 @@
 * :thumbsup: Improvement
 * :boom: Bug fix
 
+## v0.2.2
+
+* :boom: Corrected chapter numbering. Chapter '0' is now labeled as 'Intro'.
+
 ## v0.2.1
 
 * :thumbsup: Removed application menu (unused)
