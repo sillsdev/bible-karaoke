@@ -1,5 +1,5 @@
 import React from 'react';
-import { HTMLSelect, Callout, Intent } from '@blueprintjs/core';
+import { HTMLSelect, Callout, Intent, Button } from '@blueprintjs/core';
 import { inject, observer } from 'mobx-react';
 const { ipcRenderer } = window.require('electron');
 
@@ -12,7 +12,6 @@ class TextAndAudioCard extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      projects: [],
       selectedProject: noSelection,
       selectedBook: noSelection,
       selectedChapter: noSelection,
@@ -28,6 +27,10 @@ class TextAndAudioCard extends React.PureComponent {
     });
     ipcRenderer.send('did-start-getprojectstructure');
   }
+
+  refreshProject = () => {
+    ipcRenderer.send('did-start-getprojectstructure');
+  };
 
   selectProject = evt => {
     this.setState(
@@ -125,6 +128,7 @@ class TextAndAudioCard extends React.PureComponent {
             onChange={this.selectProject}
             options={[emptyOption].concat(projectOptions)}
           />
+          <Button icon="refresh" onClick={this.refreshProject} />
         </div>
         <div className='card__option'>
           <div className='card__option-label'>Book</div>
