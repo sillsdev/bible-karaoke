@@ -7,7 +7,11 @@
     margin: 0 10px;
   }
   &__label {
+
     min-width: 100px;
+  }
+  .bp3-control {
+    margin-bottom: 0;
   }
   &__button.bp3-button {
     display: block;

@@ -72,16 +72,16 @@ function handleSubmission() {
       event.sender.send('on-progress', args);
     };
     console.log('Starting command line', args);
-    const { hearThisFolder, backgroundFile, font, outputFile } = args;
+    const { hearThisFolder, background, font, outputFile } = args;
     let result;
     try {
-      result = await karaoke.execute(
+      result = await karaoke.execute({
         hearThisFolder,
-        backgroundFile,
+        background,
         font,
         outputFile,
         onProgress,
-      );
+      });
     } catch (err) {
       result = err;
     }

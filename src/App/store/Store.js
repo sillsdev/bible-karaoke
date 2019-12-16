@@ -1,19 +1,22 @@
-import { observable, computed, action } from "mobx";
+import { observable, computed, action } from 'mobx';
 
 class Store {
-  @observable 
+  @observable
   hearThisFolder = '';
-  
-  @observable 
+
+  @observable
   timingFile = '';
-  
-  @observable 
-  backgroundFile = '';
+
+  @observable
+  background = { file: '', color: '' };
 
   @observable
   font = '';
 
-  @observable 
+  @observable
+  fontColor = '#fff';
+
+  @observable
   outputFile = '';
 
   @observable
@@ -38,7 +41,7 @@ class Store {
     return [
       !!this.hearThisFolder,
       // !!this.timingFile,
-      !!this.backgroundFile,
+      (!!this.background.file || !!this.background.color),
       !!this.font,
       !!this.outputFile,
     ];
@@ -59,15 +62,20 @@ class Store {
   setTimingFile(file) {
     this.timingFile = file;
   }
-  
+
   @action.bound
-  setBackgroundFile(file) {
-    this.backgroundFile = file;
+  setBackground(background) {
+    this.background = background;
   }
-  
+
   @action.bound
   setFont(font) {
     this.font = font;
+  }
+
+  @action.bound
+  setFontColor(fontColor) {
+    this.fontColor = fontColor;
   }
 
   @action.bound
@@ -77,7 +85,13 @@ class Store {
 
   @computed
   get allValidInputs() {
-    return this.hearThisFolder && /* this.timingFile && */ this.backgroundFile && this.font && this.outputFile;
+    return (
+      this.hearThisFolder &&
+      /* this.timingFile && */ 
+      (this.background.file || this.background.color) &&
+      this.font &&
+      this.outputFile
+    );
   }
 }
 

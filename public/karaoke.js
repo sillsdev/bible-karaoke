@@ -9,11 +9,21 @@ module.exports = {
   execute,
 };
 
-async function execute(hearThisFolder, bgImage, fontFamily, output, onProgress) {
+async function execute(hearThisFolder, background, font, output, onProgress) {
   try {
     let ffmpegFolder = await setupFfmpeg();
-    const ffmpegPath =  path.join(ffmpegFolder, FFMPEG_EXE);
-    await bbkConvert({ _: [hearThisFolder], output, bgImage, ffmpegPath, fontFamily, onProgress, f: true });
+    const ffmpegPath = path.join(ffmpegFolder, FFMPEG_EXE);
+    await bbkConvert({
+      _: [hearThisFolder],
+      output,
+      bgImage: background.file,
+      bgColor: background.color,
+      ffmpegPath,
+      fontFamily: font.family,
+      fontColor: font.color,
+      onProgress,
+      f: true,
+    });
     return output;
   } catch (err) {
     console.warn('Failed to generate karaoke file', err);

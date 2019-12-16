@@ -31,7 +31,7 @@ export const cards = [
   {
     title: 'Background',
     description:
-      'Then select a background image or video that will be used as the background of the generated video',
+      'Then select a background image, video or color that will be used as the background of the generated video',
     content: <BackgroundCard />,
   },
   {

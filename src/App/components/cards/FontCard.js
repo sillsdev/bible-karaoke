@@ -1,10 +1,12 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
 import { HTMLSelect } from '@blueprintjs/core';
+import ColorPicker from '../ColorPicker';
 const { ipcRenderer } = window.require('electron');
 
 const noSelection = '';
 const emptyOption = { value: noSelection, label: 'Select....' };
+
 
 @inject('store')
 @observer
@@ -16,7 +18,6 @@ class FontCard extends React.PureComponent {
     };
     ipcRenderer.on('did-finish-getfonts', (event, fonts) => {
       if (Array.isArray(fonts)) {
-        console.log('Received fonts', fonts);
         this.setState({
           fonts: fonts.map(fontName => ({
             value: fontName,
@@ -24,7 +25,7 @@ class FontCard extends React.PureComponent {
           })),
         });
       } else {
-        console.log('No fonts for selection', fonts);
+        console.warn('No fonts for selection', fonts);
       }
     });
     ipcRenderer.send('did-start-getfonts');
@@ -37,20 +38,31 @@ class FontCard extends React.PureComponent {
     setFont(evt.currentTarget.value);
   };
 
+  onColorPickerChange = color => {
+    const {
+      store: { setFontColor },
+    } = this.props;
+    setFontColor(color.hex);
+  };
+
   render() {
     const {
-      store: { font },
+      store: { font, fontColor },
     } = this.props;
     const { fonts } = this.state;
     return (
       <div>
         <div className='card__option'>
-          <div className='card__option-label'>Font</div>
+          <div className='card__option-label'>Font Family</div>
           <HTMLSelect
             value={font}
             onChange={this.selectFont}
             options={[emptyOption].concat(fonts)}
           />
+        </div>
+        <div className='card__option'>
+          <div className='card__option-label'>Font Color</div>
+          <ColorPicker value={fontColor} onChange={this.onColorPickerChange} />
         </div>
       </div>
     );
