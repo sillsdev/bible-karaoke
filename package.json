@@ -51,6 +51,9 @@
     "electron-pack-win": "electron-builder -w"
   },
   "main": "public/electron.js",
+  "bin": {
+    "bbk": "./public/cli/index.js"
+  },
   "homepage": "./",
   "eslintConfig": {
     "extends": "react-app"
