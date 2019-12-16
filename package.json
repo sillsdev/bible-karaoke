@@ -38,6 +38,7 @@
     "xml-js": "^1.6.11"
   },
   "scripts": {
+    "cli": "node public/cli/index.js",
     "electron-dev": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\"",
     "start": "rescripts start",
     "build": "rescripts build",
