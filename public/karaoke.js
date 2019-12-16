@@ -1,4 +1,4 @@
-const bbkConvert = require('bbk/lib/commands/convert').run;
+const bbkConvert = require('./cli/lib/commands/convert').run;
 const process = require('process');
 const path = require('path');
 const { setupFfmpeg } = require('./ffmpeg');
