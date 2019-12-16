@@ -1,0 +1,1 @@
+The files in this folder were used by previous iterations of the Bible Karaoke CLI tool. They have been preserved here (rather than just in source control history) as a quick way to access them if needed. They do not form part of the current Bible Karaoke solution.

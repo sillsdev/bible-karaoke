@@ -1,0 +1,38 @@
+{
+  "name": "bbk",
+  "version": "0.1.0-alpha",
+  "description": "Bible Karaoke command line utility.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hack'19",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.1.0",
+    "chalk": "^2.4.2",
+    "clear": "^0.1.0",
+    "datauri": "^2.0.0",
+    "execa": "^3.3.0",
+    "inquirer": "^7.0.0",
+    "junk": "^3.1.0",
+    "locate-chrome": "^0.1.1",
+    "minimist": "^1.2.0",
+    "progress": "^2.0.3",
+    "puppeteer": "^2.0.0",
+    "readdir-sorted": "^3.0.0",
+    "shelljs": "^0.8.3",
+    "tempy": "^0.3.0",
+    "xml-js": "^1.6.11"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "prettier": "^1.18.2",
+    "write-file-trim": "^1.0.8"
+  },
+  "bin": {
+    "bbk": "./index.js"
+  }
+}
