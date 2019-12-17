@@ -11,18 +11,20 @@ class OutputCard extends React.PureComponent {
       store: { outputFile, setOutputFile, defaultVideoName },
     } = this.props;
     return (
-      <FileSelector
-        save
-        file={outputFile}
-        label='Output file'
-        options={{
-          defaultPath: defaultVideoName,
-          title: 'Save video file as',
-          filters: fileFilters.output,
-          properties: ['openFile'],
-        }}
-        onFileSelected={setOutputFile}
-      />
+      <div className='card__option'>
+        <div className='card__option-label'>Output file</div>
+        <FileSelector
+          save
+          file={outputFile}
+          options={{
+            defaultPath: defaultVideoName,
+            title: 'Save video file as',
+            filters: fileFilters.output,
+            properties: ['openFile'],
+          }}
+          onFileSelected={setOutputFile}
+        />
+      </div>
     );
   }
 }

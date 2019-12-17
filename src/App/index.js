@@ -57,12 +57,13 @@ class App extends React.PureComponent {
 
   onStart = () => {
     this.setState({ status: AppStatus.processing }, () => {
-      const { hearThisFolder, background, font, fontColor, outputFile } = this.props.store;
+      const { hearThisFolder, background, text, speechBubble, outputFile } = this.props.store;
       const args = {
         hearThisFolder,
         background,
-        font: { family: font, color: fontColor },
-        outputFile,
+        text,
+        speechBubble,
+        output: outputFile,
       };
       console.log('Requesting processing', args);
       ipcRenderer.send('did-start-conversion', args);

@@ -1,45 +1,40 @@
 const allFiles = {
   name: 'All files',
-  extensions: ['*']
+  extensions: ['*'],
 };
 
 export const fileFilters = {
   text: [
     {
-      name: "Text files",
+      name: 'Text files',
       extensions: ['txt'],
     },
-    allFiles
+    allFiles,
   ],
   audio: [
     {
-      name: "Audio files",
+      name: 'Audio files',
       extensions: ['mp3', 'wav'],
     },
-    allFiles
+    allFiles,
   ],
   timing: [
     {
-      name: "Timing files",
+      name: 'Timing files',
       extensions: ['txt'],
     },
-    allFiles
+    allFiles,
   ],
   background: [
     {
-      name: "Image files",
-      extensions: ['jpg', 'png'],
+      name: 'Background files',
+      extensions: ['jpg', 'png', 'mpeg4', 'mp4', 'webm'],
     },
-    {
-      name: "Video files",
-      extensions: ['mpeg4', 'webm'],
-    },
-    allFiles
   ],
   output: [
     {
-      name: "Video files",
+      name: 'Video files',
       extensions: ['mp4'],
-    }
+    },
   ],
 };

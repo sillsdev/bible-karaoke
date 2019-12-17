@@ -8,7 +8,6 @@ const FileSelector = ({
   save = false,
   disabled = false,
   file,
-  label,
   options,
   onFileSelected,
 }) => {
@@ -22,7 +21,6 @@ const FileSelector = ({
   };
   return (
     <div className='file-selector'>
-      <div className='file-selector__label'>{label}</div>
       <div className='file-selector__button'>
         <Button text='Select' onClick={selectFile} disabled={disabled} />
       </div>

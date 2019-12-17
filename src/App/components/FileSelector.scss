@@ -1,17 +1,9 @@
 .file-selector {
-  margin: 10px 0;
   display: flex;
   flex-direction: row;
   align-items: center;
   >* {
-    margin: 0 10px;
-  }
-  &__label {
-
-    min-width: 100px;
-  }
-  .bp3-control {
-    margin-bottom: 0;
+    margin-right: 10px;
   }
   &__button.bp3-button {
     display: block;

@@ -1,20 +1,53 @@
 import { observable, computed, action } from 'mobx';
+import every from 'lodash/every';
+const { ipcRenderer, remote } = window.require('electron');
+var fs = remote.require('fs');
+
+const SAMPLE_VERSES = [
+  "In the beginning, God created the heavens and the earth.",
+  "The earth was without form and void, and darkness was over the face of the deep. And the Spirit of God was hovering over the face of the waters.",
+  "And God said, \"Let there be light,\" and there was light.",
+  "And God saw that the light was good. And God separated the light from the darkness.",
+  "God called the light Day, and the darkness he called Night. And there was evening and there was morning, the first day.",
+];
 
 class Store {
+  constructor() {
+    ipcRenderer.on('did-finish-getverses', (event, verses) => {
+      if (Array.isArray(verses)) {
+        this.setVerses(verses);
+      } else {
+        console.error('Failed to set verses', verses);
+      }
+    });
+  }
   @observable
   hearThisFolder = '';
+
+  @observable
+  verses = SAMPLE_VERSES;
 
   @observable
   timingFile = '';
 
   @observable
-  background = { file: '', color: '' };
+  background = { file: '', color: '#000' };
 
   @observable
-  font = '';
+  text = {
+    fontFamily: 'Arial',
+    fontSize: 20,
+    color: '#525252',
+    bold: false,
+    italic: false,
+    highlightColor: 'yellow',
+  };
 
   @observable
-  fontColor = '#fff';
+  speechBubble = {
+    color: '#fff',
+    opacity: 1,
+  };
 
   @observable
   outputFile = '';
@@ -41,8 +74,7 @@ class Store {
     return [
       !!this.hearThisFolder,
       // !!this.timingFile,
-      (!!this.background.file || !!this.background.color),
-      !!this.font,
+      (!!this.background.file || !!this.background.color) && this.text.fontFamily,
       !!this.outputFile,
     ];
   }
@@ -56,6 +88,16 @@ class Store {
   @action.bound
   setHearThisFolder(folder) {
     this.hearThisFolder = folder;
+    if (folder) {
+      ipcRenderer.send('did-start-getverses', { hearThisFolder: folder });
+    } else {
+      this.setVerses(SAMPLE_VERSES);
+    }
+  }
+
+  @action.bound
+  setVerses(verses) {
+    this.verses = verses;
   }
 
   @action.bound
@@ -66,18 +108,31 @@ class Store {
   @action.bound
   setBackground(background) {
     this.background = background;
+    if (this.background.file) {
+      const ext = this.background.file.split('.').pop();
+      if (['mpeg4', 'mp4', 'webm'].includes(ext)) {
+        this.background.type = 'video';
+      } else {
+        this.background.type = 'image';
+        const img = fs.readFileSync(this.background.file).toString('base64');
+        this.background.imageSrc = `data:image/${ext};base64,${img}`;
+      }
+    } else {
+      this.background.imageSrc = '';
+      this.background.type = 'color';
+    }
   }
 
   @action.bound
-  setFont(font) {
-    this.font = font;
+  setTextProps(textProps) {
+    this.text = {...this.text, ...textProps};
   }
 
   @action.bound
-  setFontColor(fontColor) {
-    this.fontColor = fontColor;
+  setSpeechBubbleProps(speechBubbleProps) {
+    this.speechBubble = {...this.speechBubble, ...speechBubbleProps};
   }
-
+  
   @action.bound
   setOutputFile(file) {
     this.outputFile = file;
@@ -85,13 +140,7 @@ class Store {
 
   @computed
   get allValidInputs() {
-    return (
-      this.hearThisFolder &&
-      /* this.timingFile && */ 
-      (this.background.file || this.background.color) &&
-      this.font &&
-      this.outputFile
-    );
+    return every(this.stepStatus, s => s);
   }
 }
 

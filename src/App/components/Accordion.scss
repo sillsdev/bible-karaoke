@@ -21,21 +21,22 @@
     justify-content: center;
     flex-direction: row;
   }
+  &__card-description {
+    font-style: italic;
+  }
 }
 
 .card {
   &__option {
     display: flex;
+    padding: 10px 0;
     flex-direction: row;
     align-items: center;
     .bp3-control {
       margin-bottom: 0;
     }
-    >* {
-      margin: 0 0 10px 10px;
-    }
     &-label {
-      min-width: 100px;
+      min-width: 110px;
     }
   }
 }

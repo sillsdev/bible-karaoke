@@ -9,7 +9,14 @@ module.exports = {
   execute,
 };
 
-async function execute(hearThisFolder, background, font, output, onProgress) {
+async function execute({
+  hearThisFolder,
+  background,
+  text,
+  speechBubble,
+  output,
+  onProgress,
+}) {
   try {
     let ffmpegFolder = await setupFfmpeg();
     const ffmpegPath = path.join(ffmpegFolder, FFMPEG_EXE);
@@ -17,10 +24,8 @@ async function execute(hearThisFolder, background, font, output, onProgress) {
       _: [hearThisFolder],
       output,
       bgImage: background.file,
-      bgColor: background.color,
       ffmpegPath,
-      fontFamily: font.family,
-      fontColor: font.color,
+      fontFamily: text.fontFamily,
       onProgress,
       f: true,
     });
@@ -36,7 +41,20 @@ async function execute(hearThisFolder, background, font, output, onProgress) {
 //       console.log('OnProgress callback', data);
 //     };
 //     try {
-//         await execute("C:\\ProgramData\\SIL\\HearThis\\ENT\\Mark\\1", "C:\\DigiServe\\bible-karaoke\\cross-blog_orig.jpg", "Arial", "output.mp4", onProgress);
+//         const executeArgs = {
+//           hearThisFolder: 'C:\\ProgramData\\SIL\\HearThis\\ENT\\Mark\\1',
+//           backgroundFile: 'C:\\DigiServe\\bible-karaoke\\cross-blog_orig.jpg',
+//           backgroundColor: '',
+//           speechBubbleColor: 'white',
+//           speechBubbleOpacity: 1,
+//           textColor: 'black',
+//           fontFamily: 'Arial',
+//           fontSize: '20pt',
+//           highlightColor: 'yellow',
+//           output: 'output.mp4',
+//           onProgress,
+//         };
+//         await execute(executeArgs);
 //     } catch (error) {
 //         console.error(error);
 //     }
