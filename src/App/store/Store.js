@@ -37,15 +37,16 @@ class Store {
   text = {
     fontFamily: 'Arial',
     fontSize: 20,
-    color: '#525252',
+    color: '#555',
     bold: false,
     italic: false,
     highlightColor: 'yellow',
+    highlightRGB: 'rgba(255,255,0,1)'
   };
 
   @observable
   speechBubble = {
-    color: '#fff',
+    color: 'rgba(255,255,255,1)',
     opacity: 1,
   };
 

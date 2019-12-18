@@ -19,7 +19,7 @@ const BG = {
   COLOR: 'color',
 };
 
-const DEFAULT_BG_COLOR = '#fff'; // white
+const DEFAULT_BG_COLOR = '#4BB5C1'; // gray
 
 const FONT_SIZES = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(n => ({
   value: n,
@@ -80,7 +80,8 @@ class DisplayCard extends React.PureComponent {
   };
 
   onHighlightColorPickerChange = color => {
-    this.props.store.setTextProps({ highlightColor: color.hex });
+    this.props.store.setTextProps({ highlightColor: color.hex , highlightRGB: "rgba("+color.rgb.r+","+color.rgb.g+","+color.rgb.b+",1)" });
+    console.log(this.props);
   };
 
   toggleBold = () => {
@@ -92,7 +93,8 @@ class DisplayCard extends React.PureComponent {
   };
 
   onSpeechBubbleColorPickerChange = color => {
-    this.props.store.setSpeechBubbleProps({ color: color.hex });
+      console.log(color);
+    this.props.store.setSpeechBubbleProps({ color: color.hex, rgb: color.rgb });
   };
 
   onSetSpeechBubbleOpacity = opacity => {

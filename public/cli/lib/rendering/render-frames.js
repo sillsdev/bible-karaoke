@@ -7,7 +7,19 @@ const DataURI = require("datauri").promise;
 module.exports = { render };
 
 const fontPlaceholder = "CAPTION_FONT_FAMILY";
+const fontSizePlaceholder = "CAPTION_FONT_SIZE";
+const fontColorPlaceholder = "CAPTION_FONT_COLOR";
+const fontItalicPlaceholder = "CAPTION_FONT_ITALIC";
+const fontBoldPlaceholder = "CAPTION_FONT_BOLD";
+const bgColorPlaceholder = "BG_COLOR";
+const videoSrcPlaceholder = "VIDEO_SRC"
 const fallbackFont = "Helvetica Neue, Helvetica, Arial, sans-serif";
+const fallbackFontSize = "20pt";
+const fallbackFontColor = "#555";
+const fallbackFontItalic = "normal";
+const fallbackFontBold = "normal";
+const fallbackBgColor = "#4BB5C1";
+const fallbackVideoSrc = "";
 
 // (async function mainIIFE() {
 //     try {
@@ -17,15 +29,18 @@ const fallbackFont = "Helvetica Neue, Helvetica, Arial, sans-serif";
 //     }
 // })();
 
-async function render(timingFilePath, bgImagePath, font, notifyEvent) {
+async function render(timingFilePath, bgType, bgFilePath, bgColor, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, notifyEvent) {
     let timingObj = require(timingFilePath);
     let duration = timingObj[timingObj.length - 1].end / 1000;
     let fps = 15;
     // let ffmpegLocation = await setupFfmpeg();
-    let htmlContent = await getHtmlPage(timingFilePath, bgImagePath, fps, font);
-    // fs.writeFileSync("renderedAnimation.html", htmlContent);
+    let htmlContent = await getHtmlPage(timingFilePath, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor);
 
     let outputLocation = tempy.directory();
+
+    // fs.writeFileSync(path.join(outputLocation, "renderedAnimation.html"), htmlContent);
+    
+    console.log(htmlContent)
 
     await record({
         browser: null, // Optional: a puppeteer Browser instance,
@@ -53,14 +68,24 @@ async function render(timingFilePath, bgImagePath, font, notifyEvent) {
     return outputLocation;
 }
 
-async function getHtmlPage(timingFilePath, bgImagePath, fps, font) {
+async function getHtmlPage(timingFilePath, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor) {
     let htmlContent = fs.readFileSync(path.join(__dirname, "render.html"), {
         encoding: "utf-8"
     });
     let timings = JSON.stringify(require(timingFilePath), null, 4); // fs.readFileSync(timingFilePath, { encoding: "utf-8" });
     let backgroundDataUri = null;
-    if (bgImagePath) {
-        backgroundDataUri = await DataURI(bgImagePath);
+    if (bgFilePath && bgType == "image") {
+        backgroundDataUri = await DataURI(bgFilePath);
+    }
+    if (fontItalic) {
+        fontItalic = "italic";
+    } else {
+        fontItalic = "normal";
+    }
+    if (fontBold) {
+        fontBold = "bold";
+    } else {
+        fontBold = "normal";
     }
     return htmlContent
         .replace(
@@ -70,11 +95,22 @@ async function getHtmlPage(timingFilePath, bgImagePath, fps, font) {
         let fps = ${fps};
         let timing = ${timings};
         let backgroundDataUri = '${backgroundDataUri}';
+        let backgroundVideoUrl = '${bgFilePath}';
+        let highlightColor = '${highlightColor}';
+        let speechBubbleColor = '${speechBubbleColor}';
+        let backgroundType = '${bgType}';
+        let bgFilePath = '${bgFilePath}';
         window.onload = function () {
-            window.afterLoadKar(timing, backgroundDataUri, fps);
+            window.afterLoadKar(timing, backgroundDataUri, fps, backgroundType, backgroundVideoUrl, highlightColor, speechBubbleColor);
         }
     </script>
     `
         )
-        .replace(fontPlaceholder, font || fallbackFont);
+        .replace(fontPlaceholder, font || fallbackFont)
+        .replace(fontSizePlaceholder, fontSize + "pt" || fallbackFontSize)
+        .replace(fontColorPlaceholder, fontColor || fallbackFontColor)
+        .replace(fontItalicPlaceholder, fontItalic || fallbackFontItalic)
+        .replace(fontBoldPlaceholder, fontBold || fallbackFontBold)
+        .replace(bgColorPlaceholder, bgColor || fallbackBgColor)
+        .replace(videoSrcPlaceholder, bgFilePath || fallbackVideoSrc);
 }

@@ -23,9 +23,17 @@ async function execute({
     await bbkConvert({
       _: [hearThisFolder],
       output,
-      bgImage: background.file,
       ffmpegPath,
+      bgType: background.type,
+      bgFile: background.file,
+      bgColor: background.color,
       fontFamily: text.fontFamily,
+      fontSize: text.fontSize,
+      fontColor: text.color,
+      fontItalic: text.italic,
+      fontBold: text.bold,
+      highlightColor: text.highlightRGB,
+      speechBubbleColor: speechBubble.color,
       onProgress,
       f: true,
     });
