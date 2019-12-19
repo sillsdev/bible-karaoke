@@ -49,7 +49,7 @@ const Preview = ({ verses, background, text, speechBubble }) => {
     <div className='preview' style={styles.background}>
       {background.type === 'video' ? (
         <video
-          src={background.file}
+          src={`file://${background.file}`}
           autoPlay
           width='720'
           height='480'
