@@ -34,6 +34,7 @@ async function execute({
       fontBold: text.bold,
       highlightColor: text.highlightRGB,
       speechBubbleColor: speechBubble.rgba,
+      speechBubbleOpacity: speechBubble.opacity,
       onProgress,
       f: true,
     });

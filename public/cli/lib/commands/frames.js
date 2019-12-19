@@ -148,7 +148,7 @@ function callRender(done) {
         }
     });
     console.log(Options);
-    render(Options.inputJSON, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, notify)
+    render(Options.inputJSON, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, Options.speechBubbleOpacity, notify)
         .then((location) => {
             // console.log("frames location:", location);
             pathFramesFolder = location;

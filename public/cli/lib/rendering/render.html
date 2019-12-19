@@ -69,7 +69,7 @@
     <script>
         var animations = [];
 
-        window.afterLoadKar = function(textObj, backgroundImage, fps, bgType, backgroundVideoUrl, highlightColor, speechBubbleColor) {
+        window.afterLoadKar = function(textObj, backgroundImage, fps, bgType, backgroundVideoUrl, highlightColor, speechBubbleColor, speechBubbleOpacity) {
             var showSpeechBubble = true;
             if (bgType == "color") {
                 showSpeechBubble = false;
@@ -86,6 +86,7 @@
             var linePos = 0;
             var highlightColor = highlightColor;
             var speechBubbleColor = speechBubbleColor;
+            var speechBubbleOpacity = speechBubbleOpacity;
 
             // take the JSON obj that has the text and timings and display them on the page with animation
             function createSubtitle(textObject) {
@@ -203,7 +204,7 @@
                                 background: speechBubbleColor.replace(/,[^,]*$/, ",0)")
                             }, 
                             { 
-                                background: speechBubbleColor
+                                background: speechBubbleColor.replace(/,[^,]*$/, ","+speechBubbleOpacity+")")
                             }
                         ], {
                             duration: 500,
@@ -217,7 +218,7 @@
                         animations.push(phraseBackgroundOn);
                         var phraseBackgroundOff = line.animate([
                             { 
-                                background: speechBubbleColor
+                                background: speechBubbleColor.replace(/,[^,]*$/, ","+speechBubbleOpacity+")")
                             }, 
                             { 
                                 background: speechBubbleColor.replace(/,[^,]*$/, ",0)")

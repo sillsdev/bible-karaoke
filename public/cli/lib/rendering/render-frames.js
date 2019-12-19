@@ -29,12 +29,12 @@ const fallbackVideoSrc = "";
 //     }
 // })();
 
-async function render(timingFilePath, bgType, bgFilePath, bgColor, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, notifyEvent) {
+async function render(timingFilePath, bgType, bgFilePath, bgColor, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity, notifyEvent) {
     let timingObj = require(timingFilePath);
     let duration = timingObj[timingObj.length - 1].end / 1000;
     let fps = 15;
     // let ffmpegLocation = await setupFfmpeg();
-    let htmlContent = await getHtmlPage(timingFilePath, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor);
+    let htmlContent = await getHtmlPage(timingFilePath, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity);
 
     let outputLocation = tempy.directory();
 
@@ -68,7 +68,7 @@ async function render(timingFilePath, bgType, bgFilePath, bgColor, font, fontCol
     return outputLocation;
 }
 
-async function getHtmlPage(timingFilePath, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor) {
+async function getHtmlPage(timingFilePath, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity) {
     let htmlContent = fs.readFileSync(path.join(__dirname, "render.html"), {
         encoding: "utf-8"
     });
@@ -98,10 +98,11 @@ async function getHtmlPage(timingFilePath, bgType, bgFilePath, bgColor, fps, fon
         let backgroundVideoUrl = '${bgFilePath}';
         let highlightColor = '${highlightColor}';
         let speechBubbleColor = '${speechBubbleColor}';
+        let speechBubbleOpacity = '${speechBubbleOpacity}';
         let backgroundType = '${bgType}';
         let bgFilePath = '${bgFilePath}';
         window.onload = function () {
-            window.afterLoadKar(timing, backgroundDataUri, fps, backgroundType, backgroundVideoUrl, highlightColor, speechBubbleColor);
+            window.afterLoadKar(timing, backgroundDataUri, fps, backgroundType, backgroundVideoUrl, highlightColor, speechBubbleColor, speechBubbleOpacity);
         }
     </script>
     `
