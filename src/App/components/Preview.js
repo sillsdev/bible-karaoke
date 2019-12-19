@@ -45,15 +45,18 @@ const Preview = ({ verses, background, text, speechBubble }) => {
       backgroundColor: text.highlightColor || 'transparent',
     },
   };
+  let file = "file:"+background.file;
   return (
     <div className='preview' style={styles.background}>
       {background.type === 'video' ? (
         <video
-          src={background.file}
+          src={file}
+          loop
           autoPlay
           width='720'
           height='480'
           className='preview__video'
+          id='myVideo'
         />
       ) : null}
       <div className='preview__verses'>
