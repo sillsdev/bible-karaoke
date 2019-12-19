@@ -52,7 +52,7 @@ class App extends React.PureComponent {
   openOutputFolder = () => {
     const { outputFile } = this.props.store;
     ipcRenderer.send('open-output-folder', outputFile);
-    this.setState({ status: AppStatus.configuring });
+    this.reset();
   };
 
   onStart = () => {
@@ -88,7 +88,7 @@ class App extends React.PureComponent {
     switch(status) {
       case AppStatus.done:
         return (
-          <div>
+          <div className="app__footer-success">
             <p className={Classes.TEXT_LARGE}>Your Bible Karaoke video has been created!</p>
             <ActionButton
               large
@@ -96,6 +96,7 @@ class App extends React.PureComponent {
               text='Open output folder'
               onClick={this.openOutputFolder}
             />
+            <ActionButton large onClick={this.reset} text='Make another video...' />
           </div>
         );
       case AppStatus.error:
