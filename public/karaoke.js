@@ -33,7 +33,8 @@ async function execute({
       fontItalic: text.italic,
       fontBold: text.bold,
       highlightColor: text.highlightRGB,
-      speechBubbleColor: speechBubble.color,
+      speechBubbleColor: speechBubble.rgba,
+      speechBubbleOpacity: speechBubble.opacity,
       onProgress,
       f: true,
     });

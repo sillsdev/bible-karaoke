@@ -35,7 +35,7 @@ const Preview = ({ verses, background, text, speechBubble }) => {
       backgroundColor: speechBubble.color || 'transparent',
     },
     verse: {
-      color: text.color || '#000',
+      color: text.color || '#CCC',
       fontFamily: text.fontFamily || 'Arial',
       fontSize: `${text.fontSize}pt` || '20px',
       fontWeight: text.bold ? 'bold' : undefined,
@@ -45,15 +45,18 @@ const Preview = ({ verses, background, text, speechBubble }) => {
       backgroundColor: text.highlightColor || 'transparent',
     },
   };
+  let file = "file:"+background.file;
   return (
     <div className='preview' style={styles.background}>
       {background.type === 'video' ? (
         <video
-          src={`file://${background.file}`}
+          src={file}
+          loop
           autoPlay
           width='720'
           height='480'
           className='preview__video'
+          id='myVideo'
         />
       ) : null}
       <div className='preview__verses'>

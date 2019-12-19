@@ -19,7 +19,7 @@ const BG = {
   COLOR: 'color',
 };
 
-const DEFAULT_BG_COLOR = '#4BB5C1'; // gray
+const DEFAULT_BG_COLOR = '#CCC'; // gray
 
 const FONT_SIZES = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(n => ({
   value: n,
@@ -94,7 +94,7 @@ class DisplayCard extends React.PureComponent {
 
   onSpeechBubbleColorPickerChange = color => {
       console.log(color);
-    this.props.store.setSpeechBubbleProps({ color: color.hex, rgb: color.rgb });
+    this.props.store.setSpeechBubbleProps({ color: color.hex, rgba: "rgba("+color.rgb.r+","+color.rgb.g+","+color.rgb.b+",1)" });
   };
 
   onSetSpeechBubbleOpacity = opacity => {

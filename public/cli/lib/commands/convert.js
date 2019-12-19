@@ -352,6 +352,7 @@ function execute(done) {
                 fontBold: Options.fontBold,
                 highlightColor: Options.highlightColor,
                 speechBubbleColor: Options.speechBubbleColor,
+                speechBubbleOpacity: Options.speechBubbleOpacity
             };
             if (Options.bgFile) {
                 opts.bgFile = Options.bgFile;

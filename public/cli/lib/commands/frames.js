@@ -38,7 +38,7 @@ Command.help = function() {
   [options] :
     --inputJSON         : path to the converted timing file (bbkFormat.js)
     --bgFile            : (optional) path to a background image 
-    --bgColor           : (optional) color of background defaults to ""#4BB5C1"
+    --bgColor           : (optional) color of background defaults to ""#CCC"
     --fontFamily        : (optional) Name of font family defaults to "Helvetica Neue, Helvetica, Arial, sans-serif"
     --fontSize          : (optional) Font size defaults to "20" (pt).
     --fontColor         : (optional) Font color defaults to "#555".
@@ -148,7 +148,7 @@ function callRender(done) {
         }
     });
     console.log(Options);
-    render(Options.inputJSON, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, notify)
+    render(Options.inputJSON, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, Options.speechBubbleOpacity, notify)
         .then((location) => {
             // console.log("frames location:", location);
             pathFramesFolder = location;
