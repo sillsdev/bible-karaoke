@@ -35,7 +35,7 @@ const Preview = ({ verses, background, text, speechBubble }) => {
       backgroundColor: speechBubble.color || 'transparent',
     },
     verse: {
-      color: text.color || '#000',
+      color: text.color || '#CCC',
       fontFamily: text.fontFamily || 'Arial',
       fontSize: `${text.fontSize}pt` || '20px',
       fontWeight: text.bold ? 'bold' : undefined,

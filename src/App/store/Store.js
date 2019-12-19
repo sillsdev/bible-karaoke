@@ -31,7 +31,7 @@ class Store {
   timingFile = '';
 
   @observable
-  background = { file: '', color: '#000' };
+  background = { file: '', color: '#CCC' };
 
   @observable
   text = {
@@ -46,7 +46,8 @@ class Store {
 
   @observable
   speechBubble = {
-    color: 'rgba(255,255,255,1)',
+    color: '#FFF',
+    rgba: 'rgba(255,255,255,1)',
     opacity: 1,
   };
 

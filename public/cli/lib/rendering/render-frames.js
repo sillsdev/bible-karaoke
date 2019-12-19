@@ -18,7 +18,7 @@ const fallbackFontSize = "20pt";
 const fallbackFontColor = "#555";
 const fallbackFontItalic = "normal";
 const fallbackFontBold = "normal";
-const fallbackBgColor = "#4BB5C1";
+const fallbackBgColor = "#CCC";
 const fallbackVideoSrc = "";
 
 // (async function mainIIFE() {

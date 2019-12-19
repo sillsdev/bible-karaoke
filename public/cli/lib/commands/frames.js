@@ -38,7 +38,7 @@ Command.help = function() {
   [options] :
     --inputJSON         : path to the converted timing file (bbkFormat.js)
     --bgFile            : (optional) path to a background image 
-    --bgColor           : (optional) color of background defaults to ""#4BB5C1"
+    --bgColor           : (optional) color of background defaults to ""#CCC"
     --fontFamily        : (optional) Name of font family defaults to "Helvetica Neue, Helvetica, Arial, sans-serif"
     --fontSize          : (optional) Font size defaults to "20" (pt).
     --fontColor         : (optional) Font color defaults to "#555".
