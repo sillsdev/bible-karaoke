@@ -8,7 +8,7 @@
     <meta name="description" content="Bible Karaoke - Demo">
     <style>
         body {
-            background: #4BB5C1;
+            background: #000;
             font-family: 'Lato', sans-serif;
             font-size: 1.5em;
             line-height: 1.1em;
@@ -22,15 +22,12 @@
             /* background-color: yellow; */
         }
 
-        body {
-            background-color: #000;
-        }
-
         .karaoke-caption {
-            font-size: 20pt;
+            font-size: CAPTION_FONT_SIZE;
             padding-top: 175px;
             font-family: "CAPTION_FONT_FAMILY";
-            font-weight: 300;
+            font-weight: CAPTION_FONT_BOLD;
+            font-style: CAPTION_FONT_ITALIC;
             margin: 0px 46px;
             width: 628px;
             position: absolute;
@@ -43,10 +40,10 @@
         }
 
         .karaoke-caption .words {
-            color: #555;
+            color: CAPTION_FONT_COLOR;
             line-height: 32px;
-            margin: -5px -5px;
-            padding: 5px 5px;
+            margin: 0 -5px;
+            padding: 0 5px;
             border-radius: 10px;
         }
 
@@ -57,56 +54,39 @@
             width: 720px;
             height: 480px;
             margin: 0 auto;
-            background: #bababa;
+            background: BG_COLOR;
             background-repeat: no-repeat;
             background-size: cover;
             background-position: 50% 50%;
             position: relative;
         }
-        #backgroundHelper {
-            background: #FFF;
-            width: 648px;
-            border-radius: 10px;
-            height: 62px;
-            top: 176px;
-            left: 36px;
-            position: absolute;
+        #bgVideo {
+            width: 720px;
+            height: 480px;
+            object-fit: cover;
         }
     </style>
     <script>
-        let timeElement;
-        function getTimeElement() {
-            if (!timeElement) timeElement = document.getElementById("time");
-            return timeElement;
-        }
-        function setTimeElement(text) {
-            getTimeElement().innerText = text;
-        }
-        var currentIndex = 1;
-        window.onload = function () {
-            setTimeElement(currentIndex);
-        }
-        function next() {
-            currentIndex++;
-            setTimeElement(currentIndex);
-        }
-    </script>
-    <script>
         var animations = [];
 
-        window.afterLoadKar = function(textObj, backgroundImage, fps) {
+        window.afterLoadKar = function(textObj, backgroundImage, fps, bgType, backgroundVideoUrl, highlightColor, speechBubbleColor, speechBubbleOpacity) {
             var showSpeechBubble = true;
-            if (backgroundImage == "null") {
+            if (bgType == "color") {
                 showSpeechBubble = false;
-            } else {
+                document.getElementById("bgVideo").style.display = "none";
+            } else if (bgType == "image") {
                 let imageParent = document.getElementById("imgParent");
-                imageParent.style.backgroundImage = "url("+backgroundImage+")";            // image.src = "IMAGE URL/PATH"
+                imageParent.style.backgroundImage = "url("+backgroundImage+")";
+                document.getElementById("bgVideo").style.display = "none";
             }
 
             var subtitles = document.querySelector("#subtitles2");
             var textObject = [];
             var rawSubTitle = "";
             var linePos = 0;
+            var highlightColor = highlightColor;
+            var speechBubbleColor = speechBubbleColor;
+            var speechBubbleOpacity = speechBubbleOpacity;
 
             // take the JSON obj that has the text and timings and display them on the page with animation
             function createSubtitle(textObject) {
@@ -162,7 +142,7 @@
                     
                     var elem = document.querySelector('#p'+line + ' .'+container);
                     var wordAnimateOn = elem.animate({
-                        background: ["rgba(255,255,0,0)", "rgba(255,255,0,1)"],
+                        background: [highlightColor.replace(/,[^,]*$/, ",0)"), highlightColor],
                     }, {
                         duration: 250,
                         delay: start,
@@ -175,7 +155,7 @@
                     animations.push(wordAnimateOn);
 
                     var wordAnimateOff = elem.animate({
-                        background: ["rgba(255,255,0,1)", "rgba(255,255,0,0)"],
+                        background: [highlightColor, highlightColor.replace(/,[^,]*$/, ",0)")],
                     }, {
                         duration: 500,
                         delay: start+duration,
@@ -221,10 +201,10 @@
                     if (showSpeechBubble) {
                         var phraseBackgroundOn = line.animate([
                             { 
-                                background: 'rgba(255,255,255,0)'
+                                background: speechBubbleColor.replace(/,[^,]*$/, ",0)")
                             }, 
                             { 
-                                background: 'rgba(255,255,255,1)'
+                                background: speechBubbleColor.replace(/,[^,]*$/, ","+speechBubbleOpacity+")")
                             }
                         ], {
                             duration: 500,
@@ -238,10 +218,10 @@
                         animations.push(phraseBackgroundOn);
                         var phraseBackgroundOff = line.animate([
                             { 
-                                background: 'rgba(255,255,255,1)'
+                                background: speechBubbleColor.replace(/,[^,]*$/, ","+speechBubbleOpacity+")")
                             }, 
                             { 
-                                background: 'rgba(255,255,255,0)'
+                                background: speechBubbleColor.replace(/,[^,]*$/, ",0)")
                             }
                         ], {
                             duration: 500,
@@ -265,13 +245,18 @@
         // the app will call this function and we will need to determin what the UI should
         // look like at a given moment in time with the fps converted into a time in miliseconds
         var curPos = 0;
-        function renderNextFrame() {
-            curPos = 1000/fps + curPos;
+        function renderNextFrame(time) {
+            if (time) {
+                curPos = time;
+            } else {
+                curPos = 1000/fps + curPos;
+            }
             // This is how you tell it to go to a specific time
             animations.forEach((w) => {
                 // this makes the animation jump to this specific time in the overall animation
                 w.currentTime = curPos;
             });
+            document.getElementById('bgVideo').currentTime = curPos/1000;
         }
     </script>
     <!-- this comment get's replaced with content that has the background image
@@ -280,10 +265,11 @@
     <meta name="data-replace">
 </head>
 <body>
-    <!-- <p>hello world time: <span id="time"></span></p>
-    <div style="height: 100px; width: 100px; background-color: red"></div> -->
     <div id="imgParent">
         <div class="line subs karaoke-caption" id="subtitles2"></div>
+        <video muted loop id="bgVideo">
+          <source src="file:VIDEO_SRC" type="video/mp4">
+        </video>
     </div>
 
 </body>

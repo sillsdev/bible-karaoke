@@ -25,7 +25,7 @@ else
 # echo "Font:    $Font"
 
 	BGMount="--mount type=bind,source=\"$BGImage\",target=/app/bgimage.png "
-	BGCommand="--bgImage=bgimage.png"
+	BGCommand="--bgFile=bgimage.png"
 	if [ "$BGImage" == "none" ]; 
 	then
 		BGMount=""

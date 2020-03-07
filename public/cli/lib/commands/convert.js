@@ -46,19 +46,29 @@ module.exports = Command;
 Command.help = function() {
     console.log(`
 
-  Usage: $ bbk convert [path/to/folder] --bgImage=[path/to/image.png] --output=[outputFile.mp4] --fps=[#] -f
+  Usage: $ bbk convert --bgFile=[path/to/image.png] --output=[outputFile.mp4] --fps=[#] -f
 
   [path/to/folder] : the name of the directory with the Hearthis files to convert
 
   Options:
-    --output     : name of the desired output file (.mp4)
-    --bgImage    : (optional) an image for the background
-    --noBGImage  : (optional) no background image
-                   setting --noBGImage prevents being asked for one
-    --fps        : (optional) the frames per second of the output (15)
-    --ffmpegPath : (optional) path to your ffmpeg executable
-    -f           : (optional) overwrite the output file if it exists
-    --fontFamily : The name of the system font to use.
+    --output         : name of the desired output file (.mp4)
+    --bgType         : The type of background (image/video).
+    --bgFile         : (optional) an image for the background
+    --bgColor        : (optional) the background color of the video
+    --noBGImage      : (optional) no background image
+                        setting --noBGImage prevents being asked for one
+    --fps            : (optional) the frames per second of the output (15)
+    --ffmpegPath     : (optional) path to your ffmpeg executable
+    -f               : (optional) overwrite the output file if it exists
+    --fontFamily     : The name of the system font to use.
+    --fontSize       : The size of the font used.
+    --fontColor      : The color of the font used.
+    --fontItalic     : Style the font with italics.
+    --fontBold       : Style the font with bold.
+    --highlightColor : The color of the highlight (rgb).
+    --speechBubbleColor : The color of the speech bubble (rgb).
+    --speechBubbleOpacity : The final opacity of the speechbubble.
+    
 
   Examples:
 
@@ -182,34 +192,34 @@ function askQuestions(done) {
             {
                 name: "wantBG",
                 type: "confirm",
-                message: "Do you want to add a background image:",
+                message: "Do you want to add a background image or video:",
                 default: false,
                 when: (values) => {
                     return (
                         !values.wantBG &&
-                        typeof Options.bgImage == "undefined" &&
+                        typeof Options.bgFile == "undefined" &&
                         typeof Options.noBGImage == "undefined"
                     );
                 }
             },
             {
-                name: "bgImage",
+                name: "bgFile",
                 type: "input",
                 message:
-                    "Enter the path to the background image you want to use:",
+                    "Enter the path to the background image or video you want to use:",
                 default: "",
                 validate: (input) => {
                     if (fs.existsSync(input)) {
                         return true;
                     } else {
-                        return "Can't find image! Make sure you typed it in correctly.";
+                        return "Can't find image or video! Make sure you typed it in correctly.";
                     }
                 },
                 when: (values) => {
                     return (
                         values.wantBG &&
-                        !values.bgImage &&
-                        !Options.bgImage &&
+                        !values.bgFile &&
+                        !Options.bgFile &&
                         typeof Options.noBGImage == "undefined"
                     );
                 }
@@ -222,6 +232,36 @@ function askQuestions(done) {
                 default: "Helvetica Neue, Helvetica, Arial, sans-serif",
                 when: (values) => {
                     return !values.fontFamily && !Options.fontFamily;
+                }
+            },
+            {
+                name: "fontSize",
+                type: "input",
+                message:
+                    "Enter the font size (pt) to use in the video.",
+                default: "20",
+                when: (values) => {
+                    return !values.fontSize && !Options.fontSize;
+                }
+            },
+            {
+                name: "fontColor",
+                type: "input",
+                message:
+                    "Enter the font color to use in the video.",
+                default: "#555",
+                when: (values) => {
+                    return !values.fontColor && !Options.fontColor;
+                }
+            },
+            {
+                name: "speechBubbleColor",
+                type: "input",
+                message:
+                    "Enter the background color to use in the speech bubble.",
+                default: "rgba(0,0,0,0)",
+                when: (values) => {
+                    return !values.speechBubbleColor && !Options.speechBubbleColor;
                 }
             },
             {
@@ -305,14 +345,27 @@ function execute(done) {
         .then(() => {
             var opts = {
                 inputJSON: pathBBKFile,
-                fontFamily: Options.fontFamily
+                fontFamily: Options.fontFamily,
+                fontSize: Options.fontSize,
+                fontColor: Options.fontColor,
+                fontItalic: Options.fontItalic,
+                fontBold: Options.fontBold,
+                highlightColor: Options.highlightColor,
+                speechBubbleColor: Options.speechBubbleColor,
+                speechBubbleOpacity: Options.speechBubbleOpacity
             };
-            if (Options.bgImage) {
-                opts.bgImage = Options.bgImage;
+            if (Options.bgFile) {
+                opts.bgFile = Options.bgFile;
             }
+            if (Options.bgColor) {
+                opts.bgColor = Options.bgColor;
+            }
+            opts.bgType = Options.bgType;
             if (Options.onProgress) {
               opts.onProgress = onProgress;
             }
+            console.log("Options: ", Options);
+            console.log("opt: ", opts);
             onProgress("Rendering video frames...", 0);
             return Frames.run(opts);
         })

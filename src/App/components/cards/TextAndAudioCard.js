@@ -112,8 +112,8 @@ class TextAndAudioCard extends React.PureComponent {
     if (!hearThisProjects.length) {
       return (
         <Callout title='No HearThis projects found' intent={Intent.WARNING}>
-          Bible Karaoke was unable to locate any HearThis projects. Make
-          sure <a href='https://software.sil.org/hearthis/'>HearThis</a> is installed
+          Bible Karaoke was unable to locate any HearThis projects. Make sure{' '}
+          <a href='https://software.sil.org/hearthis/'>HearThis</a> is installed
           and you have at least one project with audio for at least one chapter
           of one book.
         </Callout>
@@ -123,12 +123,14 @@ class TextAndAudioCard extends React.PureComponent {
       <div>
         <div className='card__option'>
           <div className='card__option-label'>Project</div>
-          <HTMLSelect
-            value={selectedProject}
-            onChange={this.selectProject}
-            options={[emptyOption].concat(projectOptions)}
-          />
-          <Button icon="refresh" onClick={this.refreshProject} />
+          <div className='card--inline'>
+            <HTMLSelect
+              value={selectedProject}
+              onChange={this.selectProject}
+              options={[emptyOption].concat(projectOptions)}
+            />
+            <Button icon='refresh' onClick={this.refreshProject} />
+          </div>
         </div>
         <div className='card__option'>
           <div className='card__option-label'>Book</div>

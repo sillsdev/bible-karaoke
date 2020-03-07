@@ -50,6 +50,7 @@ class Accordion extends React.PureComponent {
               <H3>
                 <Button
                   minimal
+                  active={index === currentCardIndex}
                   onClick={() => {
                     this.selectCard(index);
                   }}
@@ -60,7 +61,7 @@ class Accordion extends React.PureComponent {
               {stepStatus[index] ? <Icon icon='tick-circle' /> : null}
             </div>
             <Collapse isOpen={index === currentCardIndex} keepChildrenMounted>
-              <p>{card.description}</p>
+              <p className="accordion__card-description">{card.description}</p>
               {card.content}
               <ActionButton
                 disabled={!stepStatus[index]}

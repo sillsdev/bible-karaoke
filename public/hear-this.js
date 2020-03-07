@@ -2,9 +2,11 @@ const fs = require('fs');
 const process = require('process');
 const os = require('os');
 const path = require('path');
+const xml2json = require('xml-js');
 
 module.exports = {
   getProjectStructure,
+  getSampleVerses,
 };
 
 const isDirectory = source => fs.lstatSync(source).isDirectory();
@@ -83,7 +85,7 @@ function makeBook(projectName, name) {
 
 function makeChapter(projectName, bookName, name) {
   let chapter = new Chapter();
-  chapter.name = name === '0' ? 'Intro' : (parseInt(name)).toString();
+  chapter.name = name === '0' ? 'Intro' : parseInt(name).toString();
   let chapterFiles = fs.readdirSync(
     path.join(DEFAULT_DATA_DIR, projectName, bookName, name),
   );
@@ -104,4 +106,18 @@ function makeChapter(projectName, bookName, name) {
     );
   chapter.fullPath = path.join(DEFAULT_DATA_DIR, projectName, bookName, name);
   return chapter;
+}
+
+function getSampleVerses(hearThisFolder) {
+  try {
+    const info = fs.readFileSync(path.join(hearThisFolder, 'info.xml'), 'utf8');
+    var jsonInfo = JSON.parse(xml2json.xml2json(info, { compact: true }));
+    const verses = jsonInfo.ChapterInfo.Recordings.ScriptLine.slice(0, 3).map(
+      line => line.Text._text,
+    );
+    return verses;
+  } catch (err) {
+    console.error('Failed to get sample verses', err);
+    return 'Failed to get sample verses';
+  }
 }

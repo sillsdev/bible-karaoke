@@ -9,11 +9,35 @@ module.exports = {
   execute,
 };
 
-async function execute(hearThisFolder, bgImage, fontFamily, output, onProgress) {
+async function execute({
+  hearThisFolder,
+  background,
+  text,
+  speechBubble,
+  output,
+  onProgress,
+}) {
   try {
     let ffmpegFolder = await setupFfmpeg();
-    const ffmpegPath =  path.join(ffmpegFolder, FFMPEG_EXE);
-    await bbkConvert({ _: [hearThisFolder], output, bgImage, ffmpegPath, fontFamily, onProgress, f: true });
+    const ffmpegPath = path.join(ffmpegFolder, FFMPEG_EXE);
+    await bbkConvert({
+      _: [hearThisFolder],
+      output,
+      ffmpegPath,
+      bgType: background.type,
+      bgFile: background.file,
+      bgColor: background.color,
+      fontFamily: text.fontFamily,
+      fontSize: text.fontSize,
+      fontColor: text.color,
+      fontItalic: text.italic,
+      fontBold: text.bold,
+      highlightColor: text.highlightRGB,
+      speechBubbleColor: speechBubble.rgba,
+      speechBubbleOpacity: speechBubble.opacity,
+      onProgress,
+      f: true,
+    });
     return output;
   } catch (err) {
     console.warn('Failed to generate karaoke file', err);
@@ -26,7 +50,20 @@ async function execute(hearThisFolder, bgImage, fontFamily, output, onProgress) 
 //       console.log('OnProgress callback', data);
 //     };
 //     try {
-//         await execute("C:\\ProgramData\\SIL\\HearThis\\ENT\\Mark\\1", "C:\\DigiServe\\bible-karaoke\\cross-blog_orig.jpg", "Arial", "output.mp4", onProgress);
+//         const executeArgs = {
+//           hearThisFolder: 'C:\\ProgramData\\SIL\\HearThis\\ENT\\Mark\\1',
+//           backgroundFile: 'C:\\DigiServe\\bible-karaoke\\cross-blog_orig.jpg',
+//           backgroundColor: '',
+//           speechBubbleColor: 'white',
+//           speechBubbleOpacity: 1,
+//           textColor: 'black',
+//           fontFamily: 'Arial',
+//           fontSize: '20pt',
+//           highlightColor: 'yellow',
+//           output: 'output.mp4',
+//           onProgress,
+//         };
+//         await execute(executeArgs);
 //     } catch (error) {
 //         console.error(error);
 //     }

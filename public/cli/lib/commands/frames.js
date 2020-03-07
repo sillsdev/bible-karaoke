@@ -32,13 +32,20 @@ module.exports = Command;
 Command.help = function() {
     console.log(`
 
-  usage: $ bbk frames --inputJSON=[bbkFormat.js] --bgImage=[path/to/image.png] --fontFamily=[name of font family] --output=[path/to/output/folder]
+  usage: $ bbk frames --inputJSON=[bbkFormat.js] --bgFile=[path/to/image.png] --fontFamily=[name of font family] --output=[path/to/output/folder]
 
 
   [options] :
-    --inputJSON  : path to the converted timing file (bbkFormat.js)
-    --bgImage    : (optional) path to a background image 
-    --fontFamily    : (optional) Name of font family defaults to "Helvetica Neue, Helvetica, Arial, sans-serif"
+    --inputJSON         : path to the converted timing file (bbkFormat.js)
+    --bgFile            : (optional) path to a background image 
+    --bgColor           : (optional) color of background defaults to ""#CCC"
+    --fontFamily        : (optional) Name of font family defaults to "Helvetica Neue, Helvetica, Arial, sans-serif"
+    --fontSize          : (optional) Font size defaults to "20" (pt).
+    --fontColor         : (optional) Font color defaults to "#555".
+    --fontItalic        : (optional) Style font with italics defaults to "false".
+    --fontBold          : (optional) Style font with bold defaults to "false".
+    --highlightColor    : (optional) Color of highlight defaults to a yellow color.
+    --speechBubbleColor : (optional) Color of speech bubble defaults to transparent.
 
   examples:
 
@@ -76,12 +83,12 @@ Command.run = function(options) {
                         }
                     }
 
-                    if (Options.bgImage) {
+                    if (Options.bgFile) {
                         // if this isn't an absolute path, then convert to one:
-                        if (!path.isAbsolute(Options.bgImage)) {
-                            Options.bgImage = path.join(
+                        if (!path.isAbsolute(Options.bgFile)) {
+                            Options.bgFile = path.join(
                                 process.cwd(),
-                                Options.bgImage
+                                Options.bgFile
                             );
                         }
                     }
@@ -140,7 +147,8 @@ function callRender(done) {
             bar.tick();
         }
     });
-    render(Options.inputJSON, Options.bgImage, Options.fontFamily, notify)
+    console.log(Options);
+    render(Options.inputJSON, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, Options.speechBubbleOpacity, notify)
         .then((location) => {
             // console.log("frames location:", location);
             pathFramesFolder = location;

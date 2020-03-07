@@ -1,7 +1,7 @@
 const electron = require('electron');
 const fontList = require('font-list');
 const karaoke = require('./karaoke');
-const { getProjectStructure } = require('./hear-this');
+const { getProjectStructure, getSampleVerses } = require('./hear-this');
 
 const { app, ipcMain, shell, Menu } = electron;
 const BrowserWindow = electron.BrowserWindow;
@@ -16,7 +16,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 880,
     height: 970,
-    webPreferences: { nodeIntegration: true },
+    webPreferences: { nodeIntegration: true, webSecurity: false },
   });
   mainWindow.loadURL(
     isDev
@@ -52,6 +52,14 @@ function handleGetFonts() {
   });
 }
 
+function handleGetSampleVerses() {
+  ipcMain.on('did-start-getverses', async (event, args) => {
+    const { hearThisFolder } = args;
+    const verses = getSampleVerses(hearThisFolder);
+    event.sender.send('did-finish-getverses', verses);
+  });
+}
+
 function handleGetProjects() {
   ipcMain.on('did-start-getprojectstructure', async event => {
     console.log('Getting project structure');
@@ -72,16 +80,9 @@ function handleSubmission() {
       event.sender.send('on-progress', args);
     };
     console.log('Starting command line', args);
-    const { hearThisFolder, backgroundFile, font, outputFile } = args;
     let result;
     try {
-      result = await karaoke.execute(
-        hearThisFolder,
-        backgroundFile,
-        font,
-        outputFile,
-        onProgress,
-      );
+      result = await karaoke.execute({ ...args, onProgress });
     } catch (err) {
       result = err;
     }
@@ -99,6 +100,7 @@ app.on('ready', () => {
   createWindow();
   handleSubmission();
   handleGetProjects();
+  handleGetSampleVerses();
   handleGetFonts();
   handleOpenOutputFolder();
 });

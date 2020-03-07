@@ -1,0 +1,25 @@
+.bk-color-picker {
+  position: relative;
+  &__cover {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+  }
+  &__popover {
+    position: absolute;
+    z-index: 2;
+    top: 40px;
+    left: -5px;
+  }
+  &__swatch {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    border: solid grey 1px;
+  }
+  &--disabled {
+    cursor: not-allowed;
+  }
+}
