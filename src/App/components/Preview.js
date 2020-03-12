@@ -5,7 +5,6 @@ const HIGHLIGHT_VERSE_INDEX = 0;
 const HIGHLIGHT_WORD_INDEX = 3;
 
 const PreviewVerse = ({ verse, highlightVerse, highlightStyle }) => {
-  console.log(verse);
   return verse.split(' ').map((word, index) => {
     const isHighlighted = highlightVerse && index === HIGHLIGHT_WORD_INDEX;
     return (
@@ -54,7 +53,6 @@ const Preview = ({ verses, background, text, speechBubble }) => {
     },
   };
   let file = "file:"+background.file;
-  console.log(verses);
   return (
     <div className='preview' style={styles.background}>
       {background.type === 'video' ? (
