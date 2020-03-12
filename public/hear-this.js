@@ -112,9 +112,13 @@ function getSampleVerses(hearThisFolder) {
   try {
     const info = fs.readFileSync(path.join(hearThisFolder, 'info.xml'), 'utf8');
     var jsonInfo = JSON.parse(xml2json.xml2json(info, { compact: true }));
-    const verses = jsonInfo.ChapterInfo.Recordings.ScriptLine.slice(0, 3).map(
-      line => line.Text._text,
-    );
+    const verses = jsonInfo.ChapterInfo.Recordings.ScriptLine.slice(0, 3).map( line => {
+      let text = line.Text._text;
+      if (line.Heading._text === "true") {
+          text = "<strong>"+text+"</strong>";
+      }
+      return text;
+    });
     return verses;
   } catch (err) {
     console.error('Failed to get sample verses', err);

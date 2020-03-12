@@ -5,6 +5,7 @@ const HIGHLIGHT_VERSE_INDEX = 0;
 const HIGHLIGHT_WORD_INDEX = 3;
 
 const PreviewVerse = ({ verse, highlightVerse, highlightStyle }) => {
+  console.log(verse);
   return verse.split(' ').map((word, index) => {
     const isHighlighted = highlightVerse && index === HIGHLIGHT_WORD_INDEX;
     return (
@@ -41,11 +42,19 @@ const Preview = ({ verses, background, text, speechBubble }) => {
       fontWeight: text.bold ? 'bold' : undefined,
       fontStyle: text.italic ? 'italic' : undefined,
     },
+    heading: {
+        color: text.color || '#CCC',
+        fontFamily: text.fontFamily || 'Arial',
+        fontSize: `${text.fontSize}pt` || '20px',
+        fontWeight: 'bold',
+        fontStyle: text.italic ? 'italic' : undefined,
+    },
     highlight: {
       backgroundColor: text.highlightColor || 'transparent',
     },
   };
   let file = "file:"+background.file;
+  console.log(verses);
   return (
     <div className='preview' style={styles.background}>
       {background.type === 'video' ? (
@@ -61,7 +70,7 @@ const Preview = ({ verses, background, text, speechBubble }) => {
       ) : null}
       <div className='preview__verses'>
         {verses.map((verse, index) => (
-          <div key={index} className='preview__verse' style={styles.verse}>
+          <div key={index} className='preview__verse' style={verse.indexOf("<strong>") > -1 ? styles.heading : styles.verse}>
             {index === HIGHLIGHT_VERSE_INDEX ? (
               <div
                 className='preview__speech-bubble-bg'
@@ -69,7 +78,7 @@ const Preview = ({ verses, background, text, speechBubble }) => {
               />
             ) : null}
             <PreviewVerse
-              verse={verse}
+              verse={verse.replace("<strong>", "").replace("</strong>", "")}
               highlightVerse={index === HIGHLIGHT_VERSE_INDEX}
               highlightStyle={styles.highlight}
             />
