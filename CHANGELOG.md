@@ -6,6 +6,10 @@
 * :thumbsup: Improvement
 * :boom: Bug fix
 
+## v0.3.1
+
+* :boom: Fixed bug that prevents the video from being created on some people's computers.
+
 ## v0.3.0
 
 (Under the hood, the CLI code is now integrated into this repo, rather than being a npm dependency)

@@ -6,7 +6,7 @@
     "email": "info@digiserve.org",
     "url": "https://digiserve.org"
   },
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.6.0",
@@ -18,7 +18,6 @@
     "datauri": "^2.0.0",
     "electron-is-dev": "^1.1.0",
     "execa": "^3.3.0",
-    "ffbinaries": "^1.1.4",
     "font-list": "^1.2.2",
     "inquirer": "^7.0.1",
     "junk": "^3.1.0",
@@ -42,15 +41,17 @@
   "scripts": {
     "cli": "node public/cli/index.js",
     "electron-dev": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\"",
-    "start": "rescripts start",
-    "build": "rescripts build",
+    "start": "ffbinaries ffmpeg ffprobe -o=binaries && rescripts start",
+    "build": "ffbinaries ffmpeg ffprobe -o=binaries && rescripts build",
     "test": "rescripts test",
     "eject": "react-scripts eject",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack-mac": "npm run build",
     "preelectron-pack-win": "npm run build",
+    "preelectron-pack-linux": "npm run build",
     "electron-pack-mac": "electron-builder -m",
-    "electron-pack-win": "electron-builder -w"
+    "electron-pack-win": "electron-builder -w",
+    "electron-pack-linux": "electron-builder -l"
   },
   "main": "public/electron.js",
   "bin": {
@@ -79,6 +80,7 @@
     "cross-env": "^6.0.3",
     "electron": "^7.1.6",
     "electron-builder": "^21.2.0",
+    "ffbinaries": "^1.1.4",
     "typescript": "^3.7.3",
     "wait-on": "^3.3.0"
   },
@@ -94,6 +96,9 @@
       "binaries/*",
       "build/**/*",
       "node_modules/**/*"
+    ],
+    "extraFiles": [
+      "./binaries"
     ],
     "directories": {
       "buildResources": "assets"
