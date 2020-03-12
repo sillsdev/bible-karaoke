@@ -210,8 +210,14 @@ function convertIt(done) {
         if (lines.length == 0) {
             cb();
         } else {
+            var line;
             // get next line
-            var line = lines.shift();
+            if (Array.isArray(lines)) {
+                line = lines.shift();
+            } else {
+                line = lines;
+                lines = [];
+            }
             
             // get the text
             var text = line.Text._text;
