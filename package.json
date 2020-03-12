@@ -6,7 +6,7 @@
     "email": "info@digiserve.org",
     "url": "https://digiserve.org"
   },
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.6.0",
