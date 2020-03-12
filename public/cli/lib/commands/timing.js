@@ -212,6 +212,14 @@ function convertIt(done) {
         } else {
             // get next line
             var line = lines.shift();
+            
+            // get the text
+            var text = line.Text._text;
+            
+            // check if the text is a heading and make it bold if so
+            if (line.Heading._text === "true") {
+                text = "<strong>"+text+"</strong>";
+            }
 
             // convert to initial timingObj
             var timingObj = {
@@ -220,7 +228,7 @@ function convertIt(done) {
                 start: startTime,
                 end: 0,
                 duration: 0,
-                content: line.Text._text,
+                content: text,
                 text: "",
                 words: []
             };
