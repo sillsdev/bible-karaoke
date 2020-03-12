@@ -26,8 +26,10 @@ npm run electron-dev
 
 Build the app for distribution:
 ```sh
-# Mac:
-npm run electron-pack-mac
 # Windows:
 npm run electron-pack-win
+# Mac:
+npm run electron-pack-mac
+# Linux:
+npm run electron-pack-linux
 ```
