@@ -2,11 +2,15 @@
 
 Create 'karaoke-style' videos of Bible passages to help users become comfortable at reading the Bible in another language.
 
-## Developing
+## Users
+
+Head on over to [biblek.info](http://biblek.info) to get started.
+
+## Developers
 
 Clone this repo:
 ```sh
-git clone git@github.com:grahammcculloch/bible-karaoke.git bible-karaoke
+git clone git@github.com:sillsdev/bible-karaoke.git bible-karaoke
 cd bible-karaoke
 ```
 
