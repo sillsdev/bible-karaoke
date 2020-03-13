@@ -221,6 +221,12 @@ function convertIt(done) {
                 text = "<strong>"+text+"</strong>";
             }
 
+            // Fix #20 : ignore Chapter Headings
+            if (line.HeadingType && line.HeadingType._text == "c") {
+                processLine(lines, startTime, cb);
+                return;
+            }
+
             // convert to initial timingObj
             var timingObj = {
                 type: "caption",

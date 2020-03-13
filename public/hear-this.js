@@ -112,13 +112,21 @@ function getSampleVerses(hearThisFolder) {
   try {
     const info = fs.readFileSync(path.join(hearThisFolder, 'info.xml'), 'utf8');
     var jsonInfo = JSON.parse(xml2json.xml2json(info, { compact: true }));
-    const verses = jsonInfo.ChapterInfo.Recordings.ScriptLine.slice(0, 3).map( line => {
+    var verses = jsonInfo.ChapterInfo.Recordings.ScriptLine.slice(0, 4).map( line => {
+      // Fix #20 : ignore Chapter Headings
+      if (line.HeadingType && line.HeadingType._text == "c") {
+          return;
+      }
       let text = line.Text._text;
       if (line.Heading._text === "true") {
           text = "<strong>"+text+"</strong>";
       }
       return text;
     });
+    // use .filter() to remove any undefined elements
+    verses = verses.filter((v)=>{ return v;});
+    // only return 3
+    if (verses.length > 3) verses.pop();    
     return verses;
   } catch (err) {
     console.error('Failed to get sample verses', err);
