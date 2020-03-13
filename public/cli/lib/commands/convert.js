@@ -10,7 +10,7 @@
 var async = require("async");
 var inquirer = require("inquirer");
 var fs = require("fs");
-var moment = require("moment");
+var dateFormat = require("date-fns/format");
 var path = require("path");
 var shell = require("shelljs");
 const process = require('process');
@@ -184,7 +184,7 @@ Command.run = function(options) {
  * @param {function} done node style callback(err)
  * @param {int} numLogsToKeep  how many previous logs to keep.
  */
- function prepareLogger( done, numLogsToKeep ) {
+ function prepareLogger( done, numLogsToKeep=10 ) {
 
     // make sure the logging directory exists
     var pathToLogDir = path.join(__dirname, "..", "..", "..", "..", "logs");
@@ -199,7 +199,7 @@ Command.run = function(options) {
     }
 
     // now create a Logger with a new log file:
-    var name = `${moment().format("YYYYMMDD_HHMMSS")}.log`;
+    var name = `${dateFormat(new Date(), "yyyyMMdd_HHmmss")}.log`;
     console.log("LOGFILE: "+name);
     var pathLogFile = path.join(pathToLogDir, name);
 
