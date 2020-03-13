@@ -206,11 +206,15 @@ function convertIt(done) {
     var processLine = (lines, startTime, cb) => {
         // process a single line of the input data at a time
 
+        // make sure lines is an array
+        if (!Array.isArray(lines)) {
+            lines = [lines];
+        }
+
         // if we have processed all the lines, return
         if (lines.length == 0) {
             cb();
         } else {
-            // get next line
             var line = lines.shift();
             
             // get the text
