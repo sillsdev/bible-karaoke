@@ -17,6 +17,9 @@ var Options = {}; // the running options for this command.
 var inputData = null;
 var finalFormat = [];
 
+var skipFiles = [];
+var allFiles = [];
+
 //
 // Build the Install Command
 //
@@ -38,7 +41,7 @@ Command.help = function() {
 
 
   [options] :
-    --input      : path to the hearthis recording .xml ( AND audio files )
+    --input      : path to the HearThis recording .xml ( AND audio files )
     --output     : (optional) path to the timing file
     --ffprobePath: (optional) path to your ffprobe executable
 
@@ -101,7 +104,7 @@ Command.run = function(options) {
                     reject(err);
                     return;
                 }
-                resolve();
+                resolve(skipFiles);
             }
         );
     });
@@ -131,6 +134,10 @@ function checkInputExists(done) {
             return;
         }
         inputData = contents;
+
+        // since that worked, lets also scan this dir for all audio files
+        var dirName = path.dirname(Options.input);
+        allFiles = fs.readdirSync(dirName);
         done();
     });
 }
@@ -212,6 +219,21 @@ function convertIt(done) {
         } else {
             // get next line
             var line = lines.shift();
+
+            // Fix #20 : ignore Chapter Headings
+            if (line.HeadingType && line.HeadingType._text == "c") {
+                // try to find the corresponding audio file for the Header
+                // add mark it for skipping
+                var audioPartial = `${parseInt(line.LineNumber._text)-1}.`;
+                var audioFile = allFiles.find((f)=>{ return f.indexOf(audioPartial) == 0;})
+                if (audioFile) {
+                    console.log(`skipping audio file: ${audioFile}`);
+                    skipFiles.push(audioFile);
+                }
+
+                processLine(lines, startTime, cb);
+                return;
+            }
             
             // get the text
             var text = line.Text._text;
@@ -219,12 +241,6 @@ function convertIt(done) {
             // check if the text is a heading and make it bold if so
             if (line.Heading._text === "true") {
                 text = "<strong>"+text+"</strong>";
-            }
-
-            // Fix #20 : ignore Chapter Headings
-            if (line.HeadingType && line.HeadingType._text == "c") {
-                processLine(lines, startTime, cb);
-                return;
             }
 
             // convert to initial timingObj

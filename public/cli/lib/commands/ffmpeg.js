@@ -91,6 +91,8 @@ Command.run = function(options) {
                         Options.framerateOut = `-r ${Options.framerateOut}`;
                     }
 
+                    Options.skipAudioFiles = Options.skipAudioFiles || [];
+
                     done();
                 },
                 checkDependencies,
@@ -128,19 +130,19 @@ function checkAudioInput(done) {
             let mp3Files = files.filter((f) => f.indexOf(".mp3") > -1),
                 wavFiles = files.filter((f) => f.indexOf(".wav") > -1),
                 audioFiles = [];
-
             // If this folder contains wave and mp3 files, then throw error
             if (mp3Files.length && wavFiles.length) {
                 return done(new Error("Conflicting audio types"));
             } else if (mp3Files.length) {
                 // can use glob format with .mp3 files
-                audioFiles = mp3Files;
+                audioFiles = mp3Files.filter((f)=>{ return Options.skipAudioFiles.indexOf(path.basename(f)) == -1; });
                 Options.audioInput = "concat:" + audioFiles.join("|");
                 done();
             } else if (wavFiles.length) {
                 // NOTE: cannot use glob format with .wav files
                 // we will combine them into a single file and use that in our encode.
-                audioFiles = wavFiles;
+                audioFiles = wavFiles.filter((f)=>{ return Options.skipAudioFiles.indexOf(path.basename(f)) == -1; });
+
                 Options.audioInput = path.join(
                     tempy.directory(),
                     "bbkAudio.wav"
