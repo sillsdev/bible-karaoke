@@ -15,6 +15,9 @@ var utils = require(path.join(__dirname, "..", "utils", "utils"));
 
 var Options = {}; // the running options for this command.
 var pathFramesFolder = null; // the path to the folder where the frames are generated.
+
+var Log = null;
+
 //
 // Build the Install Command
 //
@@ -66,11 +69,19 @@ Command.run = function(options) {
                         Options[o] = options[o];
                     }
 
+                    if (!options.Log) {
+                        var logError = new Error("missing Log parameter to frames.js");
+                        done(logError);
+                        return;
+                    } else {
+                        Log = options.Log;
+                    }
+
                     // check to see if input file exists
 
                     // check for valid params:
                     if (!Options.inputJSON) {
-                        console.log("missing required param: [inputJSON]");
+                        Log("missing required param: [inputJSON]");
                         Command.help();
                         process.exit(1);
                     } else {
@@ -147,7 +158,7 @@ function callRender(done) {
             bar.tick();
         }
     });
-    console.log(Options);
+    Log("calling render with Options:", Options);
     render(Options.inputJSON, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, Options.speechBubbleOpacity, notify)
         .then((location) => {
             // console.log("frames location:", location);

@@ -51,6 +51,8 @@ Command.help = function() {
 `);
 };
 
+var Log = null;
+
 Command.run = function(options) {
     return new Promise((resolve, reject) => {
         async.series(
@@ -61,11 +63,20 @@ Command.run = function(options) {
                         Options[o] = options[o];
                     }
 
+                    if (options.Log) {
+                        Log = options.Log;
+                    } else {
+                        var logError = new Error("Missing Log utility in timing.js")
+                        console.error(logError);
+                        done(logError);
+                        return;
+                    }
+
                     // check to see if input file exists
 
                     // check for valid params:
                     if (!Options.input) {
-                        console.log("missing required param: [input]");
+                        Log("missing required param: [input]");
                         Command.help();
                         process.exit(1);
                     } else {
@@ -125,7 +136,9 @@ function checkDependencies(done) {
 function checkInputExists(done) {
     fs.readFile(Options.input, "utf8", (err, contents) => {
         if (err) {
-            var error = new Error("Invalid path to input file");
+            var msg = `Invalid path to input file [${Options.input}]`
+            Log(msg);
+            var error = new Error(msg);
             error.err = err;
             done(error);
             return;
