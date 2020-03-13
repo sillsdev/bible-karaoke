@@ -135,13 +135,14 @@ function checkAudioInput(done) {
                 return done(new Error("Conflicting audio types"));
             } else if (mp3Files.length) {
                 // can use glob format with .mp3 files
-                audioFiles = mp3Files.filter((f)=>{ return Options.skipAudioFiles.indexOf(path.basename(f)) == -1; });
+                audioFiles = mp3Files.filter((f)=>{ return Options.skipAudioFiles.indexOf(f) == -1; });
                 Options.audioInput = "concat:" + audioFiles.join("|");
                 done();
             } else if (wavFiles.length) {
                 // NOTE: cannot use glob format with .wav files
                 // we will combine them into a single file and use that in our encode.
-                audioFiles = wavFiles.filter((f)=>{ return Options.skipAudioFiles.indexOf(path.basename(f)) == -1; });
+                // but skip the ones we've been told to skip
+                audioFiles = wavFiles.filter((f)=>{ return Options.skipAudioFiles.indexOf(f) == -1; });
 
                 Options.audioInput = path.join(
                     tempy.directory(),

@@ -228,7 +228,9 @@ function convertIt(done) {
                 var audioFile = allFiles.find((f)=>{ return f.indexOf(audioPartial) == 0;})
                 if (audioFile) {
                     console.log(`skipping audio file: ${audioFile}`);
-                    skipFiles.push(audioFile);
+                    
+                    // add full path to file
+                    skipFiles.push(path.join(path.dirname(Options.input),audioFile));
                 }
 
                 processLine(lines, startTime, cb);
