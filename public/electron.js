@@ -32,6 +32,12 @@ function createWindow() {
   }
 
   mainWindow.on('closed', () => (mainWindow = null));
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (url.startsWith('http:') || url.startsWith('https:')) {
+      event.preventDefault();
+      shell.openExternal(url);
+    }
+  });
 }
 
 function handleGetFonts() {
