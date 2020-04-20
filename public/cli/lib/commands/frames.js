@@ -200,20 +200,29 @@ function calculateRemainTime(currFrame, totalFrame) {
         let minutes = (estimateTime / 60000).toFixed(0);
         let seconds = (estimateTime / 1000).toFixed(0);
 
-        if (days > 0)
-            result += `${days} days `;
-        if (hours > 0)
-            result += `${hours} hours `;
-        if (minutes > 0)
-            result += `${minutes} minutes `;
-        if (seconds > 0)
-            result += `${seconds} seconds`;
+        if (seconds < 1)
+            result = "";
+        else if (seconds < 60) 
+            result = `${seconds} second${seconds > 1 ? 's' : ''}`;
+        else if (minutes < 60)
+            result = `${minutes == 1 ? 2 : minutes} minutes`;
+        else if (hours < 24)
+            result = `${hours} hour${hours > 1 ? 's' : ''}`;
+        else
+            result = `${days} day${days > 1 ? 's' : ''}`;
 
-        result = `(Remaining ${result})`;
+        if (result)
+            result = `(Remaining ${result})`;
     }
 
     lastUpdateFrameDate = currentDate;
     lastCurrentFrame = currFrame;
+
+    // clear when it done
+    if (currFrame >= totalFrame) {
+        lastUpdateFrameDate = null;
+        lastCurrentFrame = 0;
+    }
 
     return result;
 }
