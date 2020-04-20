@@ -47,6 +47,13 @@ Log.error = function(...allArgs) {
     console.error(allArgs);
 }
 
+// Uncaught Exception Handler
+// Catch any uncaught exceptions here.  
+// Be sure to log the error before we exit.
+process.on('uncaughtException', function(error) {
+    Log.error(error);
+    process.exit(1); // it was crashing anyway
+});
 
 
 shell.config.execPath = shell.which("node");
@@ -166,7 +173,7 @@ Command.run = function(options) {
             (err) => {
                 // shell.popd("-q");
                 // if there was an error that wasn't an ESKIP error:
-                if (err && (!err.code || err.code != "ESKIP")) {
+                if (err && (!err.code || err.code !== "ESKIP")) {
                     Log.error(err);
                     reject(err);
                     return;
@@ -392,7 +399,7 @@ function execute(done) {
     Promise.resolve()
         .then(() => {
             var pathToInfo = Options.pathFolder;
-            if (path.basename(pathToInfo) != "info.xml") {
+            if (path.basename(pathToInfo) !== "info.xml") {
                 pathToInfo = path.join(pathToInfo, "info.xml");
                 Options.pathFolder = pathToInfo;
             }
