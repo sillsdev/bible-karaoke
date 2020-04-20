@@ -19,11 +19,16 @@ class TextAndAudioCard extends React.PureComponent {
     ipcRenderer.on('did-finish-getprojectstructure', (event, projects) => {
       console.log('Received project structure', projects);
       this.props.store.setHearThisProjects(projects);
-      this.setState({
-        selectedProject: noSelection,
-        selectedBook: noSelection,
-        selectedChapter: noSelection,
-      });
+      this.setState(
+        {
+          selectedProject: noSelection,
+          selectedBook: noSelection,
+          selectedChapter: noSelection,
+        },
+        () => {
+          this.checkSingleProject();
+        },
+      );
     });
     ipcRenderer.send('did-start-getprojectstructure');
   }
@@ -40,6 +45,9 @@ class TextAndAudioCard extends React.PureComponent {
         selectedChapter: noSelection,
       },
       () => {
+        this.checkSingleBook();
+      },
+      () => {
         this.checkFolder();
       },
     );
@@ -50,6 +58,9 @@ class TextAndAudioCard extends React.PureComponent {
       {
         selectedBook: parseInt(evt.currentTarget.value, 10),
         selectedChapter: noSelection,
+      },
+      () => {
+        this.checkSingleChapter();
       },
       () => {
         this.checkFolder();
@@ -66,6 +77,52 @@ class TextAndAudioCard extends React.PureComponent {
         this.checkFolder();
       },
     );
+  };
+
+  checkSingleProject = () => {
+    const hearThisProjects = this.props.store.hearThisProjects;
+    if (hearThisProjects.length === 1) {
+      this.setState(
+        {
+          selectedProject: 0,
+        },
+        () => {
+          this.checkSingleBook();
+        },
+      );
+    }
+  };
+
+  checkSingleBook = () => {
+    const selectedProject = this.state.selectedProject;
+    const hearThisProjects = this.props.store.hearThisProjects;
+    if (selectedProject !== noSelection
+        && hearThisProjects[selectedProject].books.length === 1) {
+      this.setState(
+        {
+          selectedBook: 0,
+        },
+        () => {
+          this.checkSingleChapter();
+        },
+      );
+    }
+  };
+
+  checkSingleChapter = () => {
+    const { selectedProject, selectedBook } = this.state;
+    const hearThisProjects = this.props.store.hearThisProjects;
+    if (selectedBook !== noSelection &&
+        hearThisProjects[selectedProject].books[selectedBook].chapters.length === 1) {
+      this.setState(
+        {
+          selectedChapter: 0,
+        },
+        () => {
+          this.checkFolder();
+        },
+      );
+    }
   };
 
   checkFolder = () => {
