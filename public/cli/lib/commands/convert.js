@@ -29,6 +29,7 @@ const FFMPEG = require(path.join(__dirname, "ffmpeg.js"));
 const FFPROBE_EXE = process.platform === 'win32' ? 'ffprobe.exe' : 'ffprobe';
 
 var Options = {}; // the running options for this command.
+var skipAudioFiles =  null;  // {array} a list of audio files to NOT include
 
 var Logger = null;  // A common logger for this run
 var Log = function(...allArgs) {
@@ -411,7 +412,10 @@ function execute(done) {
                 ffprobePath: ffprobePath(Options.ffmpegPath || null)
             });
         })
-        .then(() => {
+        .then((skipFiles) => {
+            // save the list of skipped files from Timings.run()
+            skipAudioFiles = skipFiles || [];
+
             var opts = {
                 inputJSON: pathBBKFile,
                 fontFamily: Options.fontFamily,
@@ -446,6 +450,7 @@ function execute(done) {
             return FFMPEG.run({
                 images: pathFrames,
                 audio: path.dirname(Options.pathFolder),
+                skipAudioFiles,
                 output: Options.output,
                 Log,
                 framerateOut: Options.fps || 15,
