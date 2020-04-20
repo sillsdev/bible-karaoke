@@ -1,22 +1,36 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { TwitterPicker } from 'react-color';
+import { SketchPicker } from 'react-color';
 import './ColorPicker.scss';
 
 const SWATCH_COLORS = [
-  '#000000',
-  '#FFFFFF',
-  '#D9D9D9',
-  '#525252',
-  '#FF0000',
-  '#00FF00',
-  '#0000FF',
+  '#ff3b30',
+  '#4cd964',
+  '#2196f3',
+  '#ff2d55',
+  '#ffcc00',
+  '#ff9500',
+  '#9c27b0',
+  '#673ab7',
+  '#5ac8fa',
+  '#009688',
+  '#cddc39',
+  '#ff6b22',
   '#00BCD4',
   '#AED581',
-  '#FF9800',
+  '#ffff00',
+  '#ffffff',
+  '#DCDCDC',
+  '#D3D3D3',
+  '#C0C0C0',
+  '#A9A9A9',
+  '#808080',
+  '#696969',
+  '#333333',
+  '#000000'
 ];
 
-const ColorPicker = ({ value, colors, disabled, onChange }) => {
+const ColorPicker = ({ value, presetColors, disableAlpha, disabled, onChange }) => {
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
   const toggleFontColorPicker = () => {
@@ -42,10 +56,10 @@ const ColorPicker = ({ value, colors, disabled, onChange }) => {
             className='bk-color-picker__cover'
             onClick={closeFontColorPicker}
           />
-          <TwitterPicker
-            colors={colors}
-            triangle='top-left'
-            value={value}
+          <SketchPicker
+            presetColors={presetColors}
+            disableAlpha={disableAlpha}
+            color={value}
             onChange={onChange}
           />
         </div>
@@ -56,13 +70,18 @@ const ColorPicker = ({ value, colors, disabled, onChange }) => {
 
 ColorPicker.propTypes = {
   value: PropTypes.string,
-  colors: PropTypes.arrayOf(PropTypes.string),
-  onChange: PropTypes.func.isRequired,
+  presetColors: PropTypes.arrayOf(PropTypes.string),
+  disableAlpha: PropTypes.bool,
+  onChange: PropTypes.func,
 };
 
 ColorPicker.defaultProps = {
   color: undefined,
-  colors: SWATCH_COLORS,
+  presetColors: SWATCH_COLORS,
+  disableAlpha: true,
+  onChange: (color) => {
+    this.setState({ color: color.rgb })
+  }
 };
 
 export default ColorPicker;
