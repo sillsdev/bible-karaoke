@@ -10,9 +10,11 @@
 var async = require("async");
 var inquirer = require("inquirer");
 var fs = require("fs");
+var dateFormat = require("date-fns/format");
 var path = require("path");
 var shell = require("shelljs");
 const process = require('process');
+const winston = require('winston');
 
 var tempy = require("tempy");
 var utils = require(path.join(__dirname, "..", "utils", "utils"));
@@ -27,6 +29,32 @@ const FFMPEG = require(path.join(__dirname, "ffmpeg.js"));
 const FFPROBE_EXE = process.platform === 'win32' ? 'ffprobe.exe' : 'ffprobe';
 
 var Options = {}; // the running options for this command.
+
+var Logger = null;  // A common logger for this run
+var Log = function(...allArgs) {
+    if (Logger) {
+        Logger.info(allArgs);
+    }
+    console.log(allArgs);
+}
+Log.info = function(...allArgs) {
+    Log(allArgs);
+}
+Log.error = function(...allArgs) {
+    if (Logger) {
+        Logger.error(allArgs);
+    }
+    console.error(allArgs);
+}
+
+// Uncaught Exception Handler
+// Catch any uncaught exceptions here.  
+// Be sure to log the error before we exit.
+process.on('uncaughtException', function(error) {
+    Log.error(error);
+    process.exit(1); // it was crashing anyway
+});
+
 
 shell.config.execPath = shell.which("node");
 
@@ -104,6 +132,7 @@ Command.run = function(options) {
                     }
                     done();
                 },
+                prepareLogger,
                 askQuestions,
                 (done) => {
                   onProgress("Processing inputs...", 0);
@@ -113,7 +142,7 @@ Command.run = function(options) {
                     // check for valid params:
                     if (!Options.pathFolder) {
                         console.log();
-                        console.log("missing required param: [path/to/folder]");
+                        Log.error("missing required param: [path/to/folder]");
                         console.log();
                         Command.help();
                         process.exit(1);
@@ -125,7 +154,7 @@ Command.run = function(options) {
                     // check for valid params:
                     requiredParams.forEach((p) => {
                         if (!Options[p]) {
-                            console.log(`missing required param: [${p}]`);
+                            Log.error(`missing required param: [${p}]`);
                             isValid = false;
                         }
                     });
@@ -144,7 +173,8 @@ Command.run = function(options) {
             (err) => {
                 // shell.popd("-q");
                 // if there was an error that wasn't an ESKIP error:
-                if (err && (!err.code || err.code != "ESKIP")) {
+                if (err && (!err.code || err.code !== "ESKIP")) {
+                    Log.error(err);
                     reject(err);
                     return;
                 }
@@ -154,6 +184,44 @@ Command.run = function(options) {
         );
     });
 };
+
+/**
+ * prepareLogger()
+ * locate the logs directory, and only keep the last X logs.
+ * @param {function} done node style callback(err)
+ * @param {int} numLogsToKeep  how many previous logs to keep.
+ */
+ function prepareLogger( done, numLogsToKeep=10 ) {
+
+    // make sure the logging directory exists
+    var pathToLogDir = path.join(__dirname, "..", "..", "..", "..", "logs");
+    shell.mkdir("-p", pathToLogDir);
+
+    // remove log files that are > numLogsToKeep
+    var entries = fs.readdirSync(pathToLogDir);
+    while (entries && entries.length > numLogsToKeep) {
+        var fileToRemove = entries.shift();
+        var pathToFile = path.join(pathToLogDir, fileToRemove);
+        shell.rm(pathToFile);
+    }
+
+    // now create a Logger with a new log file:
+    var name = `${dateFormat(new Date(), "yyyyMMdd_HHmmss")}.log`;
+    console.log("LOGFILE: "+name);
+    var pathLogFile = path.join(pathToLogDir, name);
+
+    Logger = winston.createLogger({
+      level: 'info',
+      format: winston.format.json(),
+      defaultMeta: { service: 'user-service' },
+      transports: [
+        new winston.transports.File({ filename: pathLogFile })
+      ]
+    });
+
+    Log.info("Logger Initialized");
+    done();
+ }
 
 /**
  * @function checkDependencies
@@ -327,11 +395,11 @@ function removeOutputFile(done) {
 
 function execute(done) {
     var pathBBKFile = tempy.file({ name: "bbkFormat.js" });
-    console.log(`path to bbkFormat: ${pathBBKFile}`);
+    Log(`path to bbkFormat: ${pathBBKFile}`);
     Promise.resolve()
         .then(() => {
             var pathToInfo = Options.pathFolder;
-            if (path.basename(pathToInfo) != "info.xml") {
+            if (path.basename(pathToInfo) !== "info.xml") {
                 pathToInfo = path.join(pathToInfo, "info.xml");
                 Options.pathFolder = pathToInfo;
             }
@@ -339,6 +407,7 @@ function execute(done) {
             return Timings.run({
                 input: pathToInfo,
                 output: pathBBKFile,
+                Log,
                 ffprobePath: ffprobePath(Options.ffmpegPath || null)
             });
         })
@@ -364,19 +433,21 @@ function execute(done) {
             if (Options.onProgress) {
               opts.onProgress = onProgress;
             }
-            console.log("Options: ", Options);
-            console.log("opt: ", opts);
+            opts.Log = Log;
+            Log("Options: ", Options);
+            Log("opt: ", opts);
             onProgress("Rendering video frames...", 0);
             return Frames.run(opts);
         })
         .then((pathFrames) => {
-            console.log(`>> path to generated frames folder: ${pathFrames}`);
+            Log(`>> path to generated frames folder: ${pathFrames}`);
 
             onProgress("Combining audio and frames into video...", 100);
             return FFMPEG.run({
                 images: pathFrames,
                 audio: path.dirname(Options.pathFolder),
                 output: Options.output,
+                Log,
                 framerateOut: Options.fps || 15,
                 ffmpegPath: Options.ffmpegPath || null
             });

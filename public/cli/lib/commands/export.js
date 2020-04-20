@@ -123,12 +123,17 @@ function execute(done) {
         return `${bracket}${source}${bracket}`;
     };
 
-    shell.exec(`docker run \
+    var ret = shell.exec(`docker run \
 --mount type=bind,source=${getSource(Options.images)},target=/app/images \
 --mount type=bind,source=${getSource(Options.audio)},target=/app/sound.mp3 \
 --mount type=bind,source=${getSource()},target=/app/output skipdaddy/bbkcli:develop \
 bbk ffmpeg --images=images --audio=sound.mp3 --output=output/${
         Options.output
     }`);
+    if (ret.code !== 0) {
+        var error = new Error(ret.stderr || ret.stdout || "unspecified error exporting file");
+        done(error);
+        return;
+    }
     done();
 }

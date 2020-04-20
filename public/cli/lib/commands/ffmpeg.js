@@ -14,6 +14,8 @@ var utils = require(path.join(__dirname, "..", "utils", "utils"));
 
 var Options = {}; // the running options for this command.
 
+var Log = null;  // the logger
+
 shell.config.execPath = shell.which("node");
 
 //
@@ -65,13 +67,21 @@ Command.run = function(options) {
                         Options[o] = options[o];
                     }
 
+                    if (!options.Log) {
+                        var logError = new Error("missing Log parameter for ffmpeg.js");
+                        done(logError);
+                        return;
+                    } else {
+                        Log = options.Log;
+                    }
+
                     let requiredParams = ["images", "audio", "output"];
                     let isValid = true;
 
                     // check for valid params:
                     requiredParams.forEach((p) => {
                         if (!Options[p]) {
-                            console.log(`missing required param: [${p}]`);
+                            Log(`missing required param: [${p}]`);
                             isValid = false;
                         }
                     });

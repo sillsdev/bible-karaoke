@@ -93,10 +93,13 @@ function handleSubmission() {
       result = err;
     }
 
-    const retArgs =
-      typeof result === 'string'
-        ? { outputFile: result }
-        : { error: { message: result.message, stack: result.stack } };
+    let retArgs = { error: { message: "[unknown response]" } };
+    if (result) {
+      retArgs =
+        typeof result === 'string'
+          ? { outputFile: result }
+          : { error: { message: result.message, stack: result.stack } };
+    }
     console.log('Command line process finished', retArgs);
     event.sender.send('did-finish-conversion', retArgs);
   });
