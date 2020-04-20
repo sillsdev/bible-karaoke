@@ -204,8 +204,10 @@ function calculateRemainTime(currFrame, totalFrame) {
             result = "";
         else if (seconds < 60) 
             result = `${seconds} second${seconds > 1 ? 's' : ''}`;
+        else if (minutes == 1)
+            result = `1 minute ${seconds - 60} seconds`;
         else if (minutes < 60)
-            result = `${minutes == 1 ? 2 : minutes} minutes`;
+            result = `${minutes} minutes`;
         else if (hours < 24)
             result = `${hours} hour${hours > 1 ? 's' : ''}`;
         else
