@@ -14,6 +14,8 @@ var utils = require(path.join(__dirname, "..", "utils", "utils"));
 
 var Options = {}; // the running options for this command.
 
+var Log = null;  // the logger
+
 shell.config.execPath = shell.which("node");
 
 //
@@ -65,13 +67,21 @@ Command.run = function(options) {
                         Options[o] = options[o];
                     }
 
+                    if (!options.Log) {
+                        var logError = new Error("missing Log parameter for ffmpeg.js");
+                        done(logError);
+                        return;
+                    } else {
+                        Log = options.Log;
+                    }
+
                     let requiredParams = ["images", "audio", "output"];
                     let isValid = true;
 
                     // check for valid params:
                     requiredParams.forEach((p) => {
                         if (!Options[p]) {
-                            console.log(`missing required param: [${p}]`);
+                            Log(`missing required param: [${p}]`);
                             isValid = false;
                         }
                     });
@@ -90,6 +100,8 @@ Command.run = function(options) {
                     } else {
                         Options.framerateOut = `-r ${Options.framerateOut}`;
                     }
+
+                    Options.skipAudioFiles = Options.skipAudioFiles || [];
 
                     done();
                 },
@@ -128,19 +140,20 @@ function checkAudioInput(done) {
             let mp3Files = files.filter((f) => f.indexOf(".mp3") > -1),
                 wavFiles = files.filter((f) => f.indexOf(".wav") > -1),
                 audioFiles = [];
-
             // If this folder contains wave and mp3 files, then throw error
             if (mp3Files.length && wavFiles.length) {
                 return done(new Error("Conflicting audio types"));
             } else if (mp3Files.length) {
                 // can use glob format with .mp3 files
-                audioFiles = mp3Files;
+                audioFiles = mp3Files.filter((f)=>{ return Options.skipAudioFiles.indexOf(f) == -1; });
                 Options.audioInput = "concat:" + audioFiles.join("|");
                 done();
             } else if (wavFiles.length) {
                 // NOTE: cannot use glob format with .wav files
                 // we will combine them into a single file and use that in our encode.
-                audioFiles = wavFiles;
+                // but skip the ones we've been told to skip
+                audioFiles = wavFiles.filter((f)=>{ return Options.skipAudioFiles.indexOf(f) == -1; });
+
                 Options.audioInput = path.join(
                     tempy.directory(),
                     "bbkAudio.wav"

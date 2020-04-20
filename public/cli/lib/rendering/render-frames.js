@@ -40,7 +40,7 @@ async function render(timingFilePath, bgType, bgFilePath, bgColor, font, fontCol
 
     // fs.writeFileSync(path.join(outputLocation, "renderedAnimation.html"), htmlContent);
     
-    console.log(htmlContent)
+    // console.log(htmlContent)
 
     await record({
         browser: null, // Optional: a puppeteer Browser instance,

@@ -17,6 +17,9 @@ var Options = {}; // the running options for this command.
 var inputData = null;
 var finalFormat = [];
 
+var skipFiles = [];
+var allFiles = [];
+
 //
 // Build the Install Command
 //
@@ -38,7 +41,7 @@ Command.help = function() {
 
 
   [options] :
-    --input      : path to the hearthis recording .xml ( AND audio files )
+    --input      : path to the HearThis recording .xml ( AND audio files )
     --output     : (optional) path to the timing file
     --ffprobePath: (optional) path to your ffprobe executable
 
@@ -51,6 +54,8 @@ Command.help = function() {
 `);
 };
 
+var Log = null;
+
 Command.run = function(options) {
     return new Promise((resolve, reject) => {
         async.series(
@@ -61,11 +66,20 @@ Command.run = function(options) {
                         Options[o] = options[o];
                     }
 
+                    if (options.Log) {
+                        Log = options.Log;
+                    } else {
+                        var logError = new Error("Missing Log utility in timing.js")
+                        console.error(logError);
+                        done(logError);
+                        return;
+                    }
+
                     // check to see if input file exists
 
                     // check for valid params:
                     if (!Options.input) {
-                        console.log("missing required param: [input]");
+                        Log("missing required param: [input]");
                         Command.help();
                         process.exit(1);
                     } else {
@@ -91,6 +105,7 @@ Command.run = function(options) {
                 },
                 checkDependencies,
                 checkInputExists,
+                grabAudioFiles,
                 convertIt,
                 saveOutput
             ],
@@ -101,7 +116,7 @@ Command.run = function(options) {
                     reject(err);
                     return;
                 }
-                resolve();
+                resolve(skipFiles);
             }
         );
     });
@@ -125,14 +140,29 @@ function checkDependencies(done) {
 function checkInputExists(done) {
     fs.readFile(Options.input, "utf8", (err, contents) => {
         if (err) {
-            var error = new Error("Invalid path to input file");
+            var msg = `Invalid path to input file [${Options.input}]`
+            Log(msg);
+            var error = new Error(msg);
             error.err = err;
             done(error);
             return;
         }
         inputData = contents;
+
         done();
     });
+}
+
+/**
+ * @function grabAudioFiles
+ * scan the input directory for the audio files
+ * @param {function} done  node style callback(err)
+ */
+function grabAudioFiles(done) {
+    // scan the .input dir for all audio files
+    var dirName = path.dirname(Options.input);
+    allFiles = fs.readdirSync(dirName);
+    done();
 }
 
 /**
@@ -216,6 +246,23 @@ function convertIt(done) {
             cb();
         } else {
             var line = lines.shift();
+
+            // Fix #20 : ignore Chapter Headings
+            if (line.HeadingType && line.HeadingType._text == "c") {
+                // try to find the corresponding audio file for the Header
+                // add mark it for skipping
+                var audioPartial = `${parseInt(line.LineNumber._text)-1}.`;
+                var audioFile = allFiles.find((f)=>{ return f.indexOf(audioPartial) == 0;})
+                if (audioFile) {
+                    console.log(`skipping audio file: ${audioFile}`);
+                    
+                    // add full path to file
+                    skipFiles.push(path.join(path.dirname(Options.input),audioFile));
+                }
+
+                processLine(lines, startTime, cb);
+                return;
+            }
             
             // get the text
             var text = line.Text._text;
