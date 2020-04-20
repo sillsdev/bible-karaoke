@@ -214,7 +214,7 @@ function calculateRemainTime(currFrame, totalFrame) {
             result = `${days} day${days > 1 ? 's' : ''}`;
 
         if (result)
-            result = `(Remaining ${result})`;
+            result = `(Approximately ${result} Remaining)`;
     }
 
     lastUpdateFrameDate = currentDate;
