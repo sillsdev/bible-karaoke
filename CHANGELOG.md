@@ -6,6 +6,20 @@
 * :thumbsup: Improvement
 * :boom: Bug fix
 
+## v0.3.3
+
+This is a minor feature and bugfix release:
+
+* :star: New color selector that still includes the preset colors
+* :star: Indicates how long it will take to finish rendering the video
+* :star: Logs errors to logs folder
+  * on Windows: %USERPROFILE%\AppData\Roaming\bible-karaoke\logs\{date_time}.log
+  * on MacOS: ~/Library/Logs/bible-karaoke/{date_time}.log
+  * on Linux: ~/.config/bible-karaoke/logs/{date_time}.log
+* :thumbsup: Chapter labels are just numbers so the Chapter label doesn't need to be localized
+* :thumbsup: Section headings are wider so they are easier to click
+* :thumbsup: If there is only have one project, book, or chapter, it is automatically selected
+
 ## v0.3.2
 
 :thumbsup: change animation to karaoke style
