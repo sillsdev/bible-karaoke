@@ -2,11 +2,11 @@ import React from 'react';
 import './Preview.scss';
 
 const HIGHLIGHT_VERSE_INDEX = 0;
-const HIGHLIGHT_WORD_INDEX = 3;
+const HIGHLIGHT_WORD_INDEX = [0,1,2];
 
 const PreviewVerse = ({ verse, highlightVerse, highlightStyle }) => {
   return verse.split(' ').map((word, index) => {
-    const isHighlighted = highlightVerse && index === HIGHLIGHT_WORD_INDEX;
+    const isHighlighted = highlightVerse && HIGHLIGHT_WORD_INDEX.indexOf(index) !== -1;
     return (
       <React.Fragment key={index}>
         <div
