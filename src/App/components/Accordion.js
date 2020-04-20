@@ -49,16 +49,18 @@ class Accordion extends React.PureComponent {
             <div className='accordion__card-title'>
               <H3>
                 <Button
+                  className='accordion__card-title-button'
+                  large
                   minimal
                   active={index === currentCardIndex}
                   onClick={() => {
                     this.selectCard(index);
                   }}
                 >
-                  {`${index + 1}. ${card.title}`}
+                  <span>{`${index + 1}. ${card.title}`}</span>
+                  {stepStatus[index] ? <Icon icon='tick-circle' intent='success' className='custom-bp3-intent-success' /> : <Icon icon='tick-circle' />}
                 </Button>
               </H3>
-              {stepStatus[index] ? <Icon icon='tick-circle' /> : null}
             </div>
             <Collapse isOpen={index === currentCardIndex} keepChildrenMounted>
               <p className="accordion__card-description">{card.description}</p>
