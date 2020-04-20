@@ -94,6 +94,7 @@ Command.run = function(options) {
                 },
                 checkDependencies,
                 checkInputExists,
+                grabAudioFiles,
                 convertIt,
                 saveOutput
             ],
@@ -135,11 +136,20 @@ function checkInputExists(done) {
         }
         inputData = contents;
 
-        // since that worked, lets also scan this dir for all audio files
-        var dirName = path.dirname(Options.input);
-        allFiles = fs.readdirSync(dirName);
         done();
     });
+}
+
+/**
+ * @function grabAudioFiles
+ * scan the input directory for the audio files
+ * @param {function} done  node style callback(err)
+ */
+function grabAudioFiles(done) {
+    // scan the .input dir for all audio files
+    var dirName = path.dirname(Options.input);
+    allFiles = fs.readdirSync(dirName);
+    done();
 }
 
 /**
