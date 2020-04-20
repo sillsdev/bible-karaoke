@@ -6,9 +6,17 @@
 * :thumbsup: Improvement
 * :boom: Bug fix
 
+## v0.3.2
+
+:thumbsup: change animation to karaoke style
+
 ## v0.3.1
 
-* :boom: Fixed bug that prevents the video from being created on some people's computers.
+This is a minor bugfix release:
+
+* Section headings are now bold
+* :boom: Fixed an internet-dependent crash/bug on some computers
+    * Chrome must be installed for Bible Karaoke to work
 
 ## v0.3.0
 
