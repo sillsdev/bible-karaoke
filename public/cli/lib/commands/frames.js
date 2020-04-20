@@ -15,6 +15,8 @@ var utils = require(path.join(__dirname, "..", "utils", "utils"));
 
 var Options = {}; // the running options for this command.
 var pathFramesFolder = null; // the path to the folder where the frames are generated.
+var lastCurrentFrame = 0;
+var lastUpdateFrameDate = null;
 
 var Log = null;
 
@@ -168,10 +170,59 @@ function callRender(done) {
         .catch(done);
 }
 
+/**
+ * @function calculateRemainTime
+ * 
+ * @param {number} currFrame
+ * @param {number} totalFrame
+ * @return {string}
+ */
+function calculateRemainTime(currFrame, totalFrame) {
+
+    let result = "";
+    let currentDate = new Date();
+
+    // Skip calculating if it is the first run
+    if (lastUpdateFrameDate != null) {
+
+        // ((currentDate - lastUpdateFrameDate) / (currFrame - lastCurrentFrame)) * (totalFrame - currFrame)
+
+        let spendTime = currentDate - lastUpdateFrameDate; // milliseconds
+        let progressFrame = currFrame - lastCurrentFrame;
+        let spendTimePerFrame = spendTime / progressFrame;
+        let remainingFrames = totalFrame - currFrame;
+
+        let estimateTime = remainingFrames * spendTimePerFrame; // milliseconds
+
+        // Convert milliseconds to a readable string
+        let days = (estimateTime / 86400000).toFixed(0);
+        let hours = (estimateTime / 3600000).toFixed(0);
+        let minutes = (estimateTime / 60000).toFixed(0);
+        let seconds = (estimateTime / 1000).toFixed(0);
+
+        if (days > 0)
+            result += `${days} days `;
+        if (hours > 0)
+            result += `${hours} hours `;
+        if (minutes > 0)
+            result += `${minutes} minutes `;
+        if (seconds > 0)
+            result += `${seconds} seconds`;
+
+        result = `(Remaining ${result})`;
+    }
+
+    lastUpdateFrameDate = currentDate;
+    lastCurrentFrame = currFrame;
+
+    return result;
+}
+
 const onProgress = utils.throttle(data => {
     const percent = (data.curr / data.total) * 100;
+    let remainingTime = calculateRemainTime(data.curr, data.total);
     Options.onProgress(
-        `Rendering video frames... ${Math.floor(percent)}%`,
+        `Rendering video frames... ${Math.floor(percent)}% ${remainingTime}`,
         percent,
     );
 }, 1000);
