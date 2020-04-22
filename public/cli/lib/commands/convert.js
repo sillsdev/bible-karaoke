@@ -199,15 +199,15 @@ Command.run = function(options) {
     var pathToLogDir;
     switch(process.platform) {
         case "darwin":
-            pathToLogDir = path.join(os.homedir(), "Library", "Logs", "bbk", "logs");
+            pathToLogDir = path.join(os.homedir(), "Library", "Logs", "bible-karaoke");
             break;
 
         case "win32":
-            pathToLogDir = path.join(os.homedir(), "AppData", "Roaming", "bbk", "logs");
+            pathToLogDir = path.join(os.homedir(), "AppData", "Roaming", "bible-karaoke", "logs");
             break;
 
         default:
-            pathToLogDir = path.join(os.homedir(), ".config", "bbk", "logs");
+            pathToLogDir = path.join(os.homedir(), ".config", "bible-karaoke", "logs");
         break;
     }
     shell.mkdir("-p", pathToLogDir);
