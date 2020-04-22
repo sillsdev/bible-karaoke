@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    branches: [ release/* ]
+
+jobs:
+  build:
+    name: Build on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node_version: ['10']
+        os: [windows-latest] # or [windows-latest, macOS-latest, ubuntu-latest]
+        include:
+        - os: windows-latest
+          build_command: electron-pack-win
+        - os: macOS-latest
+          build_command: electron-pack-mac
+        - os: ubuntu-latest
+          build_command: electron-pack-linux
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+
+    - name: npm install, build and test
+      run: |
+        npm install
+        npm run ${{ matrix.build_command }}
