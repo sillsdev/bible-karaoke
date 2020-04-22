@@ -13,6 +13,7 @@ var fs = require("fs");
 var dateFormat = require("date-fns/format");
 var path = require("path");
 var shell = require("shelljs");
+const os = require("os");
 const process = require('process');
 const winston = require('winston');
 
@@ -195,7 +196,20 @@ Command.run = function(options) {
  function prepareLogger( done, numLogsToKeep=10 ) {
 
     // make sure the logging directory exists
-    var pathToLogDir = path.join(__dirname, "..", "..", "..", "..", "logs");
+    var pathToLogDir;
+    switch(process.platform) {
+        case "darwin":
+            pathToLogDir = path.join(os.homedir(), "Library", "Logs", "bible-karaoke");
+            break;
+
+        case "win32":
+            pathToLogDir = path.join(os.homedir(), "AppData", "Roaming", "bible-karaoke", "logs");
+            break;
+
+        default:
+            pathToLogDir = path.join(os.homedir(), ".config", "bible-karaoke", "logs");
+        break;
+    }
     shell.mkdir("-p", pathToLogDir);
 
     // remove log files that are > numLogsToKeep
@@ -210,6 +224,7 @@ Command.run = function(options) {
     var name = `${dateFormat(new Date(), "yyyyMMdd_HHmmss")}.log`;
     console.log("LOGFILE: "+name);
     var pathLogFile = path.join(pathToLogDir, name);
+    console.log("path to logfile:"+ pathLogFile);
 
     Logger = winston.createLogger({
       level: 'info',

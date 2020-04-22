@@ -220,8 +220,13 @@ function execute(done, err) {
         )}" -i "${Options.audioInput}" ${
             Options.framerateOut ? `${Options.framerateOut} ` : ""
         } -pix_fmt yuv420p "${Options.output}"`,
-        (err) => {
-            done(err);
+        (code, stdout, stderr) => {
+            if (code != 0) {
+                var error = new Error(stderr || stdout);
+                done(error);
+                return;
+            }
+            done();
         }
     );
 
