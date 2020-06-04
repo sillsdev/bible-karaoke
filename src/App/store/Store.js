@@ -20,6 +20,9 @@ class Store {
         console.error('Failed to set verses', verses);
       }
     });
+    this.getSpeechBubbleProps();
+    this.getBackground();
+    this.getTextProps();
   }
   @observable
   hearThisFolder = '';
@@ -106,6 +109,13 @@ class Store {
   setTimingFile(file) {
     this.timingFile = file;
   }
+  
+  @action.bound
+  getBackground() {
+    if (localStorage.background) {
+      this.setBackground(JSON.parse(localStorage.background));
+    }
+  }
 
   @action.bound
   setBackground(background) {
@@ -123,16 +133,42 @@ class Store {
       this.background.imageSrc = '';
       this.background.type = 'color';
     }
+    this.saveLocalProperties("background", background);
+  }
+  
+  @action.bound
+  getTextProps() {
+    if (localStorage.text) {
+      this.setTextProps(JSON.parse(localStorage.text));
+    }
   }
 
   @action.bound
   setTextProps(textProps) {
     this.text = {...this.text, ...textProps};
+    this.saveLocalProperties("text", textProps);
+  }
+  
+  @action.bound
+  saveLocalProperties(object, properties) {
+    var localObject = JSON.parse(localStorage[object] || "{}");
+    Object.keys(properties).forEach((atr)=>{
+      localObject[atr] = properties[atr];
+    })
+    localStorage[object] = JSON.stringify(localObject);
+  }
+
+  @action.bound
+  getSpeechBubbleProps() {
+    if (localStorage.speechBubble) {
+      this.setSpeechBubbleProps(JSON.parse(localStorage.speechBubble));
+    }
   }
 
   @action.bound
   setSpeechBubbleProps(speechBubbleProps) {
     this.speechBubble = {...this.speechBubble, ...speechBubbleProps};
+    this.saveLocalProperties("speechBubble", speechBubbleProps);
   }
   
   @action.bound
