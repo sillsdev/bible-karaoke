@@ -113,7 +113,7 @@ class Store {
   @action.bound
   getBackground() {
     if (localStorage.background) {
-      this.setBackground(JSON.parse(localStorage.background || "{}"));
+      this.setBackground(JSON.parse(localStorage.background));
     }
   }
 
@@ -139,7 +139,7 @@ class Store {
   @action.bound
   getTextProps() {
     if (localStorage.text) {
-      this.setTextProps(JSON.parse(localStorage.text || "{}"));
+      this.setTextProps(JSON.parse(localStorage.text));
     }
   }
 
@@ -161,7 +161,7 @@ class Store {
   @action.bound
   getSpeechBubbleProps() {
     if (localStorage.speechBubble) {
-      this.setSpeechBubbleProps(JSON.parse(localStorage.speechBubble || "{}"));
+      this.setSpeechBubbleProps(JSON.parse(localStorage.speechBubble));
     }
   }
 
