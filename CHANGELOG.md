@@ -6,6 +6,18 @@
 * :thumbsup: Improvement
 * :boom: Bug fix
 
+## v0.3.4
+
+This is a minor feature and bugfix release:
+
+* :star: New **Text Location** option
+  * text scrolling across the middle (as before)
+  * text as subtitle across the bottom
+* :star: The previously used settings are remembered each time
+* :thumbsup: Chrome no longer needs to be installed for Bible Karaoke to work
+* :thumbsup: Chapters are now displayed in numerical order
+* :boom: "ghost" text from previous runs is cleared each time
+
 ## v0.3.3
 
 This is a minor feature and bugfix release:
