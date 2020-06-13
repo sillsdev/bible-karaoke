@@ -21,6 +21,7 @@ class Store {
       }
     });
     this.getSpeechBubbleProps();
+    this.getTextLocation();
     this.getBackground();
     this.getTextProps();
   }
@@ -32,6 +33,11 @@ class Store {
 
   @observable
   timingFile = '';
+
+  @observable
+  textLocation = {
+    location: 'subtitle'
+  };
 
   @observable
   background = { file: '', color: '#CCC' };
@@ -109,7 +115,20 @@ class Store {
   setTimingFile(file) {
     this.timingFile = file;
   }
-  
+
+  @action.bound
+  getTextLocation() {
+    if (localStorage.textLocation) {
+      this.setTextLocation(JSON.parse(localStorage.textLocation));
+    }
+  }
+
+  @action.bound
+  setTextLocation(textLocationProps) {
+    this.textLocation = {...this.textLocation, ...textLocationProps};
+    this.saveLocalProperties("textLocation", textLocationProps);
+  }
+
   @action.bound
   getBackground() {
     if (localStorage.background) {

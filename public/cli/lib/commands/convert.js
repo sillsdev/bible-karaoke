@@ -433,6 +433,7 @@ function execute(done) {
 
             var opts = {
                 inputJSON: pathBBKFile,
+                textLocation: Options.textLocation,
                 fontFamily: Options.fontFamily,
                 fontSize: Options.fontSize,
                 fontColor: Options.fontColor,

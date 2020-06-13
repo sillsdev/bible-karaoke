@@ -14,6 +14,18 @@ import { fileFilters } from '../../constants';
 import './DisplayCard.scss';
 const { ipcRenderer } = window.require('electron');
 
+
+const TEXT_LOCATIONS = [
+  {
+    value: "subtitle",
+    label: "Subtitles on the bottom"
+  },
+  {
+    value: "scrollingText",
+    label: "Scrolling text in the middle"
+  }
+];
+
 const BG = {
   FILE: 'file',
   COLOR: 'color',
@@ -49,6 +61,12 @@ class DisplayCard extends React.PureComponent {
     });
     ipcRenderer.send('did-start-getfonts');
   }
+
+  onSetTextLocation = evt => {
+    this.props.store.setTextLocation({
+      location: evt.currentTarget.value
+    });
+  };
 
   setBackgroundOption = backgroundOption => {
     this.setState({ backgroundOption }, () => {
@@ -103,7 +121,7 @@ class DisplayCard extends React.PureComponent {
 
   render() {
     const {
-      store: { background, text, speechBubble, verses },
+      store: { textLocation, background, text, speechBubble, verses },
     } = this.props;
     const { backgroundOption, fonts } = this.state;
     const previewProps = {
@@ -111,10 +129,21 @@ class DisplayCard extends React.PureComponent {
       background,
       speechBubble,
       text,
+      textLocation
     };
 
     return (
       <div className='display-card'>
+        <div className='card__option'>
+          <div className='card__option-label'>Text Location:</div>
+          <div className='card--inline'>
+            <HTMLSelect
+              value={textLocation.location}
+              onChange={this.onSetTextLocation}
+              options={TEXT_LOCATIONS}
+            />
+          </div>
+        </div>
         <div className='card__option'>
           <div className='card__option-label display-card__bg-label'>Background:</div>
           <div>
