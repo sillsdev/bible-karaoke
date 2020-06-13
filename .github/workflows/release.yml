@@ -11,14 +11,13 @@ jobs:
     strategy:
       matrix:
         node_version: ['10']
-        os: [windows-latest] # or [windows-latest, macOS-latest, ubuntu-latest]
         include:
         - os: windows-latest
           build_command: electron-pack-win
-        - os: macOS-latest
-          build_command: electron-pack-mac
-        - os: ubuntu-latest
-          build_command: electron-pack-linux
+        # - os: macOS-latest
+        #   build_command: electron-pack-mac
+        # - os: ubuntu-latest
+        #   build_command: electron-pack-linux
 
     steps:
     - uses: actions/checkout@v2
