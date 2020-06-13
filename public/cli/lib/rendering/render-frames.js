@@ -102,8 +102,9 @@ async function getHtmlPage(timingFilePath, textLocation, bgType, bgFilePath, bgC
         let speechBubbleOpacity = '${speechBubbleOpacity}';
         let backgroundType = '${bgType}';
         let bgFilePath = '${bgFilePath}';
+        let phraseLocation = '${textLocation}';
         window.onload = function () {
-            window.afterLoadKar(timing, backgroundDataUri, fps, backgroundType, backgroundVideoUrl, highlightColor, speechBubbleColor, speechBubbleOpacity);
+            window.afterLoadKar(timing, backgroundDataUri, fps, backgroundType, backgroundVideoUrl, highlightColor, speechBubbleColor, speechBubbleOpacity, phraseLocation);
         }
     </script>
     `

@@ -23,7 +23,7 @@ const PreviewVerse = ({ verse, highlightVerse, highlightStyle }) => {
   });
 };
 
-const Preview = ({ verses, background, text, speechBubble }) => {
+const Preview = ({ verses, background, text, speechBubble, textLocation }) => {
   const styles = {
     background: {
       backgroundColor: background.color || 'transparent',
@@ -66,9 +66,9 @@ const Preview = ({ verses, background, text, speechBubble }) => {
           id='myVideo'
         />
       ) : null}
-      <div className='preview__verses'>
+      <div className={`preview__verses${textLocation.location === "subtitle" ? " subtitle" : ""}`}>
         {verses.map((verse, index) => (
-          <div key={index} className='preview__verse' style={verse.indexOf("<strong>") > -1 ? styles.heading : styles.verse}>
+          <div key={index} className={`preview__verse${(textLocation.location === "subtitle" && index !== HIGHLIGHT_VERSE_INDEX) ? " hide" : ""}`} style={verse.indexOf("<strong>") > -1 ? styles.heading : styles.verse}>
             {index === HIGHLIGHT_VERSE_INDEX ? (
               <div
                 className='preview__speech-bubble-bg'
