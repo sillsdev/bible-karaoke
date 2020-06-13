@@ -29,12 +29,12 @@ const fallbackVideoSrc = "";
 //     }
 // })();
 
-async function render(timingFilePath, bgType, bgFilePath, bgColor, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity, notifyEvent) {
+async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity, notifyEvent) {
     let timingObj = require(timingFilePath);
     let duration = timingObj[timingObj.length - 1].end / 1000;
     let fps = 15;
     // let ffmpegLocation = await setupFfmpeg();
-    let htmlContent = await getHtmlPage(timingFilePath, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity);
+    let htmlContent = await getHtmlPage(timingFilePath, textLocation, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity);
 
     let outputLocation = tempy.directory();
 
@@ -68,7 +68,8 @@ async function render(timingFilePath, bgType, bgFilePath, bgColor, font, fontCol
     return outputLocation;
 }
 
-async function getHtmlPage(timingFilePath, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity) {
+async function getHtmlPage(timingFilePath, textLocation, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity) {
+    // console.log("textLocation: ", textLocation);
     let htmlContent = fs.readFileSync(path.join(__dirname, "render.html"), {
         encoding: "utf-8"
     });

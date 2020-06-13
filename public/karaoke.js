@@ -11,6 +11,7 @@ module.exports = {
 
 async function execute({
   hearThisFolder,
+  textLocation,
   background,
   text,
   speechBubble,
@@ -24,6 +25,7 @@ async function execute({
       _: [hearThisFolder],
       output,
       ffmpegPath,
+      textLocation: textLocation.location,
       bgType: background.type,
       bgFile: background.file,
       bgColor: background.color,
