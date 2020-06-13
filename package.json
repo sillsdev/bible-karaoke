@@ -81,7 +81,7 @@
     "concurrently": "^5.2.0",
     "cross-env": "^6.0.3",
     "electron": "^7.2.3",
-    "electron-builder": "^21.2.0",
+    "electron-builder": "^22.7.0",
     "ffbinaries": "^1.1.4",
     "typescript": "^3.9.5",
     "wait-on": "^3.3.0"
@@ -89,7 +89,7 @@
   "build": {
     "appId": "org.digiserve.bible-karaoke",
     "productName": "Bible Karaoke",
-    "copyright": "Copyright © 2019 ${author}",
+    "copyright": "Copyright © 2020 ${author}",
     "mac": {
       "target": "dmg",
       "category": "public.app-category.utilities"
