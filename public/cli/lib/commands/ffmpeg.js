@@ -176,7 +176,7 @@ function checkAudioInput(done) {
                     ffmpegExe = Options.ffmpegPath;
                 }
                 shell.exec(
-                    `${ffmpegExe} -f concat -safe 0 -i "${fileDir}" -c copy "${Options.audioInput}"`,
+                    `"${ffmpegExe}" -f concat -safe 0 -i "${fileDir}" -c copy "${Options.audioInput}"`,
                     (err) => {
                         done(err);
                     }
@@ -214,7 +214,7 @@ function execute(done, err) {
     }
 
     shell.exec(
-        `${ffmpegExe} -framerate ${Options.framerateIn} -i "${path.join(
+        `"${ffmpegExe}" -framerate ${Options.framerateIn} -i "${path.join(
             Options.images,
             "frame_%06d.png"
         )}" -i "${Options.audioInput}" ${
