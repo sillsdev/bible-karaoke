@@ -77,7 +77,11 @@ function makeBook(projectName, name) {
   let chapterNames = getDirectories(
     path.join(DEFAULT_DATA_DIR, projectName, name),
   );
-  book.chapters = chapterNames
+
+  let naturalSortChapterNames = chapterNames
+    .sort(new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare);
+
+  book.chapters = naturalSortChapterNames
     .map(chapterName => makeChapter(projectName, name, chapterName))
     .filter(chapter => chapter.audioFiles.length > 0);
   return book;
