@@ -1,18 +1,18 @@
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
+const chromium = require("chromium");
 const path = require("path");
-const locateChrome = require("locate-chrome");
 
 module.exports.record = async function(options) {
+    // chronium.path may or may provide a path in an asar archive.  If it does
+    // it is unusable, and we'll attempt to swap it out for the unarchived version
+    const chromiumPath = chromium.path.replace('app.asar', 'app.asar.unpacked');
+
     // NOTE: running puppeteer inside Docker is a PAIN!
     // run with --no-sandbox until a better solution is figured out.
-    const chromePath = await locateChrome();
-    if (!chromePath) {
-        throw new Error("Could not find Chrome");
-    }
     const browser =
         options.browser ||
         (await puppeteer.launch({
-            executablePath: chromePath,
+            executablePath: chromiumPath,
             args: ["--no-sandbox", "--disable-setuid-sandbox"]
         }));
     const page = options.page || (await browser.newPage());
