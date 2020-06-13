@@ -11,24 +11,21 @@ jobs:
     strategy:
       matrix:
         node_version: ['10']
-        include:
-        - os: windows-latest
-          build_command: electron-pack-win
-        # - os: macOS-latest
-        #   build_command: electron-pack-mac
-        # - os: ubuntu-latest
-        #   build_command: electron-pack-linux
+        os: [windows-latest] # or [windows-latest, macos-latest, ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Use Node.js ${{ matrix.node_version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node_version }}
 
-    - name: npm install, build and test
-      run: |
-        npm install
-        npm run ${{ matrix.build_command }}
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build/release Electron app
+      uses: samuelmeuli/action-electron-builder@v1
+      with:
+        github_token: ${{ secrets.github_token }}
+
+        # If the commit is tagged with a version (e.g. "v0.3.4"),
+        # release the app after building
+        release: ${{ startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.') }}
