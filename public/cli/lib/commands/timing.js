@@ -101,6 +101,15 @@ Command.run = function(options) {
                             "bbkFormat.js"
                         );
                     }
+
+                    // #50: prevent ghosting of previous bbk runs.
+                    // originally this was designed to be a command run on the
+                    // cli each time we generate a video. But now that we are 
+                    // require()d into the Electron app, we need to be intentional
+                    // on resetting these variables on each run.
+                    finalFormat = [];
+                    skipFiles = [];
+
                     done();
                 },
                 checkDependencies,
