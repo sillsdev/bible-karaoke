@@ -15,7 +15,14 @@
             letter-spacing: .05em;
             margin: 0
         }
-
+        #currentFrame {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 18px;
+            color: black;
+            z-index: 100;
+        }
         .subs span {
             color: white;
             /* text-transform: capitalize; */
@@ -292,20 +299,21 @@
 
         }
         // the app will call this function and we will need to determin what the UI should
-        // look like at a given moment in time with the fps converted into a time in miliseconds
+        // look like at a given frame with the fps converted into a time in miliseconds
         var curPos = 0;
-        function renderNextFrame(time) {
-            if (time) {
-                curPos = time;
+        function renderNextFrame(frame) {
+            if (frame) {
+                curPos = parseInt(frame) * 1000/fps;
             } else {
                 curPos = 1000/fps + curPos;
             }
-            // This is how you tell it to go to a specific time
+            // This is how you tell it to go to a specific frame
             animations.forEach((w) => {
-                // this makes the animation jump to this specific time in the overall animation
+                // this makes the animation jump to this specific frame in the overall animation
                 w.currentTime = curPos;
             });
             document.getElementById('bgVideo').currentTime = curPos/1000;
+            // document.getElementById('currentFrame').innerHTML = "Frame: " + frame + " Pos: " + curPos;
         }
     </script>
     <!-- this comment get's replaced with content that has the background image
@@ -314,6 +322,7 @@
     <meta name="data-replace">
 </head>
 <body>
+    <!-- <div id="currentFrame">Time: 0 Pos: 0</div> -->
     <div id="imgParent">
         <div class="line subs karaoke-caption" id="subtitles2"></div>
         <video muted loop id="bgVideo">

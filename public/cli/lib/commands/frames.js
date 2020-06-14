@@ -145,6 +145,7 @@ function checkDependencies(done) {
 function callRender(done) {
     var notify = new EventEmitter();
     var bar;
+    var lastCount = 0;
     notify.on("rendered", (data) => {
         if (Options.onProgress) {
             onProgress(data);
@@ -157,7 +158,8 @@ function callRender(done) {
                 incomplete: " "
             });
         } else {
-            bar.tick();
+            bar.tick(data.curr - lastCount);
+            lastCount = data.curr;
         }
     });
     Log("calling render with Options:", Options);
