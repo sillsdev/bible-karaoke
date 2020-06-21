@@ -14,9 +14,9 @@ export {
 
 export const cards = [
   {
-    title: 'HearThis',
+    title: 'Input',
     description:
-      'This first step is where you select the HearThis project, book and chapter.' +
+      'This first step is where you select the HearThis or Scripture App Builder project, book and chapter.' +
       ' This folder should contain the text and audio files that will be used in the video.',
     content: <TextAndAudioCard />,
   },

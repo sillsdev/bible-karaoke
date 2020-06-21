@@ -1,7 +1,9 @@
 const electron = require('electron');
+const reduce = require('lodash/reduce');
 const fontList = require('font-list');
 const karaoke = require('./karaoke');
-const { getProjectStructure, getSampleVerses } = require('./hear-this');
+const sources = require('./sources')
+const { getSampleVerses } = require('./sources/util')
 
 const { app, ipcMain, shell, Menu } = electron;
 const BrowserWindow = electron.BrowserWindow;
@@ -10,7 +12,6 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 
 let mainWindow;
-let hearThisProjects;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -69,8 +70,11 @@ function handleGetSampleVerses() {
 function handleGetProjects() {
   ipcMain.on('did-start-getprojectstructure', async event => {
     console.log('Getting project structure');
-    hearThisProjects = getProjectStructure();
-    event.sender.send('did-finish-getprojectstructure', hearThisProjects);
+    const projects = reduce(sources, (acc, source) => {
+      acc.push(...source.getProjectStructure())
+      return acc
+    }, [])
+    event.sender.send('did-finish-getprojectstructure', projects);
   });
 }
 

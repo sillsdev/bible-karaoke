@@ -131,11 +131,11 @@ class TextAndAudioCard extends React.PureComponent {
       store: { projects, setSourceDirectory },
     } = this.props;
     if (selectedChapter !== noSelection) {
-      const hearThisChapterFolder =
+      const chapterFolder =
       projects[selectedProject].books[selectedBook].chapters[
           selectedChapter
         ].fullPath;
-        setSourceDirectory(hearThisChapterFolder);
+        setSourceDirectory(chapterFolder);
     } else {
       setSourceDirectory(undefined);
     }
@@ -168,9 +168,10 @@ class TextAndAudioCard extends React.PureComponent {
         : [];
     if (!projects.length) {
       return (
-        <Callout title='No HearThis projects found' intent={Intent.WARNING}>
-          Bible Karaoke was unable to locate any HearThis projects. Make sure{' '}
-          <a href='https://software.sil.org/hearthis/'>HearThis</a> is installed
+        <Callout title='No HearThis or Scripture App Builder projects found' intent={Intent.WARNING}>
+          Bible Karaoke was unable to locate any HearThis or Scripture App Builder projects. Make sure{' '}
+          <a href='https://software.sil.org/hearthis/'>HearThis</a> and/or 
+          <a href='https://software.sil.org/scriptureappbuilder/'>Scripture App Builder</a> is installed
           and you have at least one project with audio for at least one chapter
           of one book.
         </Callout>
