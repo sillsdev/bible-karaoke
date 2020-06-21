@@ -1,4 +1,5 @@
 import { observable, computed, action } from 'mobx';
+import { persist } from 'mobx-persist';
 import every from 'lodash/every';
 const { ipcRenderer, remote } = window.require('electron');
 var fs = remote.require('fs');
@@ -20,11 +21,8 @@ class Store {
         console.error('Failed to set verses', verses);
       }
     });
-    this.getSpeechBubbleProps();
-    this.getTextLocation();
-    this.getBackground();
-    this.getTextProps();
   }
+
   @observable
   hearThisFolder = '';
 
@@ -34,14 +32,17 @@ class Store {
   @observable
   timingFile = '';
 
+  @persist('object')
   @observable
   textLocation = {
     location: 'subtitle'
   };
 
+  @persist('object')
   @observable
   background = { file: '', color: '#CCC' };
 
+  @persist('object')
   @observable
   text = {
     fontFamily: 'Arial',
@@ -53,6 +54,7 @@ class Store {
     highlightRGB: 'rgba(255,255,0,1)'
   };
 
+  @persist('object')
   @observable
   speechBubble = {
     color: '#FFF',
@@ -117,23 +119,8 @@ class Store {
   }
 
   @action.bound
-  getTextLocation() {
-    if (localStorage.textLocation) {
-      this.setTextLocation(JSON.parse(localStorage.textLocation));
-    }
-  }
-
-  @action.bound
   setTextLocation(textLocationProps) {
     this.textLocation = {...this.textLocation, ...textLocationProps};
-    this.saveLocalProperties("textLocation", textLocationProps);
-  }
-
-  @action.bound
-  getBackground() {
-    if (localStorage.background) {
-      this.setBackground(JSON.parse(localStorage.background));
-    }
   }
 
   @action.bound
@@ -152,20 +139,11 @@ class Store {
       this.background.imageSrc = '';
       this.background.type = 'color';
     }
-    this.saveLocalProperties("background", background);
-  }
-  
-  @action.bound
-  getTextProps() {
-    if (localStorage.text) {
-      this.setTextProps(JSON.parse(localStorage.text));
-    }
   }
 
   @action.bound
   setTextProps(textProps) {
     this.text = {...this.text, ...textProps};
-    this.saveLocalProperties("text", textProps);
   }
   
   @action.bound
@@ -178,16 +156,8 @@ class Store {
   }
 
   @action.bound
-  getSpeechBubbleProps() {
-    if (localStorage.speechBubble) {
-      this.setSpeechBubbleProps(JSON.parse(localStorage.speechBubble));
-    }
-  }
-
-  @action.bound
   setSpeechBubbleProps(speechBubbleProps) {
     this.speechBubble = {...this.speechBubble, ...speechBubbleProps};
-    this.saveLocalProperties("speechBubble", speechBubbleProps);
   }
   
   @action.bound
