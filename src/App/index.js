@@ -59,9 +59,9 @@ class App extends React.PureComponent {
 
   onStart = () => {
     this.setState({ status: AppStatus.processing }, () => {
-      const { hearThisFolder, textLocation, background, text, speechBubble, outputFile } = this.props.store;
+      const { sourceDirectory, textLocation, background, text, speechBubble, outputFile } = this.props.store;
       const args = {
-        hearThisFolder,
+        sourceDirectory,
         textLocation,
         background,
         text,

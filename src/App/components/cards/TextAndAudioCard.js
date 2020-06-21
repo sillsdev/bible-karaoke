@@ -128,16 +128,16 @@ class TextAndAudioCard extends React.PureComponent {
   checkFolder = () => {
     const { selectedProject, selectedBook, selectedChapter } = this.state;
     const {
-      store: { hearThisProjects, setHearThisFolder },
+      store: { hearThisProjects, setSourceDirectory },
     } = this.props;
     if (selectedChapter !== noSelection) {
       const hearThisChapterFolder =
         hearThisProjects[selectedProject].books[selectedBook].chapters[
           selectedChapter
         ].fullPath;
-      setHearThisFolder(hearThisChapterFolder);
+        setSourceDirectory(hearThisChapterFolder);
     } else {
-      setHearThisFolder(undefined);
+      setSourceDirectory(undefined);
     }
   };
 

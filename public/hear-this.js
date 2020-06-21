@@ -112,9 +112,9 @@ function makeChapter(projectName, bookName, name) {
   return chapter;
 }
 
-function getSampleVerses(hearThisFolder) {
+function getSampleVerses(sourceDirectory) {
   try {
-    const info = fs.readFileSync(path.join(hearThisFolder, 'info.xml'), 'utf8');
+    const info = fs.readFileSync(path.join(sourceDirectory, 'info.xml'), 'utf8');
     var jsonInfo = JSON.parse(xml2json.xml2json(info, { compact: true }));
     var verses = jsonInfo.ChapterInfo.Recordings.ScriptLine.slice(0, 4).map( line => {
       // Fix #20 : ignore Chapter Headings

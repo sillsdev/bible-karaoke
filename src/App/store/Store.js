@@ -24,7 +24,7 @@ class Store {
   }
 
   @observable
-  hearThisFolder = '';
+  sourceDirectory = '';
 
   @observable
   verses = SAMPLE_VERSES;
@@ -70,11 +70,11 @@ class Store {
 
   @computed
   get defaultVideoName() {
-    if (!this.hearThisFolder) {
+    if (!this.sourceDirectory) {
       return 'bible-karaoke.mp4';
     }
     // Name the video by book and chapter (e.g. 'Mark2.mp4')
-    const dirs = this.hearThisFolder.split(/[/\\]/);
+    const dirs = this.sourceDirectory.split(/[/\\]/);
     let chapter = dirs[dirs.length - 1];
     if (chapter === '0') {
       chapter = 'Intro';
@@ -85,7 +85,7 @@ class Store {
   @computed
   get stepStatus() {
     return [
-      !!this.hearThisFolder,
+      !!this.sourceDirectory,
       // !!this.timingFile,
       (!!this.background.file || !!this.background.color) && this.text.fontFamily,
       !!this.outputFile,
@@ -95,14 +95,14 @@ class Store {
   @action.bound
   setHearThisProjects(projects) {
     this.hearThisProjects = projects;
-    this.hearThisFolder = '';
+    this.sourceDirectory = '';
   }
 
   @action.bound
-  setHearThisFolder(folder) {
-    this.hearThisFolder = folder;
+  setSourceDirectory(folder) {
+    this.sourceDirectory = folder;
     if (folder) {
-      ipcRenderer.send('did-start-getverses', { hearThisFolder: folder });
+      ipcRenderer.send('did-start-getverses', { sourceDirectory: folder });
     } else {
       this.setVerses(SAMPLE_VERSES);
     }

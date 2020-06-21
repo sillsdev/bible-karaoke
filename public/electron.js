@@ -60,8 +60,8 @@ function handleGetFonts() {
 
 function handleGetSampleVerses() {
   ipcMain.on('did-start-getverses', async (event, args) => {
-    const { hearThisFolder } = args;
-    const verses = getSampleVerses(hearThisFolder);
+    const { sourceDirectory } = args;
+    const verses = getSampleVerses(sourceDirectory);
     event.sender.send('did-finish-getverses', verses);
   });
 }

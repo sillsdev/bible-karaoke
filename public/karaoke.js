@@ -10,7 +10,7 @@ module.exports = {
 };
 
 async function execute({
-  hearThisFolder,
+  sourceDirectory,
   textLocation,
   background,
   text,
@@ -22,7 +22,7 @@ async function execute({
     let ffmpegFolder = await setupFfmpeg();
     const ffmpegPath = path.join(ffmpegFolder, FFMPEG_EXE);
     await bbkConvert({
-      _: [hearThisFolder],
+      _: [sourceDirectory],
       output,
       ffmpegPath,
       textLocation: textLocation.location,
@@ -53,7 +53,7 @@ async function execute({
 //     };
 //     try {
 //         const executeArgs = {
-//           hearThisFolder: 'C:\\ProgramData\\SIL\\HearThis\\ENT\\Mark\\1',
+//           sourceDirectory: 'C:\\ProgramData\\SIL\\HearThis\\ENT\\Mark\\1',
 //           backgroundFile: 'C:\\DigiServe\\bible-karaoke\\cross-blog_orig.jpg',
 //           backgroundColor: '',
 //           speechBubbleColor: 'white',
