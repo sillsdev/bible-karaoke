@@ -66,7 +66,7 @@ class Store {
   outputFile = '';
 
   @observable
-  hearThisProjects = [];
+  projects = [];
 
   @computed
   get defaultVideoName() {
@@ -93,8 +93,8 @@ class Store {
   }
 
   @action.bound
-  setHearThisProjects(projects) {
-    this.hearThisProjects = projects;
+  setProjects(projects) {
+    this.projects = projects;
     this.sourceDirectory = '';
   }
 

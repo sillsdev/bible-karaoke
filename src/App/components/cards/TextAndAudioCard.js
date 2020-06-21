@@ -18,7 +18,7 @@ class TextAndAudioCard extends React.PureComponent {
     };
     ipcRenderer.on('did-finish-getprojectstructure', (event, projects) => {
       console.log('Received project structure', projects);
-      this.props.store.setHearThisProjects(projects);
+      this.props.store.setProjects(projects);
       this.setState(
         {
           selectedProject: noSelection,
@@ -80,8 +80,8 @@ class TextAndAudioCard extends React.PureComponent {
   };
 
   checkSingleProject = () => {
-    const hearThisProjects = this.props.store.hearThisProjects;
-    if (hearThisProjects.length === 1) {
+    const projects = this.props.store.projects;
+    if (projects.length === 1) {
       this.setState(
         {
           selectedProject: 0,
@@ -95,9 +95,9 @@ class TextAndAudioCard extends React.PureComponent {
 
   checkSingleBook = () => {
     const selectedProject = this.state.selectedProject;
-    const hearThisProjects = this.props.store.hearThisProjects;
+    const projects = this.props.store.projects;
     if (selectedProject !== noSelection
-        && hearThisProjects[selectedProject].books.length === 1) {
+        && projects[selectedProject].books.length === 1) {
       this.setState(
         {
           selectedBook: 0,
@@ -111,9 +111,9 @@ class TextAndAudioCard extends React.PureComponent {
 
   checkSingleChapter = () => {
     const { selectedProject, selectedBook } = this.state;
-    const hearThisProjects = this.props.store.hearThisProjects;
+    const projects = this.props.store.projects;
     if (selectedBook !== noSelection &&
-        hearThisProjects[selectedProject].books[selectedBook].chapters.length === 1) {
+      projects[selectedProject].books[selectedBook].chapters.length === 1) {
       this.setState(
         {
           selectedChapter: 0,
@@ -128,11 +128,11 @@ class TextAndAudioCard extends React.PureComponent {
   checkFolder = () => {
     const { selectedProject, selectedBook, selectedChapter } = this.state;
     const {
-      store: { hearThisProjects, setSourceDirectory },
+      store: { projects, setSourceDirectory },
     } = this.props;
     if (selectedChapter !== noSelection) {
       const hearThisChapterFolder =
-        hearThisProjects[selectedProject].books[selectedBook].chapters[
+      projects[selectedProject].books[selectedBook].chapters[
           selectedChapter
         ].fullPath;
         setSourceDirectory(hearThisChapterFolder);
@@ -144,29 +144,29 @@ class TextAndAudioCard extends React.PureComponent {
   render() {
     const { selectedProject, selectedBook, selectedChapter } = this.state;
     const {
-      store: { hearThisProjects },
+      store: { projects },
     } = this.props;
-    const projectOptions = hearThisProjects.map((p, index) => ({
+    const projectOptions = projects.map((p, index) => ({
       value: index,
       label: p.name,
     }));
     const bookOptions =
       selectedProject !== noSelection
-        ? hearThisProjects[selectedProject].books.map((p, index) => ({
+        ? projects[selectedProject].books.map((p, index) => ({
             value: index,
             label: p.name,
           }))
         : [];
     const chapterOptions =
       selectedBook !== noSelection
-        ? hearThisProjects[selectedProject].books[selectedBook].chapters.map(
+        ? projects[selectedProject].books[selectedBook].chapters.map(
             (p, index) => ({
               value: index,
               label: p.name,
             }),
           )
         : [];
-    if (!hearThisProjects.length) {
+    if (!projects.length) {
       return (
         <Callout title='No HearThis projects found' intent={Intent.WARNING}>
           Bible Karaoke was unable to locate any HearThis projects. Make sure{' '}
