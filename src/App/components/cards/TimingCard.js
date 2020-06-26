@@ -3,12 +3,12 @@ import { inject, observer } from 'mobx-react';
 import FileSelector from '../FileSelector';
 import { fileFilters } from '../../constants';
 
-@inject('store')
+@inject('appState')
 @observer
 class TimingCard extends React.PureComponent {
   render() {
     const {
-      store: { timingFile, setTimingFile },
+      appState: { timingFile, setTimingFile },
     } = this.props;
     return (
       <FileSelector

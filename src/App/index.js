@@ -16,7 +16,7 @@ const AppStatus = {
   error: 'error',
 };
 
-@inject('store')
+@inject('appState')
 @observer
 class App extends React.PureComponent {
   constructor(props) {
@@ -52,14 +52,14 @@ class App extends React.PureComponent {
   };
 
   openOutputFolder = () => {
-    const { outputFile } = this.props.store;
+    const { outputFile } = this.props.appState;
     ipcRenderer.send('open-output-folder', outputFile);
     this.reset();
   };
 
   onStart = () => {
     this.setState({ status: AppStatus.processing }, () => {
-      const { sourceDirectory, textLocation, background, text, speechBubble, outputFile } = this.props.store;
+      const { sourceDirectory, textLocation, background, text, speechBubble, outputFile } = this.props.appState;
       const args = {
         sourceDirectory,
         textLocation,
@@ -88,7 +88,7 @@ class App extends React.PureComponent {
 
   renderFooter() {
     const {
-      store: { allValidInputs },
+      appState: { allValidInputs },
     } = this.props;
     const { error, status } = this.state;
     switch(status) {

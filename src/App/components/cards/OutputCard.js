@@ -3,12 +3,12 @@ import { inject, observer } from 'mobx-react';
 import FileSelector from '../FileSelector';
 import { fileFilters } from '../../constants';
 
-@inject('store')
+@inject('appState')
 @observer
 class OutputCard extends React.PureComponent {
   render() {
     const {
-      store: { outputFile, setOutputFile, defaultVideoName },
+      appState: { outputFile, setOutputFile, defaultVideoName },
     } = this.props;
     return (
       <div className='card__option'>

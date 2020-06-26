@@ -6,7 +6,7 @@ const { ipcRenderer } = window.require('electron');
 const noSelection = -1;
 const emptyOption = { value: noSelection, label: 'Select....' };
 
-@inject('store')
+@inject('appState', 'settings')
 @observer
 class TextAndAudioCard extends React.PureComponent {
   constructor(props) {
@@ -18,7 +18,6 @@ class TextAndAudioCard extends React.PureComponent {
     };
     ipcRenderer.on('did-finish-getprojectstructure', (event, projects) => {
       console.log('Received project structure', projects);
-      this.props.store.setProjects(projects);
       this.setState(
         {
           selectedProject: noSelection,
@@ -26,6 +25,7 @@ class TextAndAudioCard extends React.PureComponent {
           selectedChapter: noSelection,
         },
         () => {
+          this.props.appState.setProjects(projects);
           this.checkSingleProject();
         },
       );
@@ -80,7 +80,7 @@ class TextAndAudioCard extends React.PureComponent {
   };
 
   checkSingleProject = () => {
-    const projects = this.props.store.projects;
+    const projects = this.props.appState.projects;
     if (projects.length === 1) {
       this.setState(
         {
@@ -95,7 +95,7 @@ class TextAndAudioCard extends React.PureComponent {
 
   checkSingleBook = () => {
     const selectedProject = this.state.selectedProject;
-    const projects = this.props.store.projects;
+    const projects = this.props.appState.projects;
     if (selectedProject !== noSelection
         && projects[selectedProject].books.length === 1) {
       this.setState(
@@ -111,7 +111,7 @@ class TextAndAudioCard extends React.PureComponent {
 
   checkSingleChapter = () => {
     const { selectedProject, selectedBook } = this.state;
-    const projects = this.props.store.projects;
+    const projects = this.props.appState.projects;
     if (selectedBook !== noSelection &&
       projects[selectedProject].books[selectedBook].chapters.length === 1) {
       this.setState(
@@ -128,7 +128,7 @@ class TextAndAudioCard extends React.PureComponent {
   checkFolder = () => {
     const { selectedProject, selectedBook, selectedChapter } = this.state;
     const {
-      store: { projects, setSourceDirectory },
+      appState: { projects, setSourceDirectory },
     } = this.props;
     if (selectedChapter !== noSelection) {
       const chapterFolder =
@@ -144,7 +144,7 @@ class TextAndAudioCard extends React.PureComponent {
   render() {
     const { selectedProject, selectedBook, selectedChapter } = this.state;
     const {
-      store: { projects },
+      appState: { projects },
     } = this.props;
     const projectOptions = projects.map((p, index) => ({
       value: index,

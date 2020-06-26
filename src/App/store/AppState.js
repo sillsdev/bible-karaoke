@@ -12,7 +12,7 @@ const SAMPLE_VERSES = [
   "God called the light Day, and the darkness he called Night. And there was evening and there was morning, the first day.",
 ];
 
-class Store {
+class AppState {
   constructor() {
     ipcRenderer.on('did-finish-getverses', (event, verses) => {
       if (Array.isArray(verses)) {
@@ -171,4 +171,4 @@ class Store {
   }
 }
 
-export default Store;
+export default AppState;

@@ -38,14 +38,14 @@ const FONT_SIZES = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(n => ({
   label: `${n}pt`,
 }));
 
-@inject('store')
+@inject('appState')
 @observer
 class DisplayCard extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       fonts: [],
-      backgroundOption: props.store.background.color ? BG.COLOR : BG.FILE,
+      backgroundOption: props.appState.background.color ? BG.COLOR : BG.FILE,
     };
     ipcRenderer.on('did-finish-getfonts', (event, fonts) => {
       if (Array.isArray(fonts)) {
@@ -63,14 +63,14 @@ class DisplayCard extends React.PureComponent {
   }
 
   onSetTextLocation = evt => {
-    this.props.store.setTextLocation({
+    this.props.appState.setTextLocation({
       location: evt.currentTarget.value
     });
   };
 
   setBackgroundOption = backgroundOption => {
     this.setState({ backgroundOption }, () => {
-      this.props.store.setBackground({
+      this.props.appState.setBackground({
         color: backgroundOption === BG.COLOR ? DEFAULT_BG_COLOR : '',
         file: '',
       });
@@ -78,50 +78,50 @@ class DisplayCard extends React.PureComponent {
   };
 
   onBackgroundColorPickerChange = color => {
-    this.props.store.setBackground({ file: '', color: color.hex });
+    this.props.appState.setBackground({ file: '', color: color.hex });
   };
 
   onBackgroundFileSelected = file => {
-    this.props.store.setBackground({ file, color: '' });
+    this.props.appState.setBackground({ file, color: '' });
   };
 
   onSetFontFamily = evt => {
-    this.props.store.setTextProps({ fontFamily: evt.currentTarget.value });
+    this.props.appState.setTextProps({ fontFamily: evt.currentTarget.value });
   };
 
   onSetFontSize = evt => {
-    this.props.store.setTextProps({ fontSize: evt.currentTarget.value });
+    this.props.appState.setTextProps({ fontSize: evt.currentTarget.value });
   };
 
   onTextColorPickerChange = color => {
-    this.props.store.setTextProps({ color: color.hex });
+    this.props.appState.setTextProps({ color: color.hex });
   };
 
   onHighlightColorPickerChange = color => {
-    this.props.store.setTextProps({ highlightColor: color.hex , highlightRGB: "rgba("+color.rgb.r+","+color.rgb.g+","+color.rgb.b+",1)" });
+    this.props.appState.setTextProps({ highlightColor: color.hex , highlightRGB: "rgba("+color.rgb.r+","+color.rgb.g+","+color.rgb.b+",1)" });
     console.log(this.props);
   };
 
   toggleBold = () => {
-    this.props.store.setTextProps({ bold: !this.props.store.text.bold });
+    this.props.appState.setTextProps({ bold: !this.props.appState.text.bold });
   };
 
   toggleItalic = () => {
-    this.props.store.setTextProps({ italic: !this.props.store.text.italic });
+    this.props.appState.setTextProps({ italic: !this.props.appState.text.italic });
   };
 
   onSpeechBubbleColorPickerChange = color => {
       console.log(color);
-    this.props.store.setSpeechBubbleProps({ color: color.hex, rgba: "rgba("+color.rgb.r+","+color.rgb.g+","+color.rgb.b+",1)" });
+    this.props.appState.setSpeechBubbleProps({ color: color.hex, rgba: "rgba("+color.rgb.r+","+color.rgb.g+","+color.rgb.b+",1)" });
   };
 
   onSetSpeechBubbleOpacity = opacity => {
-    this.props.store.setSpeechBubbleProps({ opacity });
+    this.props.appState.setSpeechBubbleProps({ opacity });
   };
 
   render() {
     const {
-      store: { textLocation, background, text, speechBubble, verses },
+      appState: { textLocation, background, text, speechBubble, verses },
     } = this.props;
     const { backgroundOption, fonts } = this.state;
     const previewProps = {
