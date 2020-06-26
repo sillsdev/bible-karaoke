@@ -1,5 +1,6 @@
 const electron = require('electron');
-const reduce = require('lodash/reduce');
+const map = require('lodash/map');
+const flatten = require('lodash/flatten');
 const fontList = require('font-list');
 const karaoke = require('./karaoke');
 const sources = require('./sources')
@@ -15,7 +16,7 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 880,
+    width: 1100,
     height: 970,
     webPreferences: { nodeIntegration: true, webSecurity: false },
   });
@@ -68,12 +69,13 @@ function handleGetSampleVerses() {
 }
 
 function handleGetProjects() {
-  ipcMain.on('did-start-getprojectstructure', async event => {
-    console.log('Getting project structure');
-    const projects = reduce(sources, (acc, source) => {
-      acc.push(...source.getProjectStructure())
-      return acc
-    }, [])
+  ipcMain.on('did-start-getprojectstructure', async (event, rootDirectories) => {
+    console.log('Getting project structure', rootDirectories);
+    const projects = flatten(
+      map(rootDirectories, (directories, projectType) => {
+        return sources[projectType].getProjectStructure(directories)
+      })
+    )
     event.sender.send('did-finish-getprojectstructure', projects);
   });
 }

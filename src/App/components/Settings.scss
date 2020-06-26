@@ -1,0 +1,28 @@
+.settings {
+  padding: 20px;
+  flex: 1;
+  background: #293742;
+  &__card {
+    margin-bottom: 20px;
+  }
+  .file-selector > * {
+    margin: 0;
+  }
+  &__card-title {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    h5 {
+      flex: 1;
+      margin-bottom: 0;
+    }
+  }
+  &__directory {
+    display: flex;
+    align-items: center;
+    &-name {
+      padding: 0 10px;
+    }
+  }
+}

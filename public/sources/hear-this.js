@@ -1,7 +1,6 @@
 const fs = require('fs');
-const process = require('process');
-const os = require('os');
 const path = require('path');
+const flatten = require('lodash/flatten');
 const {
   Project,
   Book,
@@ -11,78 +10,69 @@ const {
 
 const PROJECT_TYPE = 'hearThis'
 
-function getDefaultDataDirectory() {
-  switch (process.platform) {
-    case 'win32':
-      return 'C:/ProgramData/SIL/HearThis/';
-    case 'darwin':
-    default:
-      return `${os.homedir()}/hearThisProjects/`;
-  }
-}
-
 const DEFAULT_XML_NAME = 'info.xml';
-const DEFAULT_DATA_DIR = getDefaultDataDirectory();
 
-function getProjectStructure() {
+function getProjectStructure(rootDirectories = []) {
   try {
-    let projectNames = getDirectories(DEFAULT_DATA_DIR);
-    let projects = projectNames.map(name => makeProject(name));
-
-    return projects;
-  } catch {
+    return flatten(
+      rootDirectories.map(directory => {
+        return getDirectories(directory).map(name => makeProject(name, directory));
+      })
+    )
+  } catch(error) {
+    console.error(error)
     return [];
   }
 }
 
-function makeProject(name) {
+function makeProject(name, directory) {
   let project = new Project(PROJECT_TYPE);
   project.name = name;
-  const bookNames = getDirectories(path.join(DEFAULT_DATA_DIR, name));
+  const bookNames = getDirectories(path.join(directory, name));
   project.books = bookNames
-    .map(bookName => makeBook(name, bookName))
+    .map(bookName => makeBook(name, bookName, directory))
     .filter(book => book.chapters.length);
   return project;
 }
 
-function makeBook(projectName, name) {
+function makeBook(projectName, name, directory) {
   let book = new Book();
   book.name = name;
   let chapterNames = getDirectories(
-    path.join(DEFAULT_DATA_DIR, projectName, name),
+    path.join(directory, projectName, name),
   );
 
   let naturalSortChapterNames = chapterNames
     .sort(new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'}).compare);
 
   book.chapters = naturalSortChapterNames
-    .map(chapterName => makeChapter(projectName, name, chapterName))
+    .map(chapterName => makeChapter(projectName, name, chapterName, directory))
     .filter(chapter => chapter.audioFiles.length > 0);
   return book;
 }
 
-function makeChapter(projectName, bookName, name) {
+function makeChapter(projectName, bookName, name, directory) {
   let chapter = new Chapter();
   chapter.name = name === '0' ? 'Intro' : parseInt(name).toString();
   let chapterFiles = fs.readdirSync(
-    path.join(DEFAULT_DATA_DIR, projectName, bookName, name),
+    path.join(directory, projectName, bookName, name),
   );
   chapter.audioFiles = chapterFiles
     .filter(file => file !== DEFAULT_XML_NAME)
     .map(fileName =>
-      path.join(DEFAULT_DATA_DIR, projectName, bookName, name, fileName),
+      path.join(directory, projectName, bookName, name, fileName),
     );
 
   chapter.textXmlFile = chapterFiles.find(file => file === DEFAULT_XML_NAME);
   if (chapter.textXmlFile)
     chapter.textXmlFile = path.join(
-      DEFAULT_DATA_DIR,
+      directory,
       projectName,
       bookName,
       name,
       chapter.textXmlFile,
     );
-  chapter.fullPath = path.join(DEFAULT_DATA_DIR, projectName, bookName, name);
+  chapter.fullPath = path.join(directory, projectName, bookName, name);
   return chapter;
 }
 

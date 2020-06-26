@@ -30,11 +30,11 @@ class TextAndAudioCard extends React.PureComponent {
         },
       );
     });
-    ipcRenderer.send('did-start-getprojectstructure');
+    ipcRenderer.send('did-start-getprojectstructure', this.props.settings.rootDirectories);
   }
 
   refreshProject = () => {
-    ipcRenderer.send('did-start-getprojectstructure');
+    ipcRenderer.send('did-start-getprojectstructure', this.props.settings.rootDirectories);
   };
 
   selectProject = evt => {
