@@ -4,11 +4,11 @@ const isDev = require('electron-is-dev');
 
 export async function trackScreenview (screenName) {
   const params = {cd: screenName};
-   if (isDev) {
-     console.log('Analytics Screenview: ' + JSON.stringify(params));
-   } else {
-     await analytics.send('screenview',params);
-   }
+  if (isDev) {
+    console.log('Analytics Screenview: ' + JSON.stringify(params));
+  } else {
+    await analytics.send('screenview',params);
+  }
 };
 
 export async function trackEvent (category, action, label = '', value = 0) {
