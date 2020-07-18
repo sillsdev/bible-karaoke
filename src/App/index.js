@@ -66,8 +66,10 @@ class App extends React.PureComponent {
         speechBubble,
         output: outputFile,
       };
-      console.log('Requesting processing', args);
-      ipcRenderer.send('did-start-conversion', args);
+      // IPC arguments cannot be objects, but Store returns value objects
+      const structuredArgs = JSON.parse(JSON.stringify(args));
+      console.log('Requesting processing (args)', structuredArgs);
+      ipcRenderer.send('did-start-conversion', structuredArgs);
     });
   };
 
