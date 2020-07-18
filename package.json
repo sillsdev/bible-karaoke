@@ -18,6 +18,7 @@
     "clear": "^0.1.0",
     "datauri": "^2.0.0",
     "date-fns": "^2.14.0",
+    "electron-ga": "nh758/electron-ga#master",
     "electron-is-dev": "^1.2.0",
     "execa": "^3.3.0",
     "font-list": "^1.2.11",
