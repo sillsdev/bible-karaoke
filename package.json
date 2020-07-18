@@ -29,6 +29,7 @@
     "font-list": "^1.2.11",
     "inquirer": "^7.3.2",
     "junk": "^3.1.0",
+    "libxmljs": "^0.19.7",
     "lodash": "^4.17.19",
     "minimist": "^1.2.5",
     "mobx": "^5.15.4",
@@ -47,6 +48,7 @@
     "styled-components": "^5.1.1",
     "styled-system": "^5.1.5",
     "tempy": "^0.3.0",
+    "usfm-grammar": "^2.0.0-beta.2",
     "winston": "^3.3.3",
     "xml-js": "^1.6.11"
   },

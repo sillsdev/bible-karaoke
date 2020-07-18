@@ -20,7 +20,7 @@ export const getDefaultScriptureAppBuilderDirectory = () => {
       return path.join(os.homedir(), 'Documents', 'App Builder', 'Scripture Apps', 'App Projects');
     case 'darwin':
     default:
-      return `${os.homedir()}/App Builder/Scripture Apps/App Projects/`;
+      return `${os.homedir()}/Documents/AppBuilder/Scripture Apps/App Projects/`;
   }
 };
 
