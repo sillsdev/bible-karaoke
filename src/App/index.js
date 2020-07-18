@@ -6,6 +6,7 @@ import Accordion from './components/Accordion';
 import { cards } from './components/cards';
 import ActionButton from './components/ActionButton';
 import './index.scss';
+import { trackScreenview, trackEvent, trackError } from './analytics';
 const { ipcRenderer } = window.require('electron');
 
 const AppStatus = {
@@ -34,6 +35,7 @@ class App extends React.PureComponent {
           status: AppStatus.error,
           error: args.error,
         });
+        trackError(args.error);
       }
     });
     ipcRenderer.on('on-progress', (event, args) => {
@@ -68,6 +70,7 @@ class App extends React.PureComponent {
       };
       console.log('Requesting processing', args);
       ipcRenderer.send('did-start-conversion', args);
+      trackEvent('Button Click', 'Create Video');
     });
   };
 
@@ -140,6 +143,10 @@ class App extends React.PureComponent {
         </div>
       </div>
     );
+  }
+
+  componentDidMount() {
+    trackScreenview('Home');
   }
 }
 

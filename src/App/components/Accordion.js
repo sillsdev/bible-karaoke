@@ -11,6 +11,7 @@ import {
 } from '@blueprintjs/core';
 import ActionButton from './ActionButton';
 import './Accordion.scss';
+import { trackEvent } from '../analytics';
 
 @inject('store')
 @observer
@@ -22,14 +23,23 @@ class Accordion extends React.PureComponent {
     };
   }
 
+  trackCardview(index) {
+    const { cards } = this.props;
+    if (index !== null) {
+      trackEvent('Card View', cards[index].title);
+    }
+  }
+
   selectCard = cardIndex => {
     this.setState({ currentCardIndex: cardIndex });
+    this.trackCardview(cardIndex);
   };
 
   onNext = index => {
     const { cards } = this.props;
     const nextIndex = index < cards.length - 1 ? index + 1 : null;
     this.setState({ currentCardIndex: nextIndex });
+    this.trackCardview(nextIndex);
   };
 
   render() {
@@ -79,6 +89,9 @@ class Accordion extends React.PureComponent {
         ))}
       </div>
     );
+  }
+  componentDidMount() {
+    this.trackCardview(0);
   }
 }
 
