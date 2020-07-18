@@ -1,9 +1,8 @@
 const bbkConvert = require('./cli/lib/commands/convert').run;
-const fs = require("fs");
+const bbkCombine = require('./cli/lib/commands/combine').run;
 const process = require('process');
 const path = require('path');
 const tempy = require("tempy");
-const shell = require("shelljs");
 const { setupFfmpeg } = require('./ffmpeg');
 
 const FFMPEG_EXE = process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
@@ -24,6 +23,11 @@ async function execute({
   try {
     let ffmpegFolder = await setupFfmpeg();
     const ffmpegPath = path.join(ffmpegFolder, FFMPEG_EXE);
+
+    // hearThisFolder = [
+    //   "/home/pong/hearThisProjects/ENT/Colossians/1",
+    //   "/home/pong/hearThisProjects/ENT/Colossians/2"
+    // ];
 
     // Convert to an array
     if (hearThisFolder && !Array.isArray(hearThisFolder)) {
@@ -63,18 +67,10 @@ async function execute({
     });
 
     // Combine video clips
-    tasks.push(() => {
-      return new Promise((resolve, reject) => {
-        let listFile = path.join(tempy.directory(), "outputList.txt");
-        fs.writeFileSync(listFile, fileList.map((f) => `file '${f}'`).join("\n"));
-        shell.exec(
-            `ffmpeg -f concat -safe 0 -i "${listFile}" -c copy "${output}"`,
-            (err) => {
-                err ? reject(err) : resolve();
-            }
-          );
-      });
-    });
+    tasks.push(async () => await bbkCombine({
+      fileList,
+      output
+    }));
 
     // Execute tasks sequentially
     await tasks.reduce((p, fn) => p.then(fn), Promise.resolve());
