@@ -3,18 +3,18 @@ const analytics =  new Analytics('UA-22170471-17');
 const isDev = require('electron-is-dev');
 
 export async function trackScreenview (screenName) {
-  const params = {cd: screenName}
+  const params = {cd: screenName};
    if (isDev) {
-    console.log('Analytics Screenview: ' + JSON.stringify(params));
+     console.log('Analytics Screenview: ' + JSON.stringify(params));
    } else {
      await analytics.send('screenview',params);
    }
 };
 
 export async function trackEvent (category, action, label = '', value = 0) {
-  const params = {ec: category, ea: action, el: label, ev: value}
+  const params = {ec: category, ea: action, el: label, ev: value};
   if (isDev) {
-  console.log('Analytics Event: ' + JSON.stringify(params));
+    console.log('Analytics Event: ' + JSON.stringify(params));
   } else {
     await analytics.send('event', params);
   }
