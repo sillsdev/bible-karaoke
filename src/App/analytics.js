@@ -1,6 +1,7 @@
 import Analytics from 'electron-ga';
 const analytics =  new Analytics('UA-22170471-17');
-const isDev = require('electron-is-dev');
+const isDev = true;
+// const isDev = require('electron-is-dev');
 
 export async function trackScreenview (screenName) {
   const params = {cd: screenName};
