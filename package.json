@@ -34,7 +34,7 @@
     "react": "^16.13.1",
     "react-color": "^2.18.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
+    "react-scripts": "^3.4.3",
     "readdir-sorted": "^3.0.0",
     "shelljs": "^0.8.4",
     "tempy": "^0.3.0",
