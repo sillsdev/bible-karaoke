@@ -1,5 +1,6 @@
 import Analytics from 'electron-ga';
 const analytics =  new Analytics('UA-22170471-17');
+//Analytics Disabled awaiting UI Chnages to comply with GA Policy
 const isDev = true;
 // const isDev = require('electron-is-dev');
 
