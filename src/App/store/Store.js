@@ -132,6 +132,25 @@ class Store {
   @action.bound
   getBackground() {
     if (localStorage.background) {
+      var background = JSON.parse(localStorage.background);
+      // check to see if we set the file attribute
+      if (typeof background["file"] !== "undefined") {
+        // check to see if the file attribute isn't an empty string
+        var setBgToColor = {
+          type: 'color'
+        }
+        if (background.file.length) {
+          // check to see if referenced background file is available
+          var fileExists = fs.existsSync(background.file);
+          if (!fileExists) {
+            // if not set background to color
+            localStorage.background = JSON.stringify(setBgToColor);
+          }
+        } else {
+          // if background settings reference an empty string as the file reset to use color
+          localStorage.background = JSON.stringify(setBgToColor);
+        }        
+      }
       this.setBackground(JSON.parse(localStorage.background));
     }
   }
@@ -150,6 +169,7 @@ class Store {
       }
     } else {
       this.background.imageSrc = '';
+      this.background.color = "#000";
       this.background.type = 'color';
     }
     this.saveLocalProperties("background", background);
