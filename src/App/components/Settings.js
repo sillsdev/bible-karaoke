@@ -15,7 +15,6 @@ import {
 } from '../store/Settings';
 import FileSelector from './FileSelector';
 import './Settings.scss';
-import { useAnalytics } from './Analytics';
 
 const descriptionTextClass = classnames(Classes.TEXT_SMALL, Classes.TEXT_MUTED);
 

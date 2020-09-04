@@ -1,4 +1,4 @@
-import GoogleAnalytics from 'electron-ga-uuid';
+import GoogleAnalytics, { resetClientId } from 'electron-ga-uuid';
 import { reaction } from 'mobx';
 
 const DEV_TRACK_ID = 'UA-169320344-1';
@@ -7,11 +7,12 @@ const isDev = require('electron-is-dev');
 
 class GA {
   constructor() {
+    console.log('constructed');
     this.ga = new GoogleAnalytics(isDev ? DEV_TRACK_ID : TRACK_ID);
   }
 
   resetClientId () {
-    this.ga.resetClientId();
+    resetClientId();
   }
 
   async trackScreenview (screenName) {
@@ -43,7 +44,7 @@ class DebugGA {
 
   async trackEvent (category, action, label = '', value = 0) {
     const params = {ec: category, ea: action, el: label, ev: value};
-    await this.ga.send('event', params);
+    console.log('event', params);
   }
 
   async trackError (error, fatal = 1) {
@@ -55,7 +56,7 @@ class DebugGA {
 class Analytics {
   constructor(settings) {
     const updateProxy = (enableAnalytics) => {
-      const isEnabled = !isDev && enableAnalytics;
+      const isEnabled =  true//!isDev && enableAnalytics;
       this.proxy = isEnabled ? new GA() : new DebugGA();
     }
     updateProxy(settings.enableAnalytics);
