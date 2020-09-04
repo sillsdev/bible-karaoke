@@ -5,6 +5,11 @@ export const PROJECT_TYPE = {
   scriptureAppBuilder: 'scriptureAppBuilder'
 };
 
+export const TEXT_LOCATION = {
+  subtitle: 'subtitle',
+  center: 'center',
+};
+
 const allFiles = {
   name: 'All files',
   extensions: ['*'],

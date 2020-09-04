@@ -4,11 +4,13 @@ import styled from 'styled-components';
 import { Flex, Box } from 'reflexbox';
 import { useObserver } from 'mobx-react';
 import { useStores } from '../store';
+import { TEXT_LOCATION } from '../constants';
 import {
   BackgroundEditor,
   FontEditor,
   SpeechBubbleEditor,
 } from './Editors';
+import TextLocationToggle from './TextLocationToggle';
 
 const PREVIEW_WIDTH = '720px';
 const PREVIEW_HEIGHT = '480px';
@@ -132,10 +134,10 @@ const Preview = () => {
     };
     let file = "file:"+background.file;
     const versesClassName = classnames({
-      subtitle: textLocation.location === 'subtitle'
+      subtitle: textLocation.location === TEXT_LOCATION.subtitle
     });
     const getVerseClassName = (index) => classnames({
-      hide: textLocation.location === "subtitle" && index !== HIGHLIGHT_VERSE_INDEX
+      hide: textLocation.location === TEXT_LOCATION.subtitle && index !== HIGHLIGHT_VERSE_INDEX
     });
 
     return (
@@ -151,6 +153,7 @@ const Preview = () => {
             >
               {index === HIGHLIGHT_VERSE_INDEX && (
                 <React.Fragment>
+                  <TextLocationToggle top="calc(50% - 15px)" right="-35px" />
                   <FontEditor mr={2} top="-8px" right="24px" />
                   <SpeechBubbleEditor top="-8px" right="4px" />
                   <SpeechBubbleBackground style={styles.speechBubble} />

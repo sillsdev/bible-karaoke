@@ -7,6 +7,7 @@ import sortBy from 'lodash/sortBy';
 import filter from 'lodash/filter';
 import values from 'lodash/values';
 import reduce from 'lodash/reduce';
+import { TEXT_LOCATION } from '../constants';
 
 const { ipcRenderer, remote } = window.require('electron');
 var fs = remote.require('fs');
@@ -245,7 +246,7 @@ class AppState {
   @persist('object')
   @observable
   textLocation = {
-    location: 'subtitle'
+    location: TEXT_LOCATION.subtitle
   };
 
   @persist('object')
