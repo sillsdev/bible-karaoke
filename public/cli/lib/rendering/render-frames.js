@@ -36,7 +36,7 @@ const _ = require("lodash");
 // we are using the workerpool library to create workers on other threads/processes that
 // can perform the rendering.
 const workerpool = require('workerpool');
-const pool = workerpool.pool(__dirname + '/record-frames.js', { workerType: "thread"});
+const pool = workerpool.pool(__dirname + '/record-frames.js', { workerType: "auto"});
 
 const os = require('os')
 var cpuCount = os.cpus().length-1;
@@ -48,12 +48,29 @@ if (cpuCount < 1) cpuCount = 1;
 // NOTE: it seems that workerpool will only create cpuCount - 1 workers to run at a time.
 // so we use (# cpus -1) workers to ensure the WHOLE # frames are done in parallel.
 
+/**
+ *
+ * @param timingFilePath
+ * @param bgType
+ * @param bgFilePath
+ * @param bgColor
+ * @param font
+ * @param fontColor
+ * @param fontSize
+ * @param fontItalic
+ * @param fontBold
+ * @param highlightColor
+ * @param speechBubbleColor
+ * @param speechBubbleOpacity
+ * @param notifyEvent
+ * @returns {Promise<string>}
+ */
 async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity, notifyEvent) {
     let timingObj = require(timingFilePath);
     let duration = timingObj[timingObj.length - 1].end / 1000;
     let fps = 15;
     // let ffmpegLocation = await setupFfmpeg();
-    let htmlContent = await getHtmlPage(timingFilePath, textLocation, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity);
+    let htmlContent = await getHtmlPage(timingObj, textLocation, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity);
 
     let outputLocation = tempy.directory();
 
@@ -132,19 +149,21 @@ async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor,
     await Promise.all(allRecords)
     .then(()=>{
         return pool.terminate();
-    });
+    }).catch(e => {
+        console.error(e);
+        return pool.terminate();
+        });
     clearInterval(watchInterval);
 
     // report back the outputLocation
     return outputLocation;
 }
 
-async function getHtmlPage(timingFilePath, textLocation, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity) {
-    // console.log("textLocation: ", textLocation);
+async function getHtmlPage(timingObj, textLocation, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity) {
     let htmlContent = fs.readFileSync(path.join(__dirname, "render.html"), {
         encoding: "utf-8"
     });
-    let timings = JSON.stringify(require(timingFilePath), null, 4); // fs.readFileSync(timingFilePath, { encoding: "utf-8" });
+    let timings = JSON.stringify(timingObj, null, 4); // fs.readFileSync(timingFilePath, { encoding: "utf-8" });
     let backgroundDataUri = null;
     if (bgFilePath && bgType == "image") {
         backgroundDataUri = await DataURI(bgFilePath);

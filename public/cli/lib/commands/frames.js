@@ -9,10 +9,22 @@ var EventEmitter = require("events");
 var fs = require("fs");
 var path = require("path");
 var ProgressBar = require("progress");
-var { render } = require("../rendering/render-frames.js");
+var {render} = require("../rendering/render-frames.js");
 var shell = require("shelljs");
 var utils = require(path.join(__dirname, "..", "utils", "utils"));
+/**
+ * @typedef {{
+ *      Log: function,
+ *      inputJSON: string,
+ *      bgFile: string,
+ *      bgType: ('color'|'image'),
+ *      bgColor: string,
+ *      output: string,
+ *      onProgress: function
+ * }} FramesOptions
+ */
 
+/** @type {FramesOptions} */
 var Options = {}; // the running options for this command.
 var pathFramesFolder = null; // the path to the folder where the frames are generated.
 var lastCurrentFrame = 0;
@@ -34,7 +46,7 @@ var Command = new utils.Resource({
 
 module.exports = Command;
 
-Command.help = function() {
+Command.help = function () {
     console.log(`
 
   usage: $ bbk frames --inputJSON=[bbkFormat.js] --bgFile=[path/to/image.png] --fontFamily=[name of font family] --output=[path/to/output/folder]
@@ -61,7 +73,11 @@ Command.help = function() {
 `);
 };
 
-Command.run = function(options) {
+/**
+ * @param {FramesOptions} options
+ * @returns {Promise<string>}
+ */
+Command.run = function (options) {
     return new Promise((resolve, reject) => {
         async.series(
             [
@@ -174,7 +190,7 @@ function callRender(done) {
 
 /**
  * @function calculateRemainTime
- * 
+ *
  * @param {number} currFrame
  * @param {number} totalFrame
  * @return {string}
@@ -204,7 +220,7 @@ function calculateRemainTime(currFrame, totalFrame) {
 
         if (seconds < 1)
             result = "";
-        else if (seconds < 60) 
+        else if (seconds < 60)
             result = `${seconds} second${seconds > 1 ? 's' : ''}`;
         else if (minutes == 1)
             result = `1 minute ${seconds - 60} seconds`;
