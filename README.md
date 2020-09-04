@@ -1,10 +1,10 @@
 # Bible Karaoke
 
-Create 'karaoke-style' videos of Bible passages to help users become comfortable at reading the Bible in another language.
+Create 'karaoke-style' videos of Bible passages to help users become comfortable at reading the Bible in their own language.
 
 ## Users
 
-Head on over to [biblek.info](http://biblek.info) to get started.
+Head on over to [biblek.info](http://biblek.info) to download and get started.
 
 ## Developers
 
@@ -48,3 +48,20 @@ Releasing
     * a *Tag version*, e.g. `v0.3.4`.
     * the installer artifact from GitHub **Actions** tab as Assets (attached binary)
     * a copy of the change log
+
+## Test Data
+
+Developers can download test data (permission must be granted by an admin) from Google Drive
+```
+https://drive.google.com/drive/u/1/folders/1rTCkMPA3ZoOn6dXhJHuYTn6QdAKfBj0X
+```
+For Windows,
+
+SAB projects are assumed to be located in this folder:
+```
+Documents\App Builder\Scripture Apps\App Projects\
+```
+HearThis projects are assumed to be located in this folder:
+```
+C:\ProgramData\SIL\HearThis\
+```
