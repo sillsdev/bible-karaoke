@@ -40,10 +40,6 @@ class Settings {
   @observable
   enableAnalytics = false;
 
-  @persist
-  @observable
-  analyticsTrackingId = 'UA-22170471-17';
-
   @computed({ keepAlive: true })
   get rootDirectories() {
     return {
@@ -65,11 +61,6 @@ class Settings {
   @action.bound
   setEnableAnalytics(enableAnalytics) {
     this.enableAnalytics = enableAnalytics;
-  }
-  
-  @action.bound
-  setAnalyticsTrackingId(analyticsTrackingId) {
-    this.analyticsTrackingId = analyticsTrackingId;
   }
 }
 
