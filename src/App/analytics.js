@@ -55,7 +55,7 @@ class DebugGA {
 class Analytics {
   constructor(settings) {
     const updateProxy = (enableAnalytics) => {
-      const isEnabled =  !isDev && enableAnalytics;
+      const isEnabled = !isDev && enableAnalytics;
       this.proxy = isEnabled ? new GA() : new DebugGA();
     }
     updateProxy(settings.enableAnalytics);
