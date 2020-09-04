@@ -10,7 +10,7 @@ module.exports = {
 };
 
 async function execute({
-  hearThisFolder,
+  sourceDirectory,
   textLocation,
   background,
   text,
@@ -20,15 +20,10 @@ async function execute({
   onProgress,
 }) {
   try {
-hearThisFolder = [
-  "/home/pong/hearThisProjects/ENT/Colossians/2",
-  "/home/pong/hearThisProjects/KYU/Exodus/1"
-]
-
     let ffmpegFolder = await setupFfmpeg();
     const ffmpegPath = path.join(ffmpegFolder, FFMPEG_EXE);
     await bbkConvert({
-      _: hearThisFolder,
+      _: sourceDirectory,
       // combineOutput,
       combineOutput: true, // TODO: please set combineOutput flag value here
       output,
@@ -61,7 +56,7 @@ hearThisFolder = [
 //     };
 //     try {
 //         const executeArgs = {
-//           hearThisFolder: 'C:\\ProgramData\\SIL\\HearThis\\ENT\\Mark\\1',
+//           sourceDirectory: 'C:\\ProgramData\\SIL\\HearThis\\ENT\\Mark\\1',
 //           backgroundFile: 'C:\\DigiServe\\bible-karaoke\\cross-blog_orig.jpg',
 //           backgroundColor: '',
 //           speechBubbleColor: 'white',
