@@ -20,6 +20,11 @@ async function execute({
   onProgress,
 }) {
   try {
+hearThisFolder = [
+  "/home/pong/hearThisProjects/ENT/Colossians/2",
+  "/home/pong/hearThisProjects/KYU/Exodus/1"
+]
+
     let ffmpegFolder = await setupFfmpeg();
     const ffmpegPath = path.join(ffmpegFolder, FFMPEG_EXE);
     await bbkConvert({

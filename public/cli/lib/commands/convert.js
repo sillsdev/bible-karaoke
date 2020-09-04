@@ -429,6 +429,7 @@ function removeOutputFile(done) {
 function execute(done) {
     let tasks = [];
     let outputFiles = [];
+    let outputListFile;
 
     (Options.pathFolders || []).forEach((pathToInfo, index) => {
         let pathBBKFile = tempy.file({ name: `bbkFormat-${index}.js` });
@@ -519,8 +520,6 @@ function execute(done) {
     });
 
     if (Options.combineOutput) {
-        let outputListFile;
-
         // Prepare a video list file to combine
         tasks.push(() => new Promise((next, fail) => {
             outputListFile = path.join(tempy.directory(), "outputList.txt");
@@ -549,12 +548,37 @@ function execute(done) {
         }));
     }
 
+    // Clean up at the last step after finished (or upon failure)
+    let cleanUp = () => {
+        let cleanUpTasks = [];
+
+        // delete outputListFile file
+        cleanUpTasks.push(new Promise((next, fail) => {
+            fs.unlink(outputListFile, (err) => {
+                err ? fail(err) : next();
+            });
+        }));
+
+        /// delete intermediate output files after combining them
+        (outputFiles || []).forEach((f) => {
+            cleanUpTasks.push(new Promise((next, fail) => {
+                fs.unlink(f, (err) => {
+                    err ? fail(err) : next();
+                });
+            }));
+        });
+
+        return Promise.all(cleanUpTasks);
+    }
+
     // Execute tasks sequentially
     tasks.reduce((p, fn) => p.then(fn), Promise.resolve())
         .then(() => {
+            cleanUp();
             done();
         })
         .catch((err) => {
+            cleanUp();
             done(err);
         });
 }
