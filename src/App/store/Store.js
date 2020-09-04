@@ -1,14 +1,14 @@
 import { observable, computed, action } from 'mobx';
 import every from 'lodash/every';
 const { ipcRenderer, remote } = window.require('electron');
-var fs = remote.require('fs');
+const fs = remote.require('fs');
 
 const SAMPLE_VERSES = [
-  "In the beginning, God created the heavens and the earth.",
-  "The earth was without form and void, and darkness was over the face of the deep. And the Spirit of God was hovering over the face of the waters.",
-  "And God said, \"Let there be light,\" and there was light.",
-  "And God saw that the light was good. And God separated the light from the darkness.",
-  "God called the light Day, and the darkness he called Night. And there was evening and there was morning, the first day.",
+  'In the beginning, God created the heavens and the earth.',
+  'The earth was without form and void, and darkness was over the face of the deep. And the Spirit of God was hovering over the face of the waters.',
+  'And God said, "Let there be light," and there was light.',
+  'And God saw that the light was good. And God separated the light from the darkness.',
+  'God called the light Day, and the darkness he called Night. And there was evening and there was morning, the first day.',
 ];
 
 class Store {
@@ -126,12 +126,31 @@ class Store {
   @action.bound
   setTextLocation(textLocationProps) {
     this.textLocation = {...this.textLocation, ...textLocationProps};
-    this.saveLocalProperties("textLocation", textLocationProps);
+    this.saveLocalProperties('textLocation', textLocationProps);
   }
 
   @action.bound
   getBackground() {
     if (localStorage.background) {
+      const background = JSON.parse(localStorage.background);
+      // check to see if we set the file attribute
+      if (typeof background['file'] !== 'undefined') {
+        // check to see if the file attribute isn't an empty string
+        const setBgToColor = {
+          type: 'color'
+        }
+        if (background.file.length) {
+          // check to see if referenced background file is available
+          const fileExists = fs.existsSync(background.file);
+          if (!fileExists) {
+            // if not set background to color
+            localStorage.background = JSON.stringify(setBgToColor);
+          }
+        } else {
+          // if background settings reference an empty string as the file then reset to use color
+          localStorage.background = JSON.stringify(setBgToColor);
+        }        
+      }
       this.setBackground(JSON.parse(localStorage.background));
     }
   }
@@ -150,9 +169,10 @@ class Store {
       }
     } else {
       this.background.imageSrc = '';
+      this.background.color = '#000';
       this.background.type = 'color';
     }
-    this.saveLocalProperties("background", background);
+    this.saveLocalProperties('background', background);
   }
   
   @action.bound
@@ -165,12 +185,12 @@ class Store {
   @action.bound
   setTextProps(textProps) {
     this.text = {...this.text, ...textProps};
-    this.saveLocalProperties("text", textProps);
+    this.saveLocalProperties('text', textProps);
   }
   
   @action.bound
   saveLocalProperties(object, properties) {
-    var localObject = JSON.parse(localStorage[object] || "{}");
+    const localObject = JSON.parse(localStorage[object] || '{}');
     Object.keys(properties).forEach((atr)=>{
       localObject[atr] = properties[atr];
     })
@@ -187,7 +207,7 @@ class Store {
   @action.bound
   setSpeechBubbleProps(speechBubbleProps) {
     this.speechBubble = {...this.speechBubble, ...speechBubbleProps};
-    this.saveLocalProperties("speechBubble", speechBubbleProps);
+    this.saveLocalProperties('speechBubble', speechBubbleProps);
   }
   
   @action.bound
