@@ -6,6 +6,7 @@ import { Intent } from '@blueprintjs/core';
 import { Flex } from 'reflexbox';
 import { useStores } from '../store';
 import { Button, Text, Icon } from '../blueprint';
+import { useAnalytics } from './Analytics';
 
 const ActionButton = styled(Button).attrs({
   p: 4, m: 3
@@ -37,9 +38,11 @@ const TextWrapper = styled(Flex).attrs({
 
 export default function Actions() {
   const { appState } = useStores();
+  const { analytics } = useAnalytics();
 
-  const onGenerateVideo = React.useCallback((combined) => {
+  const onGenerateVideo = React.useCallback((combined, videos = 1) => {
     appState.generateVideo(combined)
+    analytics.trackEvent('Video', 'Create Video', combined ? 'Single' : 'Multiple', videos);
   }, [ appState ]);
 
   return useObserver(() => {
@@ -51,7 +54,7 @@ export default function Actions() {
       <Flex alignItems="center" justifyContent="center" flexDirection="column">
         <ActionButton
           disabled={totalChapterCount === 1}
-          onClick={() => onGenerateVideo(false)} 
+          onClick={() => onGenerateVideo(false, totalChapterCount)}
         >
           <ButtonContent>
             <ActionIcon icon="applications" />

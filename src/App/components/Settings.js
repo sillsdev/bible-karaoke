@@ -8,7 +8,8 @@ import { useObserver } from 'mobx-react';
 import { repository } from '../../../package.json';
 import { H5, Colors, Text, Card, Button, Checkbox } from '../blueprint';
 import { useStores } from '../store';
-import { 
+import { useAnalytics } from './Analytics';
+import {
   getDefaultHearThisDirectory,
   getDefaultScriptureAppBuilderDirectory
 } from '../store/Settings';
@@ -70,7 +71,11 @@ const DirectoriesCard = ({name, directories, onSetDirectories, defaultDirectory}
 
 export default function Settings() {
   const { settings } = useStores()
+  const { analytics } = useAnalytics()
   const repoUrl = repository.url.replace(/\.git$/, '')
+  React.useEffect(() => {
+    analytics.trackScreenview('Settings');
+  }, [])
   return useObserver(() => (
     <Flex
       backgroundColor={Colors.background2}

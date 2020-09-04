@@ -10,6 +10,7 @@ import ChapterSelector from './components/ChapterSelector';
 import Preview from './components/Preview';
 import Actions from './components/Actions';
 import { useStores } from './store';
+import { useAnalytics } from './components/Analytics';
 import './index.scss';
 const { ipcRenderer } = window.require('electron');
 
@@ -19,10 +20,15 @@ const AppWrapper = styled(Flex) `
 
 export default function App() {
   const { settings } = useStores()
+  const { analytics } = useAnalytics()
 
   React.useEffect(() => {
     ipcRenderer.send('did-start-getprojectstructure', settings.rootDirectories);
   }, [settings.rootDirectories])
+
+  React.useEffect(() => {
+    analytics.trackScreenview('Home');
+  },[]);
 
   return useObserver(() => (
     <AppWrapper
