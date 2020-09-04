@@ -1,155 +1,55 @@
 import React from 'react';
-import { inject, observer } from 'mobx-react';
-import { Intent, H1, H6, Classes, Callout, ProgressBar } from '@blueprintjs/core';
-import { version } from '../../package.json';
-import Accordion from './components/Accordion';
-import { cards } from './components/cards';
-import ActionButton from './components/ActionButton';
+import { useObserver } from 'mobx-react';
+import styled from 'styled-components';
+import { Classes } from '@blueprintjs/core';
+import { Flex } from 'reflexbox';
+import { Colors } from './blueprint';
+import AppHeader from './components/AppHeader';
+import BookSelector from './components/BookSelector';
+import ChapterSelector from './components/ChapterSelector';
+import Preview from './components/Preview';
+import Actions from './components/Actions';
+import { useStores } from './store';
 import './index.scss';
-import { trackScreenview, trackEvent, trackError } from './analytics';
 const { ipcRenderer } = window.require('electron');
 
-const AppStatus = {
-  configuring: 'configuring',
-  processing: 'processing',
-  done: 'done',
-  error: 'error',
-};
+const AppWrapper = styled(Flex) `
+  position: relative;
+`
 
-@inject('store')
-@observer
-class App extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      status: AppStatus.configuring,
-      progress: undefined,
-      error: undefined,
-    };
-    ipcRenderer.on('did-finish-conversion', (event, args) => {
-      console.log('Received result', args);
-      if (args.outputFile) {
-        this.setState({ status: AppStatus.done });
-      } else {
-        this.setState({
-          status: AppStatus.error,
-          error: args.error,
-        });
-        trackError(args.error);
-      }
-    });
-    ipcRenderer.on('on-progress', (event, args) => {
-      this.setState({ progress: args });
-    });
-  }
+export default function App() {
+  const { settings } = useStores()
 
-  reset = () => {
-    this.setState({
-      status: AppStatus.configuring,
-      progress: undefined,
-      error: undefined,
-    });
-  };
+  React.useEffect(() => {
+    ipcRenderer.send('did-start-getprojectstructure', settings.rootDirectories);
+  }, [settings.rootDirectories])
 
-  openOutputFolder = () => {
-    const { outputFile } = this.props.store;
-    ipcRenderer.send('open-output-folder', outputFile);
-    this.reset();
-  };
-
-  onStart = () => {
-    this.setState({ status: AppStatus.processing }, () => {
-      const { hearThisFolder, textLocation, background, text, speechBubble, outputFile } = this.props.store;
-      const args = {
-        hearThisFolder,
-        textLocation,
-        background,
-        text,
-        speechBubble,
-        output: outputFile,
-      };
-      // IPC arguments cannot be objects, but Store returns value objects
-      const structuredArgs = JSON.parse(JSON.stringify(args));
-      console.log('Requesting processing', structuredArgs);
-      ipcRenderer.send('did-start-conversion', structuredArgs);
-      trackEvent('Button Click', 'Create Video');
-    });
-  };
-
-  renderProgress() {
-    const { progress } = this.state;
-    return (
-      <div  className="app__footer-progress">
-        <p>{progress ? progress.status : 'Getting things started...'}</p>
-        <ProgressBar intent={Intent.PRIMARY} value={progress ? progress.percent/100 : 0} />
-      </div>
-    );
-  }
-
-  renderFooter() {
-    const {
-      store: { allValidInputs },
-    } = this.props;
-    const { error, status } = this.state;
-    switch(status) {
-      case AppStatus.done:
-        return (
-          <div className="app__footer-success">
-            <p className={Classes.TEXT_LARGE}>Your Bible Karaoke video has been created!</p>
-            <ActionButton
-              large
-              intent={Intent.PRIMARY}
-              text='Open output folder'
-              onClick={this.openOutputFolder}
-            />
-            <ActionButton large onClick={this.reset} text='Make another video...' />
-          </div>
-        );
-      case AppStatus.error:
-        return (
-          <div className="app__footer-wrapper">
-            {this.renderProgress()}
-            <Callout title='Uh-oh!' intent={Intent.DANGER}>
-              <p>Looks like something went wrong.</p>
-              <H6>Details</H6>
-              <p className={Classes.TEXT_MUTED}>{error.message}</p>
-              <p className={Classes.TEXT_MUTED}>{error.stack}</p>
-              <ActionButton onClick={this.reset} text='OK' />
-            </Callout>
-          </div>
-        );
-      case AppStatus.processing:
-        return this.renderProgress();
-      case AppStatus.configuring:
-      default:
-        return (
-          <ActionButton
-            large
-            intent={Intent.PRIMARY}
-            disabled={!allValidInputs}
-            text='Make my video!'
-            onClick={this.onStart}
-          />
-        );
-    }
-  }
-
-  render() {
-    return (
-      <div className='app bp3-dark'>
-        <div className='app__container'>
-          <H1>Bible Karaoke</H1>
-          <div className="app__info">Version {version}</div>
-          <Accordion cards={cards} />
-          <div className='app__footer'>{this.renderFooter()}</div>
-        </div>
-      </div>
-    );
-  }
-
-  componentDidMount() {
-    trackScreenview('Home');
-  }
+  return useObserver(() => (
+    <AppWrapper
+      backgroundColor={Colors.background3}
+      height="100%"
+      className={Classes.DARK}
+      flexDirection="column"
+    >
+      <AppHeader />
+      <Flex flex={1} flexDirection="column">
+        <Flex flex={1}>
+          <Flex p={3} flex={1} maxWidth="50%">
+            <BookSelector flex={1} />
+          </Flex>
+          <Flex p={3} flex={1} maxWidth="50%">
+            <ChapterSelector flex={1} />
+          </Flex>
+        </Flex>
+        <Flex flex={1}>
+          <Flex p={3} flex={1} maxWidth="50%">
+            <Preview />
+          </Flex>
+          <Flex p={3} flex={1} maxWidth="50%" alignItems="center" justifyContent="center">
+            <Actions />
+          </Flex>
+        </Flex>
+      </Flex>
+    </AppWrapper>
+  ))
 }
-
-export default App;

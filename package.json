@@ -1,6 +1,10 @@
 {
   "name": "bible-karaoke",
   "description": "Create 'karaoke-style' videos of Bible passages to help users become comfortable at reading the Bible in another language.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sillsdev/bible-karaoke.git"
+  },
   "author": {
     "name": "DigiServe",
     "email": "info@digiserve.org",
@@ -15,6 +19,7 @@
     "async": "^3.2.0",
     "chalk": "^2.4.2",
     "chromium": "^2.1.2",
+    "classnames": "^2.2.6",
     "clear": "^0.1.0",
     "datauri": "^2.0.0",
     "date-fns": "^2.15.0",
@@ -27,6 +32,7 @@
     "lodash": "^4.17.19",
     "minimist": "^1.2.5",
     "mobx": "^5.15.4",
+    "mobx-persist": "^0.4.1",
     "mobx-react": "^6.2.2",
     "node-sass": "^4.14.1",
     "progress": "^2.0.3",
@@ -36,7 +42,10 @@
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.3",
     "readdir-sorted": "^3.0.0",
+    "reflexbox": "^4.0.6",
     "shelljs": "^0.8.4",
+    "styled-components": "^5.1.1",
+    "styled-system": "^5.1.5",
     "tempy": "^0.3.0",
     "winston": "^3.3.3",
     "xml-js": "^1.6.11"

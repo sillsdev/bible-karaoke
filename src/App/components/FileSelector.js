@@ -6,6 +6,8 @@ const { dialog } = remote;
 
 const FileSelector = ({
   save = false,
+  buttonText = 'Select',
+  buttonIcon,
   disabled = false,
   file,
   options,
@@ -22,7 +24,7 @@ const FileSelector = ({
   return (
     <div className='file-selector'>
       <div className='file-selector__button'>
-        <Button text='Select' onClick={selectFile} disabled={disabled} />
+        <Button text={buttonText} icon={buttonIcon} onClick={selectFile} disabled={disabled} />
       </div>
       <div className='file-selector__filename'>{file}</div>
     </div>
