@@ -410,7 +410,10 @@ function removeOutputFile(done) {
 }
 
 function execute(done) {
-    var pathBBKFile = tempy.file({ name: "bbkFormat.js" });
+
+    var workingDir = tempy.directory();
+    var pathBBKFile = path.join(workingDir, "bbkFormat.js");
+
     Log(`path to bbkFormat: ${pathBBKFile}`);
     Promise.resolve()
         .then(() => {
@@ -441,7 +444,8 @@ function execute(done) {
                 fontBold: Options.fontBold,
                 highlightColor: Options.highlightColor,
                 speechBubbleColor: Options.speechBubbleColor,
-                speechBubbleOpacity: Options.speechBubbleOpacity
+                speechBubbleOpacity: Options.speechBubbleOpacity,
+                framesPath: workingDir
             };
             if (Options.bgFile) {
                 opts.bgFile = Options.bgFile;
@@ -459,12 +463,13 @@ function execute(done) {
             onProgress("Rendering video frames...", 0);
             return Frames.run(opts);
         })
-        .then((pathFrames) => {
-            Log(`>> path to generated frames folder: ${pathFrames}`);
+        .then(() => {
+            
+            Log(`>> path to generated frames folder: ${workingDir}`);
 
             onProgress("Combining audio and frames into video...", 100);
             return FFMPEG.run({
-                images: pathFrames,
+                images: workingDir,
                 audio: path.dirname(Options.pathFolder),
                 skipAudioFiles,
                 output: Options.output,
@@ -474,6 +479,8 @@ function execute(done) {
             });
         })
         .then(() => {
+            Log.info("Removing working directory... ");
+            fs.rmdirSync(workingDir, {recursive: true});
             done();
         })
         .catch((err) => {

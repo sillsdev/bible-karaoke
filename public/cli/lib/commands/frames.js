@@ -14,7 +14,7 @@ var shell = require("shelljs");
 var utils = require(path.join(__dirname, "..", "utils", "utils"));
 
 var Options = {}; // the running options for this command.
-var pathFramesFolder = null; // the path to the folder where the frames are generated.
+//var pathFramesFolder = null; // the path to the folder where the frames are generated.
 var lastCurrentFrame = 0;
 var lastUpdateFrameDate = null;
 
@@ -121,7 +121,7 @@ Command.run = function(options) {
                     reject(err);
                     return;
                 }
-                resolve(pathFramesFolder);
+                resolve();
             }
         );
     });
@@ -161,10 +161,10 @@ function callRender(done) {
         }
     });
     Log("calling render with Options:", Options);
-    render(Options.inputJSON, Options.textLocation, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, Options.speechBubbleOpacity, notify)
+    render(Options.inputJSON, Options.textLocation, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, Options.speechBubbleOpacity, notify, Options.framesPath)
         .then((location) => {
             // console.log("frames location:", location);
-            pathFramesFolder = location;
+            //pathFramesFolder = Options.framesPath;
             done();
         })
         .catch(done);

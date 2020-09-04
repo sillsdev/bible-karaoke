@@ -1,7 +1,6 @@
 const { record } = require("./record-frames");
 const fs = require("fs");
 const path = require("path");
-const tempy = require("tempy");
 const DataURI = require("datauri").promise;
 
 module.exports = { render };
@@ -29,25 +28,21 @@ const fallbackVideoSrc = "";
 //     }
 // })();
 
-async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity, notifyEvent) {
+async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity, notifyEvent, framesPath) {
     let timingObj = require(timingFilePath);
     let duration = timingObj[timingObj.length - 1].end / 1000;
     let fps = 15;
-    // let ffmpegLocation = await setupFfmpeg();
     let htmlContent = await getHtmlPage(timingFilePath, textLocation, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity);
 
-    let outputLocation = tempy.directory();
-
-    // fs.writeFileSync(path.join(outputLocation, "renderedAnimation.html"), htmlContent);
+    // fs.writeFileSync(path.join(framesPath, "renderedAnimation.html"), htmlContent);
     
     // console.log(htmlContent)
 
     await record({
         browser: null, // Optional: a puppeteer Browser instance,
         page: null, // Optional: a puppeteer Page instance,
-        // ffmpeg: ffmpegLocation,
         logEachFrame: false,
-        output: outputLocation,
+        output: framesPath,
         fps,
         frames: Math.round(fps * duration), // duration in seconds at fps (15)
         prepare: async function(browser, page) {
@@ -65,7 +60,7 @@ async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor,
         },
         notify: notifyEvent
     });
-    return outputLocation;
+    return framesPath;
 }
 
 async function getHtmlPage(timingFilePath, textLocation, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity) {
