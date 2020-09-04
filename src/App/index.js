@@ -42,10 +42,10 @@ export default function App() {
           </Flex>
         </Flex>
         <Flex flex={1}>
-          <Flex p={3} flex={1} maxWidth="50%">
+          <Flex p={3} flex="0 auto">
             <Preview />
           </Flex>
-          <Flex p={3} flex={1} maxWidth="50%" alignItems="center" justifyContent="center">
+          <Flex p={3} flex={1} alignItems="center" justifyContent="center">
             <Actions />
           </Flex>
         </Flex>

@@ -6,6 +6,7 @@ import { Intent } from '@blueprintjs/core';
 import { Flex } from 'reflexbox';
 import { useStores } from '../store';
 import { Button, Text, Icon } from '../blueprint';
+import AnimatedVisibility from './AnimatedVisibility';
 
 const ActionButton = styled(Button).attrs({
   p: 4, m: 3
@@ -44,44 +45,43 @@ export default function Actions() {
 
   return useObserver(() => {
     const totalChapterCount = _.get(appState, [ 'projects', 'activeProject', 'selectedChapterCount' ], 0)
-    if (totalChapterCount === 0) {
-      return null;
-    }
     return (
-      <Flex alignItems="center" justifyContent="center" flexDirection="column">
-        <ActionButton
-          disabled={totalChapterCount === 1}
-          onClick={() => onGenerateVideo(false)} 
-        >
-          <ButtonContent>
-            <ActionIcon icon="applications" />
-            <TextWrapper>
-              <Text fontSize="200%">
-                Generate {totalChapterCount} video{totalChapterCount > 1 ? 's' : ''}
-              </Text>
-              <Text mt={2}>
-                (One video per chapter)
-              </Text>
-            </TextWrapper>
-          </ButtonContent>
-        </ActionButton>
-        <ActionButton
-          intent={Intent.PRIMARY}
-          onClick={() => onGenerateVideo(true)}
-        >
-          <ButtonContent>
-            <ActionIcon icon="application" />
-            <TextWrapper>
-              <Text fontSize="200%">
-                Generate a single video
-              </Text>
-              <Text mt={2}>
-                ({totalChapterCount} chapter{totalChapterCount > 1 ? 's' : ''})
-              </Text>
-            </TextWrapper>
-          </ButtonContent>
-        </ActionButton>
-      </Flex>
+      <AnimatedVisibility visible={totalChapterCount > 0}>
+        <Flex alignItems="center" justifyContent="center" flexDirection="column">
+          <ActionButton
+            disabled={totalChapterCount === 1}
+            onClick={() => onGenerateVideo(false)} 
+          >
+            <ButtonContent>
+              <ActionIcon icon="applications" />
+              <TextWrapper>
+                <Text fontSize="200%">
+                  Generate {totalChapterCount} video{totalChapterCount > 1 ? 's' : ''}
+                </Text>
+                <Text mt={2}>
+                  (One video per chapter)
+                </Text>
+              </TextWrapper>
+            </ButtonContent>
+          </ActionButton>
+          <ActionButton
+            intent={Intent.PRIMARY}
+            onClick={() => onGenerateVideo(true)}
+          >
+            <ButtonContent>
+              <ActionIcon icon="application" />
+              <TextWrapper>
+                <Text fontSize="200%">
+                  Generate a single video
+                </Text>
+                <Text mt={2}>
+                  ({totalChapterCount} chapter{totalChapterCount > 1 ? 's' : ''})
+                </Text>
+              </TextWrapper>
+            </ButtonContent>
+          </ActionButton>
+        </Flex>
+      </AnimatedVisibility>
     ) 
   })
 }

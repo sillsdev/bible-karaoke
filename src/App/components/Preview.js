@@ -1,6 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import styled from 'styled-components';
+import _ from 'lodash';
 import { Flex, Box } from 'reflexbox';
 import { useObserver } from 'mobx-react';
 import { useStores } from '../store';
@@ -11,6 +12,7 @@ import {
   SpeechBubbleEditor,
 } from './Editors';
 import TextLocationToggle from './TextLocationToggle';
+import AnimatedVisibility from './AnimatedVisibility';
 
 const PREVIEW_WIDTH = '720px';
 const PREVIEW_HEIGHT = '480px';
@@ -105,6 +107,7 @@ const PreviewVerse = ({ verse, highlightVerse, highlightColor }) => {
 const Preview = () => {
   const { appState } = useStores()
   return useObserver(() => {
+    const firstChapter = _.get(appState, [ 'projects', 'firstSelectedChapter' ]);
     const {
       verses,
       background,
@@ -141,33 +144,35 @@ const Preview = () => {
     });
 
     return (
-      <Background className='preview' background={background}>
-        <BackgroundEditor />
-        {background.type === 'video' && <PreviewVideo src={file} id='myVideo' /> }
-        <Verses className={versesClassName}>
-          {verses.map((verse, index) => (
-            <Verse
-              key={index}
-              className={getVerseClassName(index)}
-              style={verse.indexOf("<strong>") > -1 ? styles.heading : styles.verse}
-            >
-              {index === HIGHLIGHT_VERSE_INDEX && (
-                <React.Fragment>
-                  <TextLocationToggle top="calc(50% - 15px)" right="-35px" />
-                  <FontEditor mr={2} top="-8px" right="24px" />
-                  <SpeechBubbleEditor top="-8px" right="4px" />
-                  <SpeechBubbleBackground style={styles.speechBubble} />
-                </React.Fragment>
-              )}
-              <PreviewVerse
-                verse={verse.replace("<strong>", "").replace("</strong>", "")}
-                highlightVerse={index === HIGHLIGHT_VERSE_INDEX}
-                highlightColor={text.highlightColor}
-              />
-            </Verse>
-          ))}
-        </Verses>
-      </Background>
+      <AnimatedVisibility visible={!!firstChapter}>
+        <Background className='preview' background={background}>
+          <BackgroundEditor />
+          {background.type === 'video' && <PreviewVideo src={file} id='myVideo' /> }
+          <Verses className={versesClassName}>
+            {verses.map((verse, index) => (
+              <Verse
+                key={index}
+                className={getVerseClassName(index)}
+                style={verse.indexOf("<strong>") > -1 ? styles.heading : styles.verse}
+              >
+                {index === HIGHLIGHT_VERSE_INDEX && (
+                  <React.Fragment>
+                    <TextLocationToggle top="calc(50% - 15px)" right="-35px" />
+                    <FontEditor mr={2} top="-8px" right="24px" />
+                    <SpeechBubbleEditor top="-8px" right="4px" />
+                    <SpeechBubbleBackground style={styles.speechBubble} />
+                  </React.Fragment>
+                )}
+                <PreviewVerse
+                  verse={verse.replace("<strong>", "").replace("</strong>", "")}
+                  highlightVerse={index === HIGHLIGHT_VERSE_INDEX}
+                  highlightColor={text.highlightColor}
+                />
+              </Verse>
+            ))}
+          </Verses>
+        </Background>
+      </AnimatedVisibility>
     );
   })
 };
