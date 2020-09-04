@@ -1,15 +1,13 @@
 import { observable, computed, action } from 'mobx';
 import os from 'os';
+import path from 'path';
 import { persist } from 'mobx-persist';
-
-// HACK: These values must match the PROJECT_TYPE values in public/sources/*.js
-const HEAR_THIS_PROJECT_TYPE = 'hearThis'
-const SCRIPTURE_APP_BUILDER_PROJECT_TYPE = 'scriptureAppBuilder'
+import { PROJECT_TYPE } from '../constants';
 
 export const getDefaultHearThisDirectory = () => {
   switch (process.platform) {
     case 'win32':
-      return 'C:/ProgramData/SIL/HearThis/';
+      return 'C:\\ProgramData\\SIL\\HearThis\\';
     case 'darwin':
     default:
       return `${os.homedir()}/hearThisProjects/`;
@@ -19,7 +17,7 @@ export const getDefaultHearThisDirectory = () => {
 export const getDefaultScriptureAppBuilderDirectory = () => {
   switch (process.platform) {
     case 'win32':
-      return '%UserProfile%/Documents/App Builder/Scripture Apps/App Projects/';
+      return path.join(os.homedir(), 'Documents', 'App Builder', 'Scripture Apps', 'App Projects');
     case 'darwin':
     default:
       return `${os.homedir()}/App Builder/Scripture Apps/App Projects/`;
@@ -40,15 +38,11 @@ class Settings {
   @observable
   enableAnalytics = false;
 
-  @persist
-  @observable
-  analyticsTrackingId = 'UA-22170471-17';
-
   @computed({ keepAlive: true })
   get rootDirectories() {
     return {
-      [HEAR_THIS_PROJECT_TYPE]: this.hearThisRootDirectories.slice(),
-      [SCRIPTURE_APP_BUILDER_PROJECT_TYPE]: this.scriptureAppBuilderRootDirectories.slice()
+      [PROJECT_TYPE.hearThis]: this.hearThisRootDirectories.slice(),
+      [PROJECT_TYPE.scriptureAppBuilder]: this.scriptureAppBuilderRootDirectories.slice()
     }
   }
 
@@ -65,11 +59,6 @@ class Settings {
   @action.bound
   setEnableAnalytics(enableAnalytics) {
     this.enableAnalytics = enableAnalytics;
-  }
-  
-  @action.bound
-  setAnalyticsTrackingId(analyticsTrackingId) {
-    this.analyticsTrackingId = analyticsTrackingId;
   }
 }
 

@@ -15,6 +15,7 @@ import {
 } from '../store/Settings';
 import FileSelector from './FileSelector';
 import './Settings.scss';
+import { useAnalytics } from './Analytics';
 
 const descriptionTextClass = classnames(Classes.TEXT_SMALL, Classes.TEXT_MUTED);
 
@@ -111,6 +112,13 @@ export default function Settings() {
             settings.setEnableAnalytics(event.currentTarget.checked);
           }}
           label="Enable Google Analytics"
+        />
+        <Button
+          text="Reset tracking ID"
+          mt={2}
+          icon="reset"
+          disabled={!settings.enableAnalytics}
+          onClick={analytics.resetClientId}
         />
       </Card>
       <Text mt={3} className={descriptionTextClass} textAlign="center">
