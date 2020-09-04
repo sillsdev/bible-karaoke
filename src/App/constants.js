@@ -1,3 +1,10 @@
+
+// HACK: These values must match the PROJECT_TYPE values in public/sources/*.js
+export const PROJECT_TYPE = {
+  hearThis: 'hearThis',
+  scriptureAppBuilder: 'scriptureAppBuilder'
+};
+
 const allFiles = {
   name: 'All files',
   extensions: ['*'],
