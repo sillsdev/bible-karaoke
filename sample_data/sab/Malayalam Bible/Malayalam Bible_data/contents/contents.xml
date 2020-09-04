@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<contents>
+  <feature name="show-titles" value="true" />
+  <feature name="show-subtitles" value="true" />
+  <feature name="show-references" value="true" />
+  <feature name="show-text-size-button" value="true" />
+  <feature name="launch-action" value="contents" />
+  <feature name="navigation-type" value="up" />
+
+  <contents-items>
+  </contents-items>
+
+  <contents-screens>
+    <contents-screen id="1">
+      <title lang="default">Home</title>
+      <items>
+      </items>
+    </contents-screen>
+  </contents-screens>
+</contents>
