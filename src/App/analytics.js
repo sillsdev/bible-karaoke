@@ -1,4 +1,4 @@
-import GoogleAnalytics from 'electron-ga';
+import GoogleAnalytics from 'electron-ga-uuid';
 import { reaction } from 'mobx';
 
 const isDev = require('electron-is-dev');
@@ -29,7 +29,7 @@ class Analytics {
       console.log('Analytics Screenview: ' + JSON.stringify(params));
     }
   };
-  
+
   async trackEvent (category, action, label = '', value = 0) {
     const params = {ec: category, ea: action, el: label, ev: value};
     if (this.isEnabled) {
@@ -38,7 +38,7 @@ class Analytics {
       console.log('Analytics Event: ' + JSON.stringify(params));
     }
   }
-  
+
   async trackError (error, fatal = 1) {
     const params = {exd: error, exf:fatal};
     if (this.isEnabled) {
