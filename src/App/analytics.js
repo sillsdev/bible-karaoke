@@ -1,4 +1,4 @@
-import GoogleAnalytics from 'electron-ga';
+import GoogleAnalytics, { resetClientId } from 'electron-ga-uuid';
 import { reaction } from 'mobx';
 
 const DEV_TRACK_ID = 'UA-169320344-1';
@@ -9,43 +9,43 @@ class GA {
   constructor() {
     this.ga = new GoogleAnalytics(isDev ? DEV_TRACK_ID : TRACK_ID);
   }
-  
+
   resetClientId () {
-    this.ga.resetClientId();
+    resetClientId();
   }
 
   async trackScreenview (screenName) {
     const params = {cd: screenName};
     await this.ga.send('screenview',params);
   }
-  
+
   async trackEvent (category, action, label = '', value = 0) {
     const params = {ec: category, ea: action, el: label, ev: value};
     await this.ga.send('event', params);
   }
-  
+
   async trackError (error, fatal = 1) {
     const params = {exd: error, exf:fatal};
     await this.ga.send('exception', params);
   }
 }
 
-class DebugGA {  
-  
+class DebugGA {
+
   resetClientId () {
     console.log('Resetting Google Analytics Client ID');
   }
-  
+
   async trackScreenview (screenName) {
     const params = {cd: screenName};
     console.log('Analytics Screenview: ' + JSON.stringify(params));
   }
-  
+
   async trackEvent (category, action, label = '', value = 0) {
     const params = {ec: category, ea: action, el: label, ev: value};
-    await this.ga.send('event', params);
+    console.log('event', params);
   }
-  
+
   async trackError (error, fatal = 1) {
     const params = {exd: error, exf:fatal};
     console.log('Analytics Error: ' + JSON.stringify(params));
@@ -71,7 +71,7 @@ class Analytics {
       this[method] = (...args) => {
         this.proxy[method](...args);
       }
-    }) 
+    })
   }
 }
 
