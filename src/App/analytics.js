@@ -7,7 +7,6 @@ const isDev = require('electron-is-dev');
 
 class GA {
   constructor() {
-    console.log('constructed');
     this.ga = new GoogleAnalytics(isDev ? DEV_TRACK_ID : TRACK_ID);
   }
 
@@ -56,7 +55,7 @@ class DebugGA {
 class Analytics {
   constructor(settings) {
     const updateProxy = (enableAnalytics) => {
-      const isEnabled =  true//!isDev && enableAnalytics;
+      const isEnabled =  !isDev && enableAnalytics;
       this.proxy = isEnabled ? new GA() : new DebugGA();
     }
     updateProxy(settings.enableAnalytics);
