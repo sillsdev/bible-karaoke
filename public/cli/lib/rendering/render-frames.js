@@ -36,6 +36,7 @@ const _ = require("lodash");
 // we are using the electron-workers library to create workers on other 
 // threads/processes that can perform the rendering.
 
+
 const os = require('os')
 var cpuCount = os.cpus().length;
 if (cpuCount < 1) cpuCount = 1;
@@ -197,6 +198,7 @@ async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor,
         console.error(e);
         electronWorkers.kill();
     });
+
 
     clearInterval(watchInterval);
 
