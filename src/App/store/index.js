@@ -19,6 +19,7 @@ class Store {
   async init() {
     await hydrate('bk-appState', this.appState)
     await hydrate('bk-settings', this.settings)
+    this.appState.migrateFromLocalStorage()
   }
 }
 

@@ -1,6 +1,13 @@
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action, reaction, toJS } from 'mobx';
 import { persist } from 'mobx-persist';
+import get from 'lodash/get';
 import every from 'lodash/every';
+import some from 'lodash/some';
+import sortBy from 'lodash/sortBy';
+import filter from 'lodash/filter';
+import values from 'lodash/values';
+import reduce from 'lodash/reduce';
+
 const { ipcRenderer, remote } = window.require('electron');
 var fs = remote.require('fs');
 
@@ -12,25 +19,228 @@ const SAMPLE_VERSES = [
   "God called the light Day, and the darkness he called Night. And there was evening and there was morning, the first day.",
 ];
 
+const list = (dict, sortKey = 'name') => sortBy(values(dict), sortKey)
+
+const dict = (list, classType = null, key = 'name') => {
+  return list.reduce((items, item) => {
+    items[item[key]] = classType ? new classType(item) : item
+    return items
+  }, {})
+}
+
+class Chapter {
+  constructor({ name, fullPath }) {
+    this.name = name
+    this.fullPath = fullPath
+  }
+
+  @observable
+  isSelected = false;
+
+  @action.bound
+  setIsSelected (isSelected) {
+    this.isSelected = isSelected
+  }
+
+  @action.bound
+  toggleIsSelected () {
+    this.isSelected = !this.isSelected
+  }
+}
+
+class Book {
+  constructor({ name, chapters }) {
+    this.name = name
+    this.chapterList = chapters.map(chapter => new Chapter(chapter))
+    this.chapters = dict(this.chapterList)
+  }
+
+  @observable
+  chapters = {}
+
+  @observable
+  chapterList = []
+
+  @computed({ keepAlive: true})
+  get selectedChapters() {
+    return filter(this.chapterList, 'isSelected')
+  }
+
+  @computed({ keepAlive: true })
+  get isSelected() {
+    return some(this.chapterList, 'isSelected')
+  }
+  
+  @computed({ keepAlive: true })
+  get allSelected() {
+    return every(this.chapterList, 'isSelected')
+  }
+
+  @action.bound
+  toggleAllChapters() {
+    const isSelected = this.allSelected
+    this.chapterList.forEach(chapter => chapter.setIsSelected(!isSelected))
+  }
+
+  selectionToString() {
+    return `${this.name}_${this.selectedChapters.join('-')}`;
+  }
+}
+
+class Project {
+  constructor({ name, books }) {
+    this.name = name
+    this.bookList = books.map(book => new Book(book))
+    this.books = dict(this.bookList)
+    this.bookList.forEach(book => {
+      reaction(
+        () => book.isSelected,
+        (isSelected) => {
+          this.updateBookSelection(book.name, isSelected)
+        }
+      )
+    })
+  }
+  
+  @observable
+  books = {}
+
+  @observable
+  bookList = []
+
+  @observable
+  bookSelection = []
+
+  @observable
+  activeBookName = null
+
+  @computed({ keepAlive: true })
+  get selectedBooks() {
+    return filter(this.bookList, 'isSelected')
+  }
+
+  @computed({ keepAlive: true })
+  get selectedChapterCount() {
+    return reduce(this.selectedBooks, (count, book) => {
+      count += book.selectedChapters.length;
+      return count;
+    }, 0)
+  }
+
+  @computed({ keepAlive: true })
+  get activeBook() {
+    return get(this.books, [ this.activeBookName ])
+  }
+
+  @action.bound
+  setActiveBook(bookName) {
+    this.activeBookName = bookName
+  }
+
+  @action.bound
+  updateBookSelection(bookName, isSelected) {
+    this.bookSelection.remove(bookName)
+    if (isSelected) {
+      this.bookSelection.push(bookName)
+    }
+  }
+}
+
+class ProjectList {
+  constructor() {
+    ipcRenderer.on('did-finish-getprojectstructure', (event, projects) => {
+      this.setProjects(projects)
+    })
+  }
+
+  @observable
+  items = {}
+
+  @observable
+  activeProjectName = ''
+
+  @computed({ keepAlive: true })
+  get list() {
+    return list(this.items)
+  }
+
+  @computed({ keepAlive: true })
+  get activeProject() {
+    return this.items[this.activeProjectName]
+  }
+
+  @computed({ keepAlive: true })
+  get selectedChapters() {
+    return this.activeProject.selectedBooks.reduce((acc, book) => {
+      acc.concat(book.selectedChapters);
+      return acc;
+    }, [])
+  }
+
+  @computed({ keepAlive: true })
+  get firstSelectedChapter() {
+    return get(this, [ 'activeProject', 'selectedBooks', '0', 'selectedChapters', '0' ]);
+  }
+
+  @action.bound
+  setProjects(projectList) {
+    this.items = dict(projectList, Project)
+    if (projectList.length === 1) {
+      this.activeProjectName = projectList[0].name
+    } else if (!this.items[this.activeProjectName]) {
+      this.activeProjectName = ''
+    }
+  }
+
+  @action.bound
+  setActiveProject(projectName = '') {
+    this.activeProjectName = projectName
+    this.list.forEach(project => project.setActiveBook(null))
+  }
+}
+
 class AppState {
   constructor() {
     ipcRenderer.on('did-finish-getverses', (event, verses) => {
-      if (Array.isArray(verses)) {
+      if (Array.isArray(verses) && verses.length) {
         this.setVerses(verses);
       } else {
         console.error('Failed to set verses', verses);
       }
     });
+    reaction(() => this.projects.firstSelectedChapter,
+      (firstSelectedChapter) => {
+        if (firstSelectedChapter) {
+          ipcRenderer.send('did-start-getverses', {
+            sourceDirectory: firstSelectedChapter.fullPath,
+          });
+        } else {
+          this.setVerses(SAMPLE_VERSES);
+        }
+    })
+  }
+
+  // Temporary migration function from old localStorage persistance.
+  // See issue #76.
+  migrateFromLocalStorage() {
+    [
+      { key: 'speechBubble', setter: this.setSpeechBubbleProps },
+      { key: 'textLocation', setter: this.setTextLocation },
+      { key: 'background', setter: this.setBackground },
+      { key: 'text', setter: this.setTextProps },
+    ].forEach(({key, setter}) => {
+      if (localStorage[key]) {
+        setter(JSON.parse(localStorage[key]));
+        localStorage.removeItem(key)
+      }
+    })
   }
 
   @observable
-  sourceDirectory = '';
+  projects = new ProjectList();
 
   @observable
   verses = SAMPLE_VERSES;
-
-  @observable
-  timingFile = '';
 
   @persist('object')
   @observable
@@ -65,47 +275,16 @@ class AppState {
   @observable
   outputFile = '';
 
-  @observable
-  projects = [];
-
-  @computed
-  get defaultVideoName() {
-    if (!this.sourceDirectory) {
-      return 'bible-karaoke.mp4';
-    }
-    // Name the video by book and chapter (e.g. 'Mark2.mp4')
-    const dirs = this.sourceDirectory.split(/[/\\]/);
-    let chapter = dirs[dirs.length - 1];
-    if (chapter === '0') {
-      chapter = 'Intro';
-    }
-    return `${dirs[dirs.length - 2]} ${chapter}.mp4`;
-  }
-
-  @computed
-  get stepStatus() {
-    return [
-      !!this.sourceDirectory,
-      // !!this.timingFile,
-      (!!this.background.file || !!this.background.color) && this.text.fontFamily,
-      !!this.outputFile,
-    ];
-  }
-
-  @action.bound
-  setProjects(projects) {
-    this.projects = projects;
-    this.sourceDirectory = '';
-  }
-
-  @action.bound
-  setSourceDirectory(folder) {
-    this.sourceDirectory = folder;
-    if (folder) {
-      ipcRenderer.send('did-start-getverses', { sourceDirectory: folder });
-    } else {
-      this.setVerses(SAMPLE_VERSES);
-    }
+  getVideoName() {
+    // E.g 
+    // 'Mark_1.mp4'
+    // 'Mark_1-2-3.mp4'
+    // 'Mark_1-2_Luke_3.mp4'
+    const videoType = 'mp4';
+    const selection = this.projects.activeProject.selectedBooks.map(book => {
+      return book.selectionToString();
+    }).join('_')
+    return `${selection}.${videoType}`;
   }
 
   @action.bound
@@ -145,15 +324,6 @@ class AppState {
   setTextProps(textProps) {
     this.text = {...this.text, ...textProps};
   }
-  
-  @action.bound
-  saveLocalProperties(object, properties) {
-    var localObject = JSON.parse(localStorage[object] || "{}");
-    Object.keys(properties).forEach((atr)=>{
-      localObject[atr] = properties[atr];
-    })
-    localStorage[object] = JSON.stringify(localObject);
-  }
 
   @action.bound
   setSpeechBubbleProps(speechBubbleProps) {
@@ -165,9 +335,19 @@ class AppState {
     this.outputFile = file;
   }
 
-  @computed
-  get allValidInputs() {
-    return every(this.stepStatus, s => s);
+  @action.bound
+  generateVideo(combined) {
+    const sourceDirectory = get(this.projects, [ 'activeProject', 'selectedBooks', '0', 'selectedChapters', '0', 'fullPath' ])
+    const args = {
+      sourceDirectory,
+      textLocation: toJS(this.textLocation),
+      background: toJS(this.background),
+      text: toJS(this.text),
+      speechBubble: toJS(this.speechBubble),
+      output: this.getVideoName(),
+    };
+    console.log('Requesting processing', args);
+    ipcRenderer.send('did-start-conversion', args);
   }
 }
 

@@ -18,7 +18,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1100,
     height: 970,
-    webPreferences: { nodeIntegration: true, webSecurity: false },
+    webPreferences: { nodeIntegration: true, webSecurity: false, enableRemoteModule: true },
   });
   mainWindow.loadURL(
     isDev
@@ -27,12 +27,15 @@ function createWindow() {
   );
   if (isDev) {
     // Open the DevTools.
-    //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
+    // session.defaultSession.loadExtension('C:/Users/graha/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.8.2_0');
+    // BrowserWindow.addDevToolsExtension('C:/Users/graha/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.8.2_0');
     mainWindow.webContents.openDevTools();
   } else {
     Menu.setApplicationMenu(null);
   }
 
+  mainWindow.maximize();
+  
   mainWindow.on('closed', () => (mainWindow = null));
   mainWindow.webContents.on('will-navigate', (event, url) => {
     if (url.startsWith('http:') || url.startsWith('https:')) {
@@ -63,14 +66,15 @@ function handleGetFonts() {
 function handleGetSampleVerses() {
   ipcMain.on('did-start-getverses', async (event, args) => {
     const { sourceDirectory } = args;
+    console.log('Getting sample verses', sourceDirectory);
     const verses = getSampleVerses(sourceDirectory);
+    console.log('Got sample verses', verses);
     event.sender.send('did-finish-getverses', verses);
   });
 }
 
 function handleGetProjects() {
   ipcMain.on('did-start-getprojectstructure', async (event, rootDirectories) => {
-    console.log('Getting project structure', rootDirectories);
     const projects = flatten(
       map(rootDirectories, (directories, projectType) => {
         return sources[projectType].getProjectStructure(directories)

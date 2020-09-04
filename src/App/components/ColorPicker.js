@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { Box } from 'reflexbox';
+import { Popover } from '@blueprintjs/core';
 import { SketchPicker } from 'react-color';
-import './ColorPicker.scss';
 
 const SWATCH_COLORS = [
   '#ff3b30',
@@ -30,41 +32,34 @@ const SWATCH_COLORS = [
   '#000000'
 ];
 
-const ColorPicker = ({ value, presetColors, disableAlpha, disabled, onChange }) => {
-  const [displayColorPicker, setDisplayColorPicker] = useState(false);
+const Swatch = styled(Box).attrs({
+  width: 30,
+  height:30,
+  borderRadius: 4
+}) `
+  border: solid grey 1px;
+  ${(props) => {
+    return props.disabled 
+      ? 'cursor: not-allowed;'
+      : ''
+  }}
+`
 
-  const toggleFontColorPicker = () => {
-    setDisplayColorPicker(!displayColorPicker);
-  };
-
-  const closeFontColorPicker = () => {
-    setDisplayColorPicker(false);
-  };
-
+const ColorPicker = ({ value, presetColors, disableAlpha, disabled, onChange, ...props }) => {
   return (
-    <div className='bk-color-picker'>
-      <div
-        className={`bk-color-picker__swatch${
-          disabled ? ' bk-color-picker--disabled' : ''
-        }`}
-        onClick={disabled ? undefined : toggleFontColorPicker}
-        style={{ backgroundColor: disabled ? undefined : value }}
+    <Popover disabled={disabled}>
+      <Swatch
+        {...props}
+        bg={disabled ? undefined : value}
+        disabled={disabled}
       />
-      {!disabled && displayColorPicker ? (
-        <div className='bk-color-picker__popover'>
-          <div
-            className='bk-color-picker__cover'
-            onClick={closeFontColorPicker}
-          />
-          <SketchPicker
-            presetColors={presetColors}
-            disableAlpha={disableAlpha}
-            color={value}
-            onChange={onChange}
-          />
-        </div>
-      ) : null}
-    </div>
+        <SketchPicker
+          presetColors={presetColors}
+          disableAlpha={disableAlpha}
+          color={value}
+          onChange={onChange}
+        />
+    </Popover>
   );
 };
 
