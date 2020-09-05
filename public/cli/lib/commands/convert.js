@@ -31,6 +31,8 @@ const FFPROBE_EXE = process.platform === 'win32' ? 'ffprobe.exe' : 'ffprobe';
 
 var Options = {}; // the running options for this command.
 var skipAudioFiles =  null;  // {array} a list of audio files to NOT include
+var lastCurrentFrame = 0;
+var lastUpdateFrameDate = null;
 
 var Logger = null;  // A common logger for this run
 var Log = function(...allArgs) {
@@ -430,10 +432,14 @@ function execute(done) {
     let tasks = [];
     let outputFiles = [];
     let outputListFile;
+    let progressSection = 100 / (Options.pathFolders || []).length;
 
     (Options.pathFolders || []).forEach((pathToInfo, index) => {
         let pathBBKFile = tempy.file({ name: `bbkFormat-${index}.js` });
         Log(`path to bbkFormat: ${pathBBKFile}`);
+
+        let progressStart = progressSection * index;
+        let progressEnd = progressStart + (progressSection * (index + 1));
 
         tasks.push(() =>
             Promise.resolve()
@@ -442,7 +448,7 @@ function execute(done) {
                         pathToInfo = path.join(pathToInfo, "info.xml");
                         // Options.pathFolders = pathToInfo;
                     }
-                    onProgress("Generating timing file...", 0);
+                    onProgress("Generating timing file...", progressStart);
                     return Timings.run({
                         input: pathToInfo,
                         output: pathBBKFile,
@@ -474,12 +480,16 @@ function execute(done) {
                     }
                     opts.bgType = Options.bgType;
                     if (Options.onProgress) {
-                    opts.onProgress = onProgress;
+                        opts.onProgress = (status, currFrame, totalFrame) => {
+                            let percent = (currFrame / totalFrame) * 100;
+                            let progressCurrent = progressStart + ((percent / 100) * progressSection);
+                            onProgress(`${status}`, progressCurrent);
+                        };
                     }
                     opts.Log = Log;
                     Log("Options: ", Options);
                     Log("opt: ", opts);
-                    onProgress("Rendering video frames...", 0);
+                    onProgress("Rendering video frames...", progressStart);
                     return Frames.run(opts);
                 })
                 .then((pathFrames) => {
@@ -505,7 +515,7 @@ function execute(done) {
                         }
                     }
 
-                    onProgress("Combining audio and frames into video...", 100);
+                    onProgress("Combining audio and frames into video...", progressEnd);
                     return FFMPEG.run({
                         images: pathFrames,
                         audio: path.dirname(pathToInfo),
@@ -584,6 +594,9 @@ function execute(done) {
 }
 
 function onProgress(status, percent) {
+
+    status = `${status} ${Math.floor(percent > 100 ? 100 : percent)}%`;
+
     Options.onProgress && Options.onProgress({status, percent});
 }
 
