@@ -38,7 +38,7 @@ export default function App() {
       flexDirection="column"
     >
       <AppHeader />
-      <Flex flex={1} flexDirection="column">
+      <Flex flex={1} flexDirection="column" overflowY="auto">
         <Flex flex={1}>
           <Flex p={3} flex={1} maxWidth="50%">
             <BookSelector flex={1} />
