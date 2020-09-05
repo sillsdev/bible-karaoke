@@ -1,3 +1,5 @@
+import os from 'os';
+import path from 'path';
 
 // HACK: These values must match the PROJECT_TYPE values in public/sources/*.js
 export const PROJECT_TYPE = {
@@ -9,6 +11,8 @@ export const TEXT_LOCATION = {
   subtitle: 'subtitle',
   center: 'center',
 };
+
+export const DEFAULT_OUTPUT_DIRECTORY = path.join(os.homedir(), 'Bible Karaoke Videos');
 
 const allFiles = {
   name: 'All files',
