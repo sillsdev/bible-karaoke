@@ -1,16 +1,9 @@
 import { observable, computed, action, reaction, toJS } from 'mobx';
 import { persist } from 'mobx-persist';
-import get from 'lodash/get';
-import every from 'lodash/every';
-import some from 'lodash/some';
-import sortBy from 'lodash/sortBy';
-import filter from 'lodash/filter';
-import values from 'lodash/values';
-import reduce from 'lodash/reduce';
-import { TEXT_LOCATION } from '../constants';
+import _ from 'lodash';
+import { TEXT_LOCATION, BACKGROUND_TYPE, DEFAULT_BG_COLOR } from '../constants';
 
-const { ipcRenderer, remote } = window.require('electron');
-var fs = remote.require('fs');
+const { ipcRenderer } = window.require('electron');
 
 const SAMPLE_VERSES = [
   "In the beginning, God created the heavens and the earth.",
@@ -20,13 +13,54 @@ const SAMPLE_VERSES = [
   "God called the light Day, and the darkness he called Night. And there was evening and there was morning, the first day.",
 ];
 
-const list = (dict, sortKey = 'name') => sortBy(values(dict), sortKey)
+const list = (dict, sortKey = 'name') => _.sortBy(_.values(dict), sortKey)
 
 const dict = (list, classType = null, key = 'name') => {
   return list.reduce((items, item) => {
     items[item[key]] = classType ? new classType(item) : item
     return items
   }, {})
+}
+
+const isVideo = _.memoize((ext) => ['mpeg4', 'mp4', 'webm'].includes(ext));
+
+class Background {
+  @persist
+  @observable
+  color = DEFAULT_BG_COLOR;
+
+  @persist
+  @observable
+  file = '';
+
+  @computed
+  get type() {
+    if (!this.file) {
+      return BACKGROUND_TYPE.color;
+    }
+    const ext = this.file.split('.').pop();
+    return isVideo(ext)
+      ? BACKGROUND_TYPE.video
+      : BACKGROUND_TYPE.image;
+  }
+
+  @action.bound
+  setFile(file) {
+    this.color = '';
+    this.file = file;
+  }
+  
+  @action.bound
+  setColor(color) {
+    this.color = color;
+    this.file = '';
+  }
+
+  @action.bound
+  update({ file, color }) {
+    this.file = file;
+    this.color = color;
+  }
 }
 
 class Chapter {
@@ -64,17 +98,17 @@ class Book {
 
   @computed({ keepAlive: true})
   get selectedChapters() {
-    return filter(this.chapterList, 'isSelected')
+    return _.filter(this.chapterList, 'isSelected')
   }
 
   @computed({ keepAlive: true })
   get isSelected() {
-    return some(this.chapterList, 'isSelected')
+    return _.some(this.chapterList, 'isSelected')
   }
   
   @computed({ keepAlive: true })
   get allSelected() {
-    return every(this.chapterList, 'isSelected')
+    return _.every(this.chapterList, 'isSelected')
   }
 
   @action.bound
@@ -117,12 +151,12 @@ class Project {
 
   @computed({ keepAlive: true })
   get selectedBooks() {
-    return filter(this.bookList, 'isSelected')
+    return _.filter(this.bookList, 'isSelected')
   }
 
   @computed({ keepAlive: true })
   get selectedChapterCount() {
-    return reduce(this.selectedBooks, (count, book) => {
+    return _.reduce(this.selectedBooks, (count, book) => {
       count += book.selectedChapters.length;
       return count;
     }, 0)
@@ -130,7 +164,7 @@ class Project {
 
   @computed({ keepAlive: true })
   get activeBook() {
-    return get(this.books, [ this.activeBookName ])
+    return _.get(this.books, [ this.activeBookName ])
   }
 
   @action.bound
@@ -180,7 +214,7 @@ class ProjectList {
 
   @computed({ keepAlive: true })
   get firstSelectedChapter() {
-    return get(this, [ 'activeProject', 'selectedBooks', '0', 'selectedChapters', '0' ]);
+    return _.get(this, [ 'activeProject', 'selectedBooks', '0', 'selectedChapters', '0' ]);
   }
 
   @action.bound
@@ -227,7 +261,7 @@ class AppState {
     [
       { key: 'speechBubble', setter: this.setSpeechBubbleProps },
       { key: 'textLocation', setter: this.setTextLocation },
-      { key: 'background', setter: this.setBackground },
+      { key: 'background', setter: this.background.update },
       { key: 'text', setter: this.setTextProps },
     ].forEach(({key, setter}) => {
       if (localStorage[key]) {
@@ -246,12 +280,12 @@ class AppState {
   @persist('object')
   @observable
   textLocation = {
-    location: TEXT_LOCATION.subtitle
+    location: TEXT_LOCATION.center
   };
-
-  @persist('object')
+  
+  @persist('object', Background)
   @observable
-  background = { file: '', color: '#CCC' };
+  background = new Background();
 
   @persist('object')
   @observable
@@ -304,24 +338,6 @@ class AppState {
   }
 
   @action.bound
-  setBackground(background) {
-    this.background = background;
-    if (this.background.file) {
-      const ext = this.background.file.split('.').pop();
-      if (['mpeg4', 'mp4', 'webm'].includes(ext)) {
-        this.background.type = 'video';
-      } else {
-        this.background.type = 'image';
-        const img = fs.readFileSync(this.background.file).toString('base64');
-        this.background.imageSrc = `data:image/${ext};base64,${img}`;
-      }
-    } else {
-      this.background.imageSrc = '';
-      this.background.type = 'color';
-    }
-  }
-
-  @action.bound
   setTextProps(textProps) {
     this.text = {...this.text, ...textProps};
   }
@@ -338,11 +354,11 @@ class AppState {
 
   @action.bound
   generateVideo(combined) {
-    const sourceDirectory = get(this.projects, [ 'activeProject', 'selectedBooks', '0', 'selectedChapters', '0', 'fullPath' ])
+    const sourceDirectory = _.get(this.projects, [ 'activeProject', 'selectedBooks', '0', 'selectedChapters', '0', 'fullPath' ])
     const args = {
       sourceDirectory,
       textLocation: toJS(this.textLocation),
-      background: toJS(this.background),
+      background: _.pick(toJS(this.background), 'file', 'color', 'type'),
       text: toJS(this.text),
       speechBubble: toJS(this.speechBubble),
       output: this.getVideoName(),

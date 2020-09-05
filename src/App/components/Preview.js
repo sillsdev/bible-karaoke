@@ -1,8 +1,10 @@
 import React from 'react';
+import fs from 'fs';
 import classnames from 'classnames';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { Flex, Box } from 'reflexbox';
+import { toJS } from 'mobx';
 import { useObserver } from 'mobx-react';
 import { useStores } from '../store';
 import { TEXT_LOCATION } from '../constants';
@@ -28,12 +30,6 @@ const Background = styled(Editable) `
   transform: scale(1);
   width: ${PREVIEW_WIDTH};
   height: ${PREVIEW_HEIGHT};
-  ${({background}) => {
-    return `
-      background-color: ${background.color || 'transparent'};
-      background-image: ${background.type === 'image' ? `url(${background.imageSrc})` : ''}; 
-    `;
-  }}
 `;
 
 const PreviewVideo = styled.video.attrs({
@@ -90,6 +86,22 @@ const PreviewWord = styled.div `
 const HIGHLIGHT_VERSE_INDEX = 0;
 const HIGHLIGHT_WORD_INDEXES = [0,1,2];
 
+const getImageSrc = _.memoize((file) => {
+  if (!file) {
+    return '';
+  }
+  try {
+    const ext = file.split('.').pop();
+    if (['png', 'jpg', 'jpeg', 'gif'].includes(ext)) {
+      const img = fs.readFileSync(file).toString('base64');
+      return `url(data:image/${ext};base64,${img})`;
+    }
+  } catch(err) {
+    console.log(`Failed to load image from '${file}'`);
+  }
+  return ''
+});
+
 const PreviewVerse = ({ verse, highlightVerse, highlightColor }) => {
   return verse.split(' ').map((word, index) => {
     const isHighlighted = highlightVerse && HIGHLIGHT_WORD_INDEXES.includes(index);
@@ -116,6 +128,10 @@ const Preview = () => {
       textLocation
     } = appState
     const styles = {
+      background: {
+        backgroundColor: background.color || 'transparent',
+        backgroundImage: getImageSrc(toJS(appState.background.file)), 
+      },
       speechBubble: {
         opacity: speechBubble.opacity,
         backgroundColor: speechBubble.color || 'transparent',
@@ -145,7 +161,7 @@ const Preview = () => {
 
     return (
       <AnimatedVisibility visible={!!firstChapter}>
-        <Background className='preview' background={background}>
+        <Background className='preview' style={styles.background}>
           <BackgroundEditor />
           {background.type === 'video' && <PreviewVideo src={file} id='myVideo' /> }
           <Verses className={versesClassName}>
