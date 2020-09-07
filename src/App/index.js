@@ -28,7 +28,8 @@ export default function App() {
 
   React.useEffect(() => {
     analytics.trackScreenview('Home');
-  },[]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return useObserver(() => (
     <AppWrapper

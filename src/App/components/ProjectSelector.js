@@ -15,7 +15,7 @@ export default function ProjectSelector() {
     }
     appState.projects.setActiveProject(event.target.value)
     analytics.trackEvent('User Interaction', 'Project Loaded')
-  }, [ appState ])
+  }, [ appState, analytics ])
   return useObserver(() => {
     const projectOptions = [
       { value: '', label: 'Select a project...' },

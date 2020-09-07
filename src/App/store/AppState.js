@@ -118,7 +118,7 @@ class Book {
   }
 
   selectionToString() {
-    return `${this.name}_${this.selectedChapters.join('-')}`;
+    return `${this.name}_${this.selectedChapters.map(chapter => chapter.name).join('-')}`;
   }
 }
 
@@ -179,6 +179,19 @@ class Project {
       this.bookSelection.push(bookName)
     }
   }
+
+  selectionToJS() {
+    return {
+      name: this.name,
+      books: this.selectedBooks.map(book => ({
+        name: book.name,
+        chapters: book.selectedChapters.map(chapter => ({
+          name: chapter.name,
+          fullPath: chapter.fullPath,
+        }))
+      }))
+    };
+  }
 }
 
 class ProjectList {
@@ -234,8 +247,78 @@ class ProjectList {
   }
 }
 
-class AppState {
+class Progress {
   constructor() {
+    ipcRenderer.on('on-progress', (_, progress) => {
+      this.setProgress(progress)
+    });
+    ipcRenderer.on('did-finish-conversion', (_, args) => {
+      if (args.outputDirectory) {
+        this.finish();
+      } else {
+        this.setError(args.error);
+      }
+    });
+  }
+
+  @observable
+  percent = 0;
+
+  @observable
+  status = '';
+
+  @observable
+  error = null;
+
+  @observable
+  inProgress = false;
+
+  @observable
+  combined = false;
+
+  @action.bound
+  start(args) {
+    console.log('Requesting processing', args);
+    ipcRenderer.send('did-start-conversion', args);
+    this.combined = args.combined;
+    this.error = null;
+    this.status = 'Getting things started...';
+    this.percent = 0;
+    this.inProgress = true;
+  }
+
+  @action.bound
+  reset() {
+    this.error = null;
+    this.status = '';
+    this.percent = 0;
+    this.inProgress = false;
+  }
+
+  @action.bound
+  finish() {
+    this.error = null;
+    this.status = '';
+    this.percent = 0;
+    this.inProgress = false;
+  }
+
+  @action.bound
+  setProgress({status, percent}) {
+    this.status = status;
+    this.percent = percent;
+    this.inProgress = true;
+  }
+
+  @action.bound
+  setError(error) {
+    this.error = error;
+  }
+}
+
+class AppState {
+  constructor(root) {
+    this.root = root;
     ipcRenderer.on('did-finish-getverses', (event, verses) => {
       if (Array.isArray(verses) && verses.length) {
         this.setVerses(verses);
@@ -272,6 +355,9 @@ class AppState {
   }
 
   @observable
+  progress = new Progress();
+
+  @observable
   projects = new ProjectList();
 
   @observable
@@ -306,9 +392,6 @@ class AppState {
     rgba: 'rgba(255,255,255,1)',
     opacity: 1,
   };
-
-  @observable
-  outputFile = '';
 
   getVideoName() {
     // E.g 
@@ -348,23 +431,22 @@ class AppState {
   }
   
   @action.bound
-  setOutputFile(file) {
-    this.outputFile = file;
-  }
-
-  @action.bound
   generateVideo(combined) {
+    // TODO: Pass selected project structure to the CLI
+    const project = this.projects.activeProject.selectionToJS();
     const sourceDirectory = _.get(this.projects, [ 'activeProject', 'selectedBooks', '0', 'selectedChapters', '0', 'fullPath' ])
     const args = {
+      project,
+      combined,
       sourceDirectory,
       textLocation: toJS(this.textLocation),
       background: _.pick(toJS(this.background), 'file', 'color', 'type'),
       text: toJS(this.text),
       speechBubble: toJS(this.speechBubble),
       output: this.getVideoName(),
+      outputDirectory: toJS(this.root.settings.outputDirectory),
     };
-    console.log('Requesting processing', args);
-    ipcRenderer.send('did-start-conversion', args);
+    this.progress.start(args);
   }
 }
 

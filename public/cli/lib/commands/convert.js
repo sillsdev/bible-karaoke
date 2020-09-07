@@ -31,7 +31,6 @@ const FFPROBE_EXE = process.platform === 'win32' ? 'ffprobe.exe' : 'ffprobe';
 
 var Options = {}; // the running options for this command.
 var skipAudioFiles =  null;  // {array} a list of audio files to NOT include
-
 var Logger = null;  // A common logger for this run
 var Log = function(...allArgs) {
     if (Logger) {
@@ -85,6 +84,7 @@ Command.help = function() {
     --bgType         : The type of background (image/video).
     --bgFile         : (optional) an image for the background
     --bgColor        : (optional) the background color of the video
+    --combineOutput  : [boolean] 
     --noBGImage      : (optional) no background image
                         setting --noBGImage prevents being asked for one
     --fps            : (optional) the frames per second of the output (15)
@@ -121,7 +121,13 @@ Command.run = function(options) {
                     for (var o in options) {
                         Options[o] = options[o];
                     }
-                    Options.pathFolder = options._.shift();
+
+                    Options.pathFolders = options._;
+
+                    // Convert Options.pathFolders to an array
+                    if (Options.pathFolders && !Array.isArray(Options.pathFolders))
+                        Options.pathFolders = [Options.pathFolders];
+
                     if (Options.ffmpegPath) {
                         if (!path.isAbsolute(Options.ffmpegPath)) {
                             Options.ffmpegPath = path.join(process.cwd(), Options.ffmpegPath);
@@ -142,7 +148,7 @@ Command.run = function(options) {
                 },
                 (done) => {
                     // check for valid params:
-                    if (!Options.pathFolder) {
+                    if (!Options.pathFolders || !Options.pathFolders.length) {
                         console.log();
                         Log.error("missing required param: [path/to/folder]");
                         console.log();
@@ -258,7 +264,7 @@ function askQuestions(done) {
     inquirer
         .prompt([
             {
-                name: "pathFolder",
+                name: "pathFolders",
                 type: "input",
                 message: "Enter the path to the Hearthis folder to convert:",
                 default: "",
@@ -270,7 +276,7 @@ function askQuestions(done) {
                     }
                 },
                 when: (values) => {
-                    return !values.pathFolder && !Options.pathFolder;
+                    return !values.pathFolders && !Options.pathFolders;
                 }
             },
             {
@@ -349,6 +355,16 @@ function askQuestions(done) {
                 }
             },
             {
+                name: "combineOutput",
+                type: "input",
+                message:
+                    "Do you want to combine chapters to one video ?",
+                default: false,
+                when: (values) => {
+                    return values.combineOutput == null && Options.combineOutput == null;
+                }
+            },
+            {
                 name: "output",
                 type: "input",
                 message: "Enter the desired name of the final video:",
@@ -410,78 +426,176 @@ function removeOutputFile(done) {
 }
 
 function execute(done) {
-    var pathBBKFile = tempy.file({ name: "bbkFormat.js" });
-    Log(`path to bbkFormat: ${pathBBKFile}`);
-    Promise.resolve()
-        .then(() => {
-            var pathToInfo = Options.pathFolder;
-            if (path.basename(pathToInfo) !== "info.xml") {
-                pathToInfo = path.join(pathToInfo, "info.xml");
-                Options.pathFolder = pathToInfo;
-            }
-            onProgress("Generating timing file...", 0);
-            return Timings.run({
-                input: pathToInfo,
-                output: pathBBKFile,
-                Log,
-                ffprobePath: ffprobePath(Options.ffmpegPath || null)
-            });
-        })
-        .then((skipFiles) => {
-            // save the list of skipped files from Timings.run()
-            skipAudioFiles = skipFiles || [];
+    let tasks = [];
+    let outputFiles = [];
+    let outputListFile;
+    let progressSection = 100 / (Options.pathFolders || []).length;
 
-            var opts = {
-                inputJSON: pathBBKFile,
-                textLocation: Options.textLocation,
-                fontFamily: Options.fontFamily,
-                fontSize: Options.fontSize,
-                fontColor: Options.fontColor,
-                fontItalic: Options.fontItalic,
-                fontBold: Options.fontBold,
-                highlightColor: Options.highlightColor,
-                speechBubbleColor: Options.speechBubbleColor,
-                speechBubbleOpacity: Options.speechBubbleOpacity
-            };
-            if (Options.bgFile) {
-                opts.bgFile = Options.bgFile;
-            }
-            if (Options.bgColor) {
-                opts.bgColor = Options.bgColor;
-            }
-            opts.bgType = Options.bgType;
-            if (Options.onProgress) {
-              opts.onProgress = onProgress;
-            }
-            opts.Log = Log;
-            Log("Options: ", Options);
-            Log("opt: ", opts);
-            onProgress("Rendering video frames...", 0);
-            return Frames.run(opts);
-        })
-        .then((pathFrames) => {
-            Log(`>> path to generated frames folder: ${pathFrames}`);
+    (Options.pathFolders || []).forEach((pathToInfo, index) => {
+        let pathBBKFile = tempy.file({ name: `bbkFormat-${index}.js` });
+        Log(`path to bbkFormat: ${pathBBKFile}`);
 
-            onProgress("Combining audio and frames into video...", 100);
-            return FFMPEG.run({
-                images: pathFrames,
-                audio: path.dirname(Options.pathFolder),
-                skipAudioFiles,
-                output: Options.output,
-                Log,
-                framerateOut: Options.fps || 15,
-                ffmpegPath: Options.ffmpegPath || null
+        let progressStart = progressSection * index;
+        let progressEnd = progressStart + (progressSection * (index + 1));
+
+        tasks.push(() =>
+            Promise.resolve()
+                .then(() => {
+                    if (path.basename(pathToInfo) !== "info.xml") {
+                        pathToInfo = path.join(pathToInfo, "info.xml");
+                        // Options.pathFolders = pathToInfo;
+                    }
+                    onProgress("Generating timing file...", progressStart);
+                    return Timings.run({
+                        input: pathToInfo,
+                        output: pathBBKFile,
+                        Log,
+                        ffprobePath: ffprobePath(Options.ffmpegPath || null)
+                    });
+                })
+                .then((skipFiles) => {
+                    // save the list of skipped files from Timings.run()
+                    skipAudioFiles = skipFiles || [];
+        
+                    var opts = {
+                        inputJSON: pathBBKFile,
+                        textLocation: Options.textLocation,
+                        fontFamily: Options.fontFamily,
+                        fontSize: Options.fontSize,
+                        fontColor: Options.fontColor,
+                        fontItalic: Options.fontItalic,
+                        fontBold: Options.fontBold,
+                        highlightColor: Options.highlightColor,
+                        speechBubbleColor: Options.speechBubbleColor,
+                        speechBubbleOpacity: Options.speechBubbleOpacity
+                    };
+                    if (Options.bgFile) {
+                        opts.bgFile = Options.bgFile;
+                    }
+                    if (Options.bgColor) {
+                        opts.bgColor = Options.bgColor;
+                    }
+                    opts.bgType = Options.bgType;
+                    if (Options.onProgress) {
+                        opts.onProgress = (status, currFrame, totalFrame) => {
+                            let percent = (currFrame / totalFrame) * 100;
+                            let progressCurrent = progressStart + ((percent / 100) * progressSection);
+                            onProgress(`${status}`, progressCurrent);
+                        };
+                    }
+                    opts.Log = Log;
+                    Log("Options: ", Options);
+                    Log("opt: ", opts);
+                    onProgress("Rendering video frames...", progressStart);
+                    return Frames.run(opts);
+                })
+                .then((pathFrames) => {
+                    Log(`>> path to generated frames folder: ${pathFrames}`);
+        
+                    let output;
+                    let outputFilename = path.parse(Options.output).name;
+            
+                    if (Options.combineOutput) {
+                        output = path.join(tempy.directory(), `${outputFilename}-${index+1}.mp4`);
+                        outputFiles.push(output);
+                    }
+                    else {
+                        // when --combineOutput is set to false, then generate multiple files.
+                        // Mark1.mp4, Mark2.mp4, Mark3.mp4, Mark4.mp4
+                        if (Options.pathFolders.length > 1) {
+                            let outputDir = path.parse(Options.output).dir;
+                            output = `${outputDir}/${outputFilename}${index+1}.mp4`;
+                        }
+                        // --combineOutput == false and pathFolders has only 1 item
+                        else {
+                            output = Options.output;
+                        }
+                    }
+
+                    onProgress("Combining audio and frames into video...", progressEnd);
+                    return FFMPEG.run({
+                        images: pathFrames,
+                        audio: path.dirname(pathToInfo),
+                        skipAudioFiles,
+                        output,
+                        Log,
+                        framerateOut: Options.fps || 15,
+                        ffmpegPath: Options.ffmpegPath || null
+                    });
+                })
+            );
+    });
+
+    if (Options.combineOutput) {
+        // Prepare a video list file to combine
+        tasks.push(() => new Promise((next, fail) => {
+            outputListFile = path.join(tempy.directory(), "outputList.txt");
+            Log(`>> path to the video list file: ${outputListFile}`);
+
+            fs.writeFile(
+                outputListFile,
+                outputFiles.map((f) => `file '${f}'`).join("\n"),
+                (err) => {
+                    return err ? fail(err): next();
+                });
+        }));
+
+        // Combine videos
+        tasks.push(() => new Promise((next, fail) => {
+            let ffmpegExe = Options.ffmpegPath || "ffmpeg";
+            Log(`>> Combining videos`);
+
+            onProgress("Combining videos...", 100);
+            
+            // We prefer shell.spawn over shell.exec so that arguments are safely escaped
+            // See https://nodejs.org/api/child_process.html#child_process_spawning_bat_and_cmd_files_on_windows
+            // See https://stackoverflow.com/a/50424976
+            let ffmpegProcess = shell.spawn(ffmpegExe, ['f concat -safe 0 -i', outputListFile, '-c copy', Options.output]);
+            ffmpegProcess.stderr.on('data', (err) => {
+                fail(err);
             });
-        })
+        }));
+    }
+
+    // Clean up at the last step after finished (or upon failure)
+    let cleanUp = () => {
+        let cleanUpTasks = [];
+
+        // delete outputListFile file
+        cleanUpTasks.push(new Promise((next, fail) => {
+            fs.unlink(outputListFile, (err) => {
+                err ? fail(err) : next();
+            });
+        }));
+
+        /// delete intermediate output files after combining them
+        (outputFiles || []).forEach((f) => {
+            cleanUpTasks.push(new Promise((next, fail) => {
+                fs.unlink(f, (err) => {
+                    err ? fail(err) : next();
+                });
+            }));
+        });
+
+        return Promise.all(cleanUpTasks);
+    }
+
+    // Execute tasks sequentially
+    tasks.reduce((p, fn) => p.then(fn), Promise.resolve())
         .then(() => {
+            cleanUp();
             done();
         })
         .catch((err) => {
+            cleanUp();
             done(err);
         });
 }
 
 function onProgress(status, percent) {
+
+    status = `${status} ${Math.floor(percent > 100 ? 100 : percent)}%`;
+
     Options.onProgress && Options.onProgress({status, percent});
 }
 

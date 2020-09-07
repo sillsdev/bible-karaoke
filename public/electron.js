@@ -84,12 +84,6 @@ function handleGetProjects() {
   });
 }
 
-function handleOpenOutputFolder() {
-  ipcMain.on('open-output-folder', async (event, outputFile) => {
-    shell.showItemInFolder(outputFile);
-  });
-}
-
 function handleSubmission() {
   ipcMain.on('did-start-conversion', async (event, args) => {
     const onProgress = args => {
@@ -107,10 +101,13 @@ function handleSubmission() {
     if (result) {
       retArgs =
         typeof result === 'string'
-          ? { outputFile: result }
+          ? { outputDirectory: null } // TODO!
           : { error: { message: result.message, stack: result.stack } };
     }
     console.log('Command line process finished', retArgs);
+    if (retArgs.outputDirectory) {
+      shell.openPath(retArgs.outputDirectory);
+    }
     event.sender.send('did-finish-conversion', retArgs);
   });
 }
@@ -121,7 +118,6 @@ app.on('ready', () => {
   handleGetProjects();
   handleGetSampleVerses();
   handleGetFonts();
-  handleOpenOutputFolder();
 });
 
 app.on('window-all-closed', () => {

@@ -38,17 +38,17 @@ class DebugGA {
 
   async trackScreenview (screenName) {
     const params = {cd: screenName};
-    console.log('Analytics Screenview: ' + JSON.stringify(params));
+    console.log('Analytics Screenview', params);
   }
 
   async trackEvent (category, action, label = '', value = 0) {
     const params = {ec: category, ea: action, el: label, ev: value};
-    console.log('event', params);
+    console.log('Analytics Event', params);
   }
 
   async trackError (error, fatal = 1) {
     const params = {exd: error, exf:fatal};
-    console.log('Analytics Error: ' + JSON.stringify(params));
+    console.log('Analytics Error', params);
   }
 }
 

@@ -12,8 +12,8 @@ export function useStores() {
 
 class Store {
   constructor() {
-    this.appState = new AppState()
-    this.settings = new Settings()
+    this.appState = new AppState(this)
+    this.settings = new Settings(this)
   }
 
   async init() {

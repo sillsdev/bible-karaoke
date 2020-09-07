@@ -1,3 +1,5 @@
+import os from 'os';
+import path from 'path';
 
 export const DEFAULT_BG_COLOR = '#000';
 
@@ -17,6 +19,8 @@ export const TEXT_LOCATION = {
   subtitle: 'subtitle',
   center: 'center',
 };
+
+export const DEFAULT_OUTPUT_DIRECTORY = path.join(os.homedir(), 'Bible Karaoke Videos');
 
 const allFiles = {
   name: 'All files',
