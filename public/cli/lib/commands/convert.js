@@ -31,9 +31,6 @@ const FFPROBE_EXE = process.platform === 'win32' ? 'ffprobe.exe' : 'ffprobe';
 
 var Options = {}; // the running options for this command.
 var skipAudioFiles =  null;  // {array} a list of audio files to NOT include
-var lastCurrentFrame = 0;
-var lastUpdateFrameDate = null;
-
 var Logger = null;  // A common logger for this run
 var Log = function(...allArgs) {
     if (Logger) {
