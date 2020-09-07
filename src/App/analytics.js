@@ -1,4 +1,4 @@
-import Analytics from 'electron-ga';
+import Analytics from 'electron-ga-uuid';
 const analytics =  new Analytics('UA-22170471-17');
 //Analytics Disabled awaiting UI Chnages to comply with GA Policy
 const isDev = true;
