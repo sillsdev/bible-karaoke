@@ -75,6 +75,7 @@ export default function Settings() {
   const repoUrl = repository.url.replace(/\.git$/, '')
   React.useEffect(() => {
     analytics.trackScreenview('Settings');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return useObserver(() => (
     <Flex
