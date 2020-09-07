@@ -15,8 +15,8 @@ var utils = require(path.join(__dirname, "..", "utils", "utils"));
 
 var Options = {}; // the running options for this command.
 var pathFramesFolder = null; // the path to the folder where the frames are generated.
-var lastCurrentFrame = 0;
-var lastUpdateFrameDate = null;
+//var lastCurrentFrame = 0;
+//var lastUpdateFrameDate = null;
 
 var Log = null;
 
