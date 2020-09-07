@@ -6,6 +6,14 @@
 * :thumbsup: Improvement
 * :boom: Bug fix
 
+## v0.3.5
+
+This is a minor feature and bugfix release:
+
+* :star: Speed up video render time by running in parallel where it can
+* :thumbsup: Removed known security vulnerabilities
+* :boom: The program starts even if the specified background image file is empty or missing
+
 ## v0.3.4
 
 This is a minor feature and bugfix release:
