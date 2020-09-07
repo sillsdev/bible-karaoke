@@ -1,6 +1,14 @@
 import os from 'os';
 import path from 'path';
 
+export const DEFAULT_BG_COLOR = '#000';
+
+export const BACKGROUND_TYPE = {
+  image: 'image',
+  video: 'video',
+  color: 'color',
+};
+
 // HACK: These values must match the PROJECT_TYPE values in public/sources/*.js
 export const PROJECT_TYPE = {
   hearThis: 'hearThis',

@@ -1,8 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
+import _ from 'lodash';
 import styled from 'styled-components';
-import uniq from 'lodash/uniq';
-import without from 'lodash/without';
 import { Flex } from 'reflexbox';
 import { Icon, Tooltip, Classes } from '@blueprintjs/core';
 import { useObserver } from 'mobx-react';
@@ -29,11 +28,11 @@ const defaultAppBuilderDirectory = getDefaultScriptureAppBuilderDirectory()
 
 const DirectoriesCard = ({name, directories, onSetDirectories, defaultDirectory}) => {
   const addDirectory = (folder) => {
-    onSetDirectories(uniq([...directories, folder]))
+    onSetDirectories(_.uniq([...directories, folder]))
   }
   
   const removeDirectory = (folder) => {
-    onSetDirectories(without(directories, folder))
+    onSetDirectories(_.without(directories, folder))
   }
 
   const resetDirectories = () => {

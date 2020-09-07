@@ -7,13 +7,7 @@ import { fileFilters } from '../../constants';
 import { useStores } from '../../store';
 import ColorPicker from '../ColorPicker';
 import FileSelector from '../FileSelector';
-
-const BG = {
-  FILE: 'file',
-  COLOR: 'color',
-};
-
-const DEFAULT_BG_COLOR = '#CCC'; // gray
+import { DEFAULT_BG_COLOR } from '../../constants';
 
 const EditRadio = styled(Radio).attrs({
   width: 100,
@@ -23,22 +17,6 @@ const EditRadio = styled(Radio).attrs({
 
 export default function BackgroundEditor(props) {
   const { appState } = useStores()
-  
-  const setBackgroundOption = React.useCallback((backgroundOption) => {
-    appState.setBackground({
-      color: backgroundOption === BG.COLOR ? DEFAULT_BG_COLOR : '',
-      file: '',
-    });
-  }, [ appState ])
-
-  const setBackgroundFile = React.useCallback((file) => {
-    appState.setBackground({ file, color: '' });
-  }, [ appState ])
-
-  const setBackgroundColor = React.useCallback((color) => {
-    appState.setBackground({ file: '', color: color.hex });
-  }, [ appState ])
-
   return useObserver(() => {
     const {
       background
@@ -46,7 +24,11 @@ export default function BackgroundEditor(props) {
     return (
       <EditPopover title="Edit background" {...props}>
         <EditRow>
-          <EditRadio label="Image" checked={!background.color} onChange={() => { setBackgroundOption(BG.FILE); }}/>
+          <EditRadio
+            label="Image"
+            checked={!background.color}
+            onChange={() => { appState.background.setFile(''); }}
+          />
           <FileSelector
             disabled={!!background.color}
             file={background.file}
@@ -55,15 +37,19 @@ export default function BackgroundEditor(props) {
               filters: fileFilters.background,
               properties: ['openFile'],
             }}
-            onFileSelected={setBackgroundFile}
+            onFileSelected={appState.background.setFile}
           />
         </EditRow>
         <EditRow mt={3}>
-          <EditRadio label='Solid color' checked={!!background.color} onChange={() => { setBackgroundOption(BG.COLOR); }} />
+          <EditRadio
+            label='Solid color'
+            checked={!!background.color}
+            onChange={() => { appState.background.setColor(DEFAULT_BG_COLOR); }}
+          />
           <ColorPicker
             disabled={background.color === ''}
             value={background.color}
-            onChange={setBackgroundColor}
+            onChange={(color) => { appState.background.setColor(color.hex); }}
           />
         </EditRow>
       </EditPopover>
