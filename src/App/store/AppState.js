@@ -283,7 +283,8 @@ class Progress {
 }
 
 class AppState {
-  constructor() {
+  constructor(root) {
+    this.root = root;
     ipcRenderer.on('did-finish-getverses', (event, verses) => {
       if (Array.isArray(verses) && verses.length) {
         this.setVerses(verses);
@@ -427,6 +428,7 @@ class AppState {
       text: toJS(this.text),
       speechBubble: toJS(this.speechBubble),
       output: this.getVideoName(),
+      outputDirectory: toJS(this.root.settings.outputDirectory),
     };
     this.progress.start(args);
   }

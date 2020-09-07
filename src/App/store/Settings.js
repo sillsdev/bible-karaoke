@@ -2,7 +2,7 @@ import { observable, computed, action } from 'mobx';
 import os from 'os';
 import path from 'path';
 import { persist } from 'mobx-persist';
-import { PROJECT_TYPE } from '../constants';
+import { PROJECT_TYPE, DEFAULT_OUTPUT_DIRECTORY } from '../constants';
 
 export const getDefaultHearThisDirectory = () => {
   switch (process.platform) {
@@ -25,6 +25,9 @@ export const getDefaultScriptureAppBuilderDirectory = () => {
 }
 
 class Settings {
+  constructor(root) {
+    this.root = root;
+  }
 
   @persist('list')
   @observable
@@ -33,6 +36,10 @@ class Settings {
   @persist('list')
   @observable
   scriptureAppBuilderRootDirectories = [ getDefaultScriptureAppBuilderDirectory() ]
+
+  @persist
+  @observable
+  outputDirectory = DEFAULT_OUTPUT_DIRECTORY;
 
   @persist
   @observable
@@ -54,6 +61,11 @@ class Settings {
   @action.bound
   setScriptureAppBuilderRootDirectories(directories) {
     this.scriptureAppBuilderRootDirectories = directories
+  }
+
+  @action.bound
+  setOutputDirectory(outputDirectory) {
+    this.outputDirectory = outputDirectory;
   }
 
   @action.bound

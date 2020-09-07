@@ -1,5 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
+import styled from 'styled-components';
 import uniq from 'lodash/uniq';
 import without from 'lodash/without';
 import { Flex } from 'reflexbox';
@@ -14,7 +15,12 @@ import {
   getDefaultScriptureAppBuilderDirectory
 } from '../store/Settings';
 import FileSelector from './FileSelector';
-import './Settings.scss';
+
+const DirectoryHeading = styled(Flex) `
+  .file-selector > * {
+    margin: 0;
+  }
+`;
 
 const descriptionTextClass = classnames(Classes.TEXT_SMALL, Classes.TEXT_MUTED);
 
@@ -37,13 +43,12 @@ const DirectoriesCard = ({name, directories, onSetDirectories, defaultDirectory}
   return (
     <Card className="settings__card" mb={3}>
       <Flex
-        className="settings__card-title"
         alignItems="center"
         justifyContent="space-between"
         mb={2}
       >
         <H5 mb="0">{name} Projects Folders</H5>
-        <Flex alignItems="center">
+        <DirectoryHeading alignItems="center">
           <Tooltip content="Reset to default directory">
             <Button mr={2} minimal icon='reset' onClick={resetDirectories} />
           </Tooltip>
@@ -56,10 +61,10 @@ const DirectoriesCard = ({name, directories, onSetDirectories, defaultDirectory}
             }}
             onFileSelected={addDirectory}
           />
-        </Flex>
+        </DirectoryHeading>
       </Flex>
       {directories.map(dir => (
-        <Flex alignItems="center" className="settings__directory" key={dir}>
+        <Flex alignItems="center" key={dir}>
           <Icon icon="folder-close" />
           <Text px={2} ellipsize title={dir}>{dir}</Text>
           <Button minimal icon='cross' onClick={() => { removeDirectory(dir) }} />
@@ -97,9 +102,20 @@ export default function Settings() {
         onSetDirectories={settings.setScriptureAppBuilderRootDirectories} 
         defaultDirectory={defaultAppBuilderDirectory}
       />
-      <Card className="settings__card" mb={3}>
+      <Card mb={3}>
+        <H5 mb="3">Output</H5>
+        <FileSelector
+          buttonText="Save videos to..."
+          file={settings.outputDirectory}
+          options={{
+            title: 'Select Output Folder',
+            properties: ['openDirectory'],
+          }}
+          onFileSelected={settings.setOutputDirectory}
+        />
+      </Card>
+      <Card mb={3}>
         <Flex
-          className="settings__card-title"
           alignItems="center"
           justifyContent="space-between"
         >
