@@ -170,6 +170,7 @@ function callRender(done) {
         .catch(done);
 }
 
+// commented out unused function - for the time being until we have a suitable way to get the total frames of multiple videos @pong @chris
 /**
  * @function calculateRemainTime
  * 
@@ -177,57 +178,57 @@ function callRender(done) {
  * @param {number} totalFrame
  * @return {string}
  */
-function calculateRemainTime(currFrame, totalFrame) {
+// function calculateRemainTime(currFrame, totalFrame) {
 
-    let result = "";
-    let currentDate = new Date();
+//     let result = "";
+//     let currentDate = new Date();
 
-    // Skip calculating if it is the first run
-    if (lastUpdateFrameDate != null) {
+//     // Skip calculating if it is the first run
+//     if (lastUpdateFrameDate != null) {
 
-        // ((currentDate - lastUpdateFrameDate) / (currFrame - lastCurrentFrame)) * (totalFrame - currFrame)
+//         // ((currentDate - lastUpdateFrameDate) / (currFrame - lastCurrentFrame)) * (totalFrame - currFrame)
 
-        let spendTime = currentDate - lastUpdateFrameDate; // milliseconds
-        let progressFrame = currFrame - lastCurrentFrame;
-        let spendTimePerFrame = spendTime / progressFrame;
-        let remainingFrames = totalFrame - currFrame;
+//         let spendTime = currentDate - lastUpdateFrameDate; // milliseconds
+//         let progressFrame = currFrame - lastCurrentFrame;
+//         let spendTimePerFrame = spendTime / progressFrame;
+//         let remainingFrames = totalFrame - currFrame;
 
-        let estimateTime = remainingFrames * spendTimePerFrame; // milliseconds
+//         let estimateTime = remainingFrames * spendTimePerFrame; // milliseconds
 
-        // Convert milliseconds to a readable string
-        let days = (estimateTime / 86400000).toFixed(0);
-        let hours = (estimateTime / 3600000).toFixed(0);
-        let minutes = (estimateTime / 60000).toFixed(0);
-        let seconds = (estimateTime / 1000).toFixed(0);
+//         // Convert milliseconds to a readable string
+//         let days = (estimateTime / 86400000).toFixed(0);
+//         let hours = (estimateTime / 3600000).toFixed(0);
+//         let minutes = (estimateTime / 60000).toFixed(0);
+//         let seconds = (estimateTime / 1000).toFixed(0);
 
-        if (seconds < 1)
-            result = "";
-        else if (seconds < 60) 
-            result = `${seconds} second${seconds > 1 ? 's' : ''}`;
-        else if (minutes == 1)
-            result = `1 minute ${seconds - 60} seconds`;
-        else if (minutes < 60)
-            result = `${minutes} minutes`;
-        else if (hours < 24)
-            result = `${hours} hour${hours > 1 ? 's' : ''}`;
-        else
-            result = `${days} day${days > 1 ? 's' : ''}`;
+//         if (seconds < 1)
+//             result = "";
+//         else if (seconds < 60) 
+//             result = `${seconds} second${seconds > 1 ? 's' : ''}`;
+//         else if (minutes == 1)
+//             result = `1 minute ${seconds - 60} seconds`;
+//         else if (minutes < 60)
+//             result = `${minutes} minutes`;
+//         else if (hours < 24)
+//             result = `${hours} hour${hours > 1 ? 's' : ''}`;
+//         else
+//             result = `${days} day${days > 1 ? 's' : ''}`;
 
-        if (result)
-            result = `(Approximately ${result} remaining)`;
-    }
+//         if (result)
+//             result = `(Approximately ${result} remaining)`;
+//     }
 
-    lastUpdateFrameDate = currentDate;
-    lastCurrentFrame = currFrame;
+//     lastUpdateFrameDate = currentDate;
+//     lastCurrentFrame = currFrame;
 
-    // clear when it done
-    if (currFrame >= totalFrame) {
-        lastUpdateFrameDate = null;
-        lastCurrentFrame = 0;
-    }
+//     // clear when it done
+//     if (currFrame >= totalFrame) {
+//         lastUpdateFrameDate = null;
+//         lastCurrentFrame = 0;
+//     }
 
-    return result;
-}
+//     return result;
+// }
 
 const onProgress = utils.throttle(data => {
     Options.onProgress(
