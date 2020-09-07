@@ -549,12 +549,14 @@ function execute(done) {
             Log(`>> Combining videos`);
 
             onProgress("Combining videos...", 100);
-            shell.exec(
-                `"${ffmpegExe}" -f concat -safe 0 -i "${outputListFile}" -c copy "${Options.output}"`,
-                (err) => {
-                    err ? fail(err) : next();
-                }
-            );
+            
+            // We prefer shell.spawn over shell.exec so that arguments are safely escaped
+            // See https://nodejs.org/api/child_process.html#child_process_spawning_bat_and_cmd_files_on_windows
+            // See https://stackoverflow.com/a/50424976
+            let ffmpegProcess = shell.spawn(ffmpegExe, ['f concat -safe 0 -i', outputListFile, '-c copy', Options.output]);
+            ffmpegProcess.stderr.on('data', (err) => {
+                fail(err);
+            });
         }));
     }
 
