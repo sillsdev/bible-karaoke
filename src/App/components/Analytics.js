@@ -14,7 +14,7 @@ export const AnalyticsProvider = ({ settings, children }) => {
     localStorage.setItem('analyticsNoticeDisplayed', true)
     settings.setEnableAnalytics(confirmed);
     confirmed && analytics.trackEvent('Analytics', 'Opted In');
-  }, [ settings ])
+  }, [ settings, analytics ])
   
   return (
     <analyticsContext.Provider value={{ analytics }}>

@@ -15,6 +15,7 @@ async function execute({
   background,
   text,
   speechBubble,
+  // combineOutput,
   output,
   onProgress,
 }) {
@@ -22,7 +23,9 @@ async function execute({
     let ffmpegFolder = await setupFfmpeg();
     const ffmpegPath = path.join(ffmpegFolder, FFMPEG_EXE);
     await bbkConvert({
-      _: [sourceDirectory],
+      _: sourceDirectory,
+      // combineOutput,
+      combineOutput: true, // TODO: please set combineOutput flag value here
       output,
       ffmpegPath,
       textLocation: textLocation.location,
