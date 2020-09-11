@@ -6,6 +6,12 @@
 * :thumbsup: Improvement
 * :boom: Bug fix
 
+## v0.3.6
+
+This is a minor feature and bugfix release:
+
+* :star: Use a video for the background instead of an image
+
 ## v0.3.5
 
 This is a minor feature and bugfix release:
