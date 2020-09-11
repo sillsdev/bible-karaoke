@@ -39,6 +39,7 @@
     "shelljs": "^0.8.4",
     "tempy": "^0.3.0",
     "winston": "^3.3.3",
+    "workerpool": "^6.0.0",
     "xml-js": "^1.6.11"
   },
   "scripts": {
@@ -84,6 +85,7 @@
     "electron": "^9.1.0",
     "electron-builder": "^22.7.0",
     "ffbinaries": "^1.1.4",
+    "fs-extra": "^9.0.1",
     "typescript": "^3.9.7",
     "wait-on": "^3.3.0"
   },
