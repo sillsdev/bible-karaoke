@@ -39,12 +39,14 @@ Build the app automatically for distribution:
 * Look in the GitHub **Actions** tab for the build artifacts.
 
 Releasing
-1. Update the *version* in your project's `package.json` file (e.g. *0.3.4*).
+
+1. Update the _version_ in your project's `package.json` file (e.g. _0.3.4_).
 2. Run `npm i` to update `package-lock.json`.
 3. Update `CHANGELOG.md` with changes in this release.
 4. Commit these changes to your release branch as defined in the section above.
-5. Tag your commit. Make sure your tag name's format is `v*.*.*`. Push to GitHub.
+5. Tag your commit. Make sure your tag name's format is `v*.*.*`.
 6. Create a new draft GitHub **Release**, ensure the following are included:
-    * a *Tag version*, e.g. `v0.3.4`.
-    * the installer artifact from GitHub **Actions** tab as Assets (attached binary)
-    * a copy of the change log
+   - a _Tag version_, e.g. `v0.3.4`.
+   - a copy of the change log.
+   - the installer artifact from GitHub **Actions** tab as Assets (attached binary) will be added in step 7.
+7. Push the tag then the commit to GitHub.
