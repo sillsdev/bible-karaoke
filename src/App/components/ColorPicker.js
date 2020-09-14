@@ -29,36 +29,25 @@ const SWATCH_COLORS = [
   '#808080',
   '#696969',
   '#333333',
-  '#000000'
+  '#000000',
 ];
 
 const Swatch = styled(Box).attrs({
   width: 30,
-  height:30,
-  borderRadius: 4
-}) `
+  height: 30,
+  borderRadius: 4,
+})`
   border: solid grey 1px;
   ${(props) => {
-    return props.disabled 
-      ? 'cursor: not-allowed;'
-      : ''
+    return props.disabled ? 'cursor: not-allowed;' : '';
   }}
-`
+`;
 
 const ColorPicker = ({ value, presetColors, disableAlpha, disabled, onChange, ...props }) => {
   return (
     <Popover disabled={disabled}>
-      <Swatch
-        {...props}
-        bg={disabled ? undefined : value}
-        disabled={disabled}
-      />
-        <SketchPicker
-          presetColors={presetColors}
-          disableAlpha={disableAlpha}
-          color={value}
-          onChange={onChange}
-        />
+      <Swatch {...props} bg={disabled ? undefined : value} disabled={disabled} />
+      <SketchPicker presetColors={presetColors} disableAlpha={disableAlpha} color={value} onChange={onChange} />
     </Popover>
   );
 };
@@ -67,6 +56,7 @@ ColorPicker.propTypes = {
   value: PropTypes.string,
   presetColors: PropTypes.arrayOf(PropTypes.string),
   disableAlpha: PropTypes.bool,
+  disabled: PropTypes.bool,
   onChange: PropTypes.func,
 };
 
@@ -75,8 +65,8 @@ ColorPicker.defaultProps = {
   presetColors: SWATCH_COLORS,
   disableAlpha: true,
   onChange: (color) => {
-    this.setState({ color: color.rgb })
-  }
+    this.setState({ color: color.rgb });
+  },
 };
 
 export default ColorPicker;

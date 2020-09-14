@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
 import styled from 'styled-components';
@@ -9,13 +10,10 @@ import { repository } from '../../../package.json';
 import { H5, Colors, Text, Card, Button, Checkbox } from '../blueprint';
 import { useStores } from '../store';
 import { useAnalytics } from './Analytics';
-import {
-  getDefaultHearThisDirectory,
-  getDefaultScriptureAppBuilderDirectory
-} from '../store/Settings';
+import { getDefaultHearThisDirectory, getDefaultScriptureAppBuilderDirectory } from '../store/Settings';
 import FileSelector from './FileSelector';
 
-const DirectoryHeading = styled(Flex) `
+const DirectoryHeading = styled(Flex)`
   .file-selector > * {
     margin: 0;
   }
@@ -23,33 +21,29 @@ const DirectoryHeading = styled(Flex) `
 
 const descriptionTextClass = classnames(Classes.TEXT_SMALL, Classes.TEXT_MUTED);
 
-const defaultHearThisDirectory = getDefaultHearThisDirectory()
-const defaultAppBuilderDirectory = getDefaultScriptureAppBuilderDirectory()
+const defaultHearThisDirectory = getDefaultHearThisDirectory();
+const defaultAppBuilderDirectory = getDefaultScriptureAppBuilderDirectory();
 
-const DirectoriesCard = ({name, directories, onSetDirectories, defaultDirectory}) => {
+const DirectoriesCard = ({ name, directories, onSetDirectories, defaultDirectory }) => {
   const addDirectory = (folder) => {
-    onSetDirectories(_.uniq([...directories, folder]))
-  }
-  
+    onSetDirectories(_.uniq([...directories, folder]));
+  };
+
   const removeDirectory = (folder) => {
-    onSetDirectories(_.without(directories, folder))
-  }
+    onSetDirectories(_.without(directories, folder));
+  };
 
   const resetDirectories = () => {
-    onSetDirectories([defaultDirectory])
-  }
+    onSetDirectories([defaultDirectory]);
+  };
 
   return (
     <Card className="settings__card" mb={3}>
-      <Flex
-        alignItems="center"
-        justifyContent="space-between"
-        mb={2}
-      >
+      <Flex alignItems="center" justifyContent="space-between" mb={2}>
         <H5 mb="0">{name} Projects Folders</H5>
         <DirectoryHeading alignItems="center">
           <Tooltip content="Reset to default directory">
-            <Button mr={2} minimal icon='reset' onClick={resetDirectories} />
+            <Button mr={2} minimal icon="reset" onClick={resetDirectories} />
           </Tooltip>
           <FileSelector
             buttonText="Add folder..."
@@ -62,43 +56,58 @@ const DirectoriesCard = ({name, directories, onSetDirectories, defaultDirectory}
           />
         </DirectoryHeading>
       </Flex>
-      {directories.map(dir => (
+      {directories.map((dir) => (
         <Flex alignItems="center" key={dir}>
           <Icon icon="folder-close" />
-          <Text px={2} ellipsize title={dir}>{dir}</Text>
-          <Button minimal icon='cross' onClick={() => { removeDirectory(dir) }} />
+          <Text px={2} ellipsize title={dir}>
+            {dir}
+          </Text>
+          <Button
+            minimal
+            icon="cross"
+            onClick={() => {
+              removeDirectory(dir);
+            }}
+          />
         </Flex>
       ))}
     </Card>
-  )
-}
+  );
+};
+
+DirectoriesCard.propTypes = {
+  name: PropTypes.string,
+  directories: PropTypes.array,
+  onSetDirectories: PropTypes.func,
+  defaultDirectory: PropTypes.string,
+};
 
 export default function Settings() {
-  const { settings } = useStores()
-  const { analytics } = useAnalytics()
-  const repoUrl = repository.url.replace(/\.git$/, '')
+  const { settings } = useStores();
+  const { analytics } = useAnalytics();
+  const repoUrl = repository.url.replace(/\.git$/, '');
   React.useEffect(() => {
     analytics.trackScreenview('Settings');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
   return useObserver(() => (
     <Flex
       backgroundColor={Colors.background2}
-      p={3} flex={1} 
-      flexDirection="column" 
+      p={3}
+      flex={1}
+      flexDirection="column"
       overflowY="auto"
       className="settings"
     >
-      <DirectoriesCard 
-        name="HearThis" 
-        directories={settings.hearThisRootDirectories} 
+      <DirectoriesCard
+        name="HearThis"
+        directories={settings.hearThisRootDirectories}
         onSetDirectories={settings.setHearThisRootDirectories}
         defaultDirectory={defaultHearThisDirectory}
       />
-      <DirectoriesCard 
-        name="Scripture App Builder" 
-        directories={settings.scriptureAppBuilderRootDirectories} 
-        onSetDirectories={settings.setScriptureAppBuilderRootDirectories} 
+      <DirectoriesCard
+        name="Scripture App Builder"
+        directories={settings.scriptureAppBuilderRootDirectories}
+        onSetDirectories={settings.setScriptureAppBuilderRootDirectories}
         defaultDirectory={defaultAppBuilderDirectory}
       />
       <Card mb={3}>
@@ -114,13 +123,12 @@ export default function Settings() {
         />
       </Card>
       <Card mb={3}>
-        <Flex
-          alignItems="center"
-          justifyContent="space-between"
-        >
+        <Flex alignItems="center" justifyContent="space-between">
           <H5 mb="0">Google Analytics</H5>
         </Flex>
-        <Text my={3} className={descriptionTextClass}>Google Analytics helps us understand how Bible Karaoke is being used and when errors occur.</Text>          
+        <Text my={3} className={descriptionTextClass}>
+          Google Analytics helps us understand how Bible Karaoke is being used and when errors occur.
+        </Text>
         <Checkbox
           checked={settings.enableAnalytics}
           onChange={(event) => {
@@ -137,8 +145,11 @@ export default function Settings() {
         />
       </Card>
       <Text mt={3} className={descriptionTextClass} textAlign="center">
-        This software is released under the <a target="_blank" rel="noopener noreferrer" href={`${repoUrl}/blob/master/LICENSE.md`}>MIT License</a>
+        This software is released under the{' '}
+        <a target="_blank" rel="noopener noreferrer" href={`${repoUrl}/blob/master/LICENSE.md`}>
+          MIT License
+        </a>
       </Text>
     </Flex>
-  ))
+  ));
 }

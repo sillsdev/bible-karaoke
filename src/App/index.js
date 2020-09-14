@@ -14,30 +14,24 @@ import { useAnalytics } from './components/Analytics';
 import './index.scss';
 const { ipcRenderer } = window.require('electron');
 
-const AppWrapper = styled(Flex) `
+const AppWrapper = styled(Flex)`
   position: relative;
-`
+`;
 
 export default function App() {
-  const { settings } = useStores()
-  const { analytics } = useAnalytics()
+  const { settings } = useStores();
+  const { analytics } = useAnalytics();
 
   React.useEffect(() => {
     ipcRenderer.send('did-start-getprojectstructure', settings.rootDirectories);
-  }, [settings.rootDirectories])
+  }, [settings.rootDirectories]);
 
   React.useEffect(() => {
     analytics.trackScreenview('Home');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return useObserver(() => (
-    <AppWrapper
-      backgroundColor={Colors.background3}
-      height="100%"
-      className={Classes.DARK}
-      flexDirection="column"
-    >
+    <AppWrapper backgroundColor={Colors.background3} height="100%" className={Classes.DARK} flexDirection="column">
       <AppHeader />
       <Flex flex={1} flexDirection="column" overflowY="auto">
         <Flex flex={1}>
@@ -58,5 +52,5 @@ export default function App() {
         </Flex>
       </Flex>
     </AppWrapper>
-  ))
+  ));
 }

@@ -12,7 +12,7 @@ export const BACKGROUND_TYPE = {
 // HACK: These values must match the PROJECT_TYPE values in public/sources/*.js
 export const PROJECT_TYPE = {
   hearThis: 'hearThis',
-  scriptureAppBuilder: 'scriptureAppBuilder'
+  scriptureAppBuilder: 'scriptureAppBuilder',
 };
 
 export const TEXT_LOCATION = {

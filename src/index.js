@@ -16,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-store.init().then (() => {
+store.init().then(() => {
   ReactDOM.render(
     <Provider {...store}>
       <AnalyticsProvider settings={store.settings}>
@@ -24,6 +24,6 @@ store.init().then (() => {
         <App />
       </AnalyticsProvider>
     </Provider>,
-    document.getElementById('root'),
+    document.getElementById('root')
   );
-})
+});

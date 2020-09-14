@@ -13,21 +13,21 @@ const EditRadio = styled(Radio).attrs({
   width: 100,
   mr: 3,
   mb: 0,
-})``
+})``;
 
 export default function BackgroundEditor(props) {
-  const { appState } = useStores()
+  const { appState } = useStores();
   return useObserver(() => {
-    const {
-      background
-    } = appState;
+    const { background } = appState;
     return (
       <EditPopover title="Edit background" {...props}>
         <EditRow>
           <EditRadio
             label="Image"
             checked={!background.color}
-            onChange={() => { appState.background.setFile(''); }}
+            onChange={() => {
+              appState.background.setFile('');
+            }}
           />
           <FileSelector
             disabled={!!background.color}
@@ -42,17 +42,21 @@ export default function BackgroundEditor(props) {
         </EditRow>
         <EditRow mt={3}>
           <EditRadio
-            label='Solid color'
+            label="Solid color"
             checked={!!background.color}
-            onChange={() => { appState.background.setColor(DEFAULT_BG_COLOR); }}
+            onChange={() => {
+              appState.background.setColor(DEFAULT_BG_COLOR);
+            }}
           />
           <ColorPicker
             disabled={background.color === ''}
             value={background.color}
-            onChange={(color) => { appState.background.setColor(color.hex); }}
+            onChange={(color) => {
+              appState.background.setColor(color.hex);
+            }}
           />
         </EditRow>
       </EditPopover>
-    )
-  })
+    );
+  });
 }

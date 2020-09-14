@@ -3,8 +3,8 @@ const map = require('lodash/map');
 const flatten = require('lodash/flatten');
 const fontList = require('font-list');
 const karaoke = require('./karaoke');
-const sources = require('./sources')
-const { getSampleVerses } = require('./sources/util')
+const sources = require('./sources');
+const { getSampleVerses } = require('./sources/util');
 
 const { app, ipcMain, shell, Menu } = electron;
 const BrowserWindow = electron.BrowserWindow;
@@ -20,11 +20,7 @@ function createWindow() {
     height: 970,
     webPreferences: { nodeIntegration: true, webSecurity: false, enableRemoteModule: true },
   });
-  mainWindow.loadURL(
-    isDev
-      ? 'http://localhost:3000'
-      : `file://${path.join(__dirname, '../build/index.html')}`,
-  );
+  mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
   if (isDev) {
     // Open the DevTools.
     // session.defaultSession.loadExtension('C:/Users/graha/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.8.2_0');
@@ -35,7 +31,7 @@ function createWindow() {
   }
 
   mainWindow.maximize();
-  
+
   mainWindow.on('closed', () => (mainWindow = null));
   mainWindow.webContents.on('will-navigate', (event, url) => {
     if (url.startsWith('http:') || url.startsWith('https:')) {
@@ -46,18 +42,18 @@ function createWindow() {
 }
 
 function handleGetFonts() {
-  ipcMain.on('did-start-getfonts', async event => {
+  ipcMain.on('did-start-getfonts', async (event) => {
     console.log('Getting system fonts');
     fontList
       .getFonts()
-      .then(fonts => {
+      .then((fonts) => {
         event.sender.send(
           'did-finish-getfonts',
           // Font names with spaces are wrapped in quotation marks
-          fonts.map(font => font.replace(/^"|"$/g, '')).sort(),
+          fonts.map((font) => font.replace(/^"|"$/g, '')).sort()
         );
       })
-      .catch(err => {
+      .catch((err) => {
         event.sender.send('did-finish-getfonts', err);
       });
   });
@@ -77,16 +73,16 @@ function handleGetProjects() {
   ipcMain.on('did-start-getprojectstructure', async (event, rootDirectories) => {
     const projects = flatten(
       map(rootDirectories, (directories, projectType) => {
-        return sources[projectType].getProjectStructure(directories)
+        return sources[projectType].getProjectStructure(directories);
       })
-    )
+    );
     event.sender.send('did-finish-getprojectstructure', projects);
   });
 }
 
 function handleSubmission() {
   ipcMain.on('did-start-conversion', async (event, args) => {
-    const onProgress = args => {
+    const onProgress = (args) => {
       event.sender.send('on-progress', args);
     };
     console.log('Starting command line', args);
@@ -97,7 +93,7 @@ function handleSubmission() {
       result = err;
     }
 
-    let retArgs = { error: { message: "[unknown response]" } };
+    let retArgs = { error: { message: '[unknown response]' } };
     if (result) {
       retArgs =
         typeof result === 'string'

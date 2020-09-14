@@ -23,7 +23,7 @@ async function setupFfmpeg() {
 
   // if in the electron-dev environment, running from node_modules tree
   // so find the parent to the node_modules directory
-  const NODE_MODULES = "node_modules";
+  const NODE_MODULES = 'node_modules';
 
   if (executablePath.includes(NODE_MODULES)) {
     let node_modules_position = executablePath.indexOf(NODE_MODULES);
@@ -32,9 +32,9 @@ async function setupFfmpeg() {
 
   let binariesPath = path.join(executablePath, 'binaries');
 
-  console.log( `ffmpeg.js: setupFfmpeg() binaries directory: [${binariesPath}]` );
+  console.log(`ffmpeg.js: setupFfmpeg() binaries directory: [${binariesPath}]`);
 
   // Ensure executables are... executable
-  shell.chmod('+X', path.join(binariesPath, (process.platform == 'win32') ? '*.*' : '*' ));
+  shell.chmod('+X', path.join(binariesPath, process.platform == 'win32' ? '*.*' : '*'));
   return binariesPath;
 }
