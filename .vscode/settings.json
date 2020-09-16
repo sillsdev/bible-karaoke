@@ -1,0 +1,33 @@
+{
+  "editor.formatOnSave": true,
+  "editor.rulers": [120],
+  "editor.wordWrapColumn": 120,
+  "cSpell.words": [
+    "apos",
+    "arial",
+    "asar",
+    "blueprintjs",
+    "datauri",
+    "ellipsize",
+    "eskip",
+    "execa",
+    "ffprobe",
+    "flexbox",
+    "hearthis",
+    "helvetica",
+    "iife",
+    "kayan",
+    "mobx",
+    "neue",
+    "noopener",
+    "noreferrer",
+    "onstatechange",
+    "onupdatefound",
+    "popd",
+    "reflexbox",
+    "screenview",
+    "tempy",
+    "usfm",
+    "webm"
+  ]
+}

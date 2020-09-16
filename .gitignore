@@ -27,3 +27,5 @@ binaries/ffmpeg.exe
 binaries/ffprobe.exe
 binaries/ffmpeg
 binaries/ffprobe
+
+.eslintcache
