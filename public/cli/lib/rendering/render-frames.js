@@ -113,7 +113,7 @@ async function getHtmlPage(
   });
   let timings = JSON.stringify(require(timingFilePath), null, 4); // fs.readFileSync(timingFilePath, { encoding: "utf-8" });
   let backgroundDataUri = null;
-  if (bgFilePath && bgType == 'image') {
+  if (bgFilePath && bgType === 'image') {
     backgroundDataUri = await DataURI(bgFilePath);
   }
   if (fontItalic) {
