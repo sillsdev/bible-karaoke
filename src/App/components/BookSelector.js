@@ -7,20 +7,20 @@ import { Tag, H3, Card, Button } from '../blueprint';
 import { useStores } from '../store';
 
 export default function BookSelector(props) {
-  const { appState } = useStores()
+  const { appState } = useStores();
   return useObserver(() => {
-    const project = appState.projects.activeProject
+    const project = appState.projects.activeProject;
     if (!project) {
-      return null
+      return null;
     }
     return (
       <Card {...props}>
         <H3>{project.name}</H3>
         <Flex flexWrap="wrap" m={-1}>
-          {project.bookList.map(book => {
-            let selectionCount = null
+          {project.bookList.map((book) => {
+            let selectionCount = null;
             if (book.isSelected) {
-              selectionCount = _.indexOf(project.bookSelection, book.name) + 1
+              selectionCount = _.indexOf(project.bookSelection, book.name) + 1;
             }
             return (
               <Button
@@ -38,10 +38,10 @@ export default function BookSelector(props) {
                   </Tag>
                 )}
               </Button>
-            )
+            );
           })}
         </Flex>
       </Card>
-    )
-  })
+    );
+  });
 }

@@ -12,7 +12,7 @@ export const getDefaultHearThisDirectory = () => {
     default:
       return `${os.homedir()}/hearThisProjects/`;
   }
-}
+};
 
 export const getDefaultScriptureAppBuilderDirectory = () => {
   switch (process.platform) {
@@ -22,7 +22,7 @@ export const getDefaultScriptureAppBuilderDirectory = () => {
     default:
       return `${os.homedir()}/App Builder/Scripture Apps/App Projects/`;
   }
-}
+};
 
 class Settings {
   constructor(root) {
@@ -31,11 +31,11 @@ class Settings {
 
   @persist('list')
   @observable
-  hearThisRootDirectories = [ getDefaultHearThisDirectory() ]
+  hearThisRootDirectories = [getDefaultHearThisDirectory()];
 
   @persist('list')
   @observable
-  scriptureAppBuilderRootDirectories = [ getDefaultScriptureAppBuilderDirectory() ]
+  scriptureAppBuilderRootDirectories = [getDefaultScriptureAppBuilderDirectory()];
 
   @persist
   @observable
@@ -49,18 +49,18 @@ class Settings {
   get rootDirectories() {
     return {
       [PROJECT_TYPE.hearThis]: this.hearThisRootDirectories.slice(),
-      [PROJECT_TYPE.scriptureAppBuilder]: this.scriptureAppBuilderRootDirectories.slice()
-    }
+      [PROJECT_TYPE.scriptureAppBuilder]: this.scriptureAppBuilderRootDirectories.slice(),
+    };
   }
 
   @action.bound
   setHearThisRootDirectories(directories) {
-    this.hearThisRootDirectories = directories
+    this.hearThisRootDirectories = directories;
   }
-  
+
   @action.bound
   setScriptureAppBuilderRootDirectories(directories) {
-    this.scriptureAppBuilderRootDirectories = directories
+    this.scriptureAppBuilderRootDirectories = directories;
   }
 
   @action.bound

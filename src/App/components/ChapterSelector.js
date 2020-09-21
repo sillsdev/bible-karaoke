@@ -7,9 +7,9 @@ import { H3, Checkbox, Button, Card } from '../blueprint';
 import { useStores } from '../store';
 
 export default function ChapterSelector(props) {
-  const { appState } = useStores()
+  const { appState } = useStores();
   return useObserver(() => {
-    const book = _.get(appState.projects, [ 'activeProject', 'activeBook' ]);
+    const book = _.get(appState.projects, ['activeProject', 'activeBook']);
     return (
       <Card {...props}>
         {!!book && (
@@ -25,7 +25,7 @@ export default function ChapterSelector(props) {
               />
             </Flex>
             <Flex flexWrap="wrap" m={-1}>
-              {book.chapterList.map(chapter => (
+              {book.chapterList.map((chapter) => (
                 <Button
                   key={chapter.name}
                   m={1}
@@ -39,6 +39,6 @@ export default function ChapterSelector(props) {
           </React.Fragment>
         )}
       </Card>
-    )
-  })
+    );
+  });
 }

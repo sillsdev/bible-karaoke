@@ -23,7 +23,7 @@ export default function FontEditor(props) {
           newFonts.map((fontName) => ({
             value: fontName,
             lael: fontName,
-          })),
+          }))
         );
       } else {
         console.warn('No fonts for selection', newFonts);
@@ -32,22 +32,22 @@ export default function FontEditor(props) {
     ipcRenderer.send('did-start-getfonts');
   }, []);
 
-  const setFontFamily = evt => {
+  const setFontFamily = (evt) => {
     appState.setTextProps({ fontFamily: evt.currentTarget.value });
   };
 
-  const setFontSize = evt => {
+  const setFontSize = (evt) => {
     appState.setTextProps({ fontSize: evt.currentTarget.value });
   };
 
-  const setTextColor = color => {
+  const setTextColor = (color) => {
     appState.setTextProps({ color: color.hex });
   };
 
-  const setHighlightColor = color => {
+  const setHighlightColor = (color) => {
     appState.setTextProps({
       highlightColor: color.hex,
-      highlightRGB: `rgba(${color.rgb.r},${color.rgb.g},${color.rgb.b},${color.rgb.a})`
+      highlightRGB: `rgba(${color.rgb.r},${color.rgb.g},${color.rgb.b},${color.rgb.a})`,
     });
   };
 
@@ -62,38 +62,20 @@ export default function FontEditor(props) {
   return useObserver(() => {
     const { text } = appState;
     return (
-      <EditPopover icon="font" title='Edit font' {...props}>
+      <EditPopover icon="font" title="Edit font" {...props}>
         <EditRow>
-          <HTMLSelect
-            mr={2}
-            value={text.fontFamily}
-            onChange={setFontFamily}
-            options={fonts}
-          />
-          <HTMLSelect
-            mr={2}
-            value={text.fontSize}
-            onChange={setFontSize}
-            options={FONT_SIZES}
-          />
-          <ColorPicker value={text.color} onChange={setTextColor}/>
+          <HTMLSelect mr={2} value={text.fontFamily} onChange={setFontFamily} options={fonts} />
+          <HTMLSelect mr={2} value={text.fontSize} onChange={setFontSize} options={FONT_SIZES} />
+          <ColorPicker value={text.color} onChange={setTextColor} />
         </EditRow>
         <EditRow mt={3}>
           <ButtonGroup mr={3}>
-            <Button
-              active={text.bold}
-              text={<Text bold>B</Text>}
-              onClick={toggleBold}
-            />
-            <Button
-              active={text.italic}
-              text={<Text italic>i</Text>}
-              onClick={toggleItalic}
-            />
+            <Button active={text.bold} text={<Text bold>B</Text>} onClick={toggleBold} />
+            <Button active={text.italic} text={<Text italic>i</Text>} onClick={toggleItalic} />
           </ButtonGroup>
           <Text mr={2}>Highlight:</Text>
-          <ColorPicker value={text.highlightColor} onChange={setHighlightColor}/>
-        </EditRow>  
+          <ColorPicker value={text.highlightColor} onChange={setHighlightColor} />
+        </EditRow>
       </EditPopover>
     );
   });

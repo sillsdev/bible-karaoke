@@ -8,32 +8,31 @@ import { Button } from '../blueprint';
 import { useStores } from '../store';
 import { TEXT_LOCATION } from '../constants';
 
-const Wrapper = styled(Box) `
+const Wrapper = styled(Box)`
   ${position}
   position: absolute;
   line-height: 1;
   .bp3-popover-target {
     display: block;
   }
-`
+`;
 
 export default function TextLocationToggle(props) {
   const { appState } = useStores();
   const toggleTextLocation = React.useCallback(() => {
     appState.setTextLocation({
-      location: appState.textLocation.location === TEXT_LOCATION.subtitle
-        ? TEXT_LOCATION.center
-        : TEXT_LOCATION.subtitle
+      location:
+        appState.textLocation.location === TEXT_LOCATION.subtitle ? TEXT_LOCATION.center : TEXT_LOCATION.subtitle,
     });
-  }, [ appState ]);
+  }, [appState]);
   return useObserver(() => {
     const isSubtitle = appState.textLocation.location === TEXT_LOCATION.subtitle;
     return (
       <Wrapper {...props}>
-        <Tooltip content={isSubtitle ? "Switch to centered mode" : "Switch to subtitle mode"}>
+        <Tooltip content={isSubtitle ? 'Switch to centered mode' : 'Switch to subtitle mode'}>
           <Button minimal icon={isSubtitle ? 'arrow-up' : 'arrow-down'} onClick={toggleTextLocation} />
         </Tooltip>
       </Wrapper>
     );
-  })
+  });
 }

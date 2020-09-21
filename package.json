@@ -3,7 +3,7 @@
   "description": "Create 'karaoke-style' videos of Bible passages to help users become comfortable at reading the Bible in another language.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sillsdev/bible-karaoke.git"
+    "url": "https://github.com/mseag/bible-karaoke.git"
   },
   "author": {
     "name": "DigiServe",
@@ -61,6 +61,9 @@
     "preelectron-pack-mac": "npm run build",
     "preelectron-pack-win": "npm run build",
     "preelectron-pack-linux": "npm run build",
+    "lint": "eslint -c .eslintrc.json --ignore-path .eslintignore --cache --fix",
+    "prettier": "prettier --write \"**/*.{ts,js,json,css,scss,less,html,md,yml}\"",
+    "prettier:test": "prettier --list-different \"**/*.{ts,js,json,css,scss,less,html,md,yml}\"",
     "electron-pack-mac": "electron-builder -m",
     "electron-pack-win": "electron-builder -w",
     "electron-pack-linux": "electron-builder -l"
@@ -88,13 +91,28 @@
   "devDependencies": {
     "@rescripts/cli": "^0.0.13",
     "@rescripts/rescript-env": "^0.0.11",
+    "babel-eslint": "^10.1.0",
     "concurrently": "^5.2.0",
     "cross-env": "^6.0.3",
     "electron": "^9.1.0",
     "electron-builder": "^22.7.0",
+    "eslint": "^7.8.1",
+    "eslint-plugin-react": "^7.20.6",
     "ffbinaries": "^1.1.4",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.3.0",
+    "prettier": "^2.1.1",
     "typescript": "^3.9.7",
     "wait-on": "^3.3.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{ts,js,json,css,scss,less,html,md,yml}": "prettier --write"
   },
   "build": {
     "appId": "org.digiserve.bible-karaoke",

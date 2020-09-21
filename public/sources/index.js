@@ -3,5 +3,5 @@ const scriptureAppBuilder = require('./scripture-app-builder');
 
 module.exports = {
   [hearThis.PROJECT_TYPE]: hearThis,
-  [scriptureAppBuilder.PROJECT_TYPE]: scriptureAppBuilder
-}
+  [scriptureAppBuilder.PROJECT_TYPE]: scriptureAppBuilder,
+};

@@ -11,8 +11,8 @@
  * @return {string}
  */
 module.exports = function stringPad(str, length) {
-    while (str.length < length) {
-        str += " ";
-    }
-    return str;
+  while (str.length < length) {
+    str += ' ';
+  }
+  return str;
 };

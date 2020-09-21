@@ -57,7 +57,7 @@ const TextWrapper = styled(Flex).attrs({
 
 const ProgressText = ({ progress }) => {
   if (progress.error) {
-    return <Text>{progress.error.toString()}</Text>
+    return <Text>{progress.error.toString()}</Text>;
   }
   const progressText = progress.status.replace('% (', '%\n(').split('\n');
   return progressText.map((line, index) => (
@@ -67,19 +67,10 @@ const ProgressText = ({ progress }) => {
   ));
 };
 
-const Action = ({
-  icon,
-  intent,
-  disabled,
-  onClick,
-  combined,
-  mainText,
-  subText,
-}) => {
+const Action = ({ icon, intent, disabled, onClick, combined, mainText, subText }) => {
   const { appState } = useStores();
   return useObserver(() => {
-    const progress =
-      appState.progress.combined === combined ? appState.progress : null;
+    const progress = appState.progress.combined === combined ? appState.progress : null;
     const inProgress = _.get(progress, 'inProgress');
     return (
       <ActionButton
@@ -96,7 +87,7 @@ const Action = ({
               <ProgressText progress={progress} />
             ) : (
               <React.Fragment>
-                <Text fontSize='200%'>{mainText}</Text>
+                <Text fontSize="200%">{mainText}</Text>
                 <Text mt={2}>{subText}</Text>
               </React.Fragment>
             )}
@@ -114,49 +105,32 @@ export default function Actions() {
   const onGenerateVideo = React.useCallback(
     (combined, videos = 1) => {
       appState.generateVideo(combined);
-      analytics.trackEvent(
-        'Video',
-        'Create Video',
-        combined ? 'Single' : 'Multiple',
-        videos,
-      );
+      analytics.trackEvent('Video', 'Create Video', combined ? 'Single' : 'Multiple', videos);
     },
-    [appState, analytics],
+    [appState, analytics]
   );
 
   return useObserver(() => {
     const { projects } = appState;
-    const totalChapterCount = _.get(
-      projects,
-      ['activeProject', 'selectedChapterCount'],
-      0,
-    );
+    const totalChapterCount = _.get(projects, ['activeProject', 'selectedChapterCount'], 0);
     return (
       <AnimatedVisibility visible={totalChapterCount > 0}>
-        <Flex
-          alignItems='center'
-          justifyContent='center'
-          flexDirection='column'
-        >
+        <Flex alignItems="center" justifyContent="center" flexDirection="column">
           <Action
             combined={false}
-            icon='applications'
+            icon="applications"
             disabled={totalChapterCount === 1}
             onClick={() => onGenerateVideo(false, totalChapterCount)}
-            mainText={`Generate ${totalChapterCount} video${
-              totalChapterCount > 1 ? 's' : ''
-            }`}
-            subText='(One video per chapter)'
+            mainText={`Generate ${totalChapterCount} video${totalChapterCount > 1 ? 's' : ''}`}
+            subText="(One video per chapter)"
           />
           <Action
             combined
-            icon='application'
+            icon="application"
             intent={Intent.PRIMARY}
             onClick={() => onGenerateVideo(true)}
-            mainText='Generate a single video'
-            subText={`(${totalChapterCount} chapter${
-              totalChapterCount > 1 ? 's' : ''
-            })`}
+            mainText="Generate a single video"
+            subText={`(${totalChapterCount} chapter${totalChapterCount > 1 ? 's' : ''})`}
           />
         </Flex>
       </AnimatedVisibility>

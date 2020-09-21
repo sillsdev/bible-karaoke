@@ -8,22 +8,18 @@ import { toJS } from 'mobx';
 import { useObserver } from 'mobx-react';
 import { useStores } from '../store';
 import { TEXT_LOCATION } from '../constants';
-import {
-  BackgroundEditor,
-  FontEditor,
-  SpeechBubbleEditor,
-} from './Editors';
+import { BackgroundEditor, FontEditor, SpeechBubbleEditor } from './Editors';
 import TextLocationToggle from './TextLocationToggle';
 import AnimatedVisibility from './AnimatedVisibility';
 
 const PREVIEW_WIDTH = '720px';
 const PREVIEW_HEIGHT = '480px';
 
-const Editable = styled(Flex) `
+const Editable = styled(Flex)`
   position: relative;
-`
+`;
 
-const Background = styled(Editable) `
+const Background = styled(Editable)`
   border: 1px solid grey;
   overflow: hidden;
   background-size: cover;
@@ -37,34 +33,34 @@ const PreviewVideo = styled.video.attrs({
   autoPlay: true,
   width: PREVIEW_WIDTH,
   height: PREVIEW_HEIGHT,
-}) `
+})`
   position: absolute;
   z-index: -2;
   object-fit: cover;
-`
+`;
 
 const Verses = styled(Box).attrs({
-  mt: '175px'
-}) `
+  mt: '175px',
+})`
   &.subtitle {
     position: absolute;
     width: 100%;
     bottom: 35px;
   }
-`
+`;
 
-const Verse = styled.div `
+const Verse = styled.div`
   position: relative;
   line-height: 2;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   margin: 0px 46px;
   padding: 15px 10px;
   &.hide {
     display: none;
   }
-`
+`;
 
-const SpeechBubbleBackground = styled(Box) `
+const SpeechBubbleBackground = styled(Box)`
   z-index: -1;
   border-radius: 10px;
   position: absolute;
@@ -72,19 +68,19 @@ const SpeechBubbleBackground = styled(Box) `
   bottom: 0;
   left: 0;
   right: 0;
-`
+`;
 
-const PreviewWord = styled.div `
+const PreviewWord = styled.div`
   padding: 0 5px;
   margin: 0 -5px;
   display: inline-block;
-  ${({isHighlighted, highlightColor}) => {
+  ${({ isHighlighted, highlightColor }) => {
     return `background-color: ${isHighlighted ? highlightColor || 'transparent' : 'transparent'};`;
   }}
-`
+`;
 
 const HIGHLIGHT_VERSE_INDEX = 0;
-const HIGHLIGHT_WORD_INDEXES = [0,1,2];
+const HIGHLIGHT_WORD_INDEXES = [0, 1, 2];
 
 const getImageSrc = _.memoize((file) => {
   if (!file) {
@@ -96,10 +92,10 @@ const getImageSrc = _.memoize((file) => {
       const img = fs.readFileSync(file).toString('base64');
       return `url(data:image/${ext};base64,${img})`;
     }
-  } catch(err) {
+  } catch (err) {
     console.log(`Failed to load image from '${file}'`);
   }
-  return ''
+  return '';
 });
 
 const PreviewVerse = ({ verse, highlightVerse, highlightColor }) => {
@@ -117,20 +113,14 @@ const PreviewVerse = ({ verse, highlightVerse, highlightColor }) => {
 };
 
 const Preview = () => {
-  const { appState } = useStores()
+  const { appState } = useStores();
   return useObserver(() => {
-    const firstChapter = _.get(appState, [ 'projects', 'firstSelectedChapter' ]);
-    const {
-      verses,
-      background,
-      speechBubble,
-      text,
-      textLocation
-    } = appState
+    const firstChapter = _.get(appState, ['projects', 'firstSelectedChapter']);
+    const { verses, background, speechBubble, text, textLocation } = appState;
     const styles = {
       background: {
         backgroundColor: background.color || 'transparent',
-        backgroundImage: getImageSrc(toJS(appState.background.file)), 
+        backgroundImage: getImageSrc(toJS(appState.background.file)),
       },
       speechBubble: {
         opacity: speechBubble.opacity,
@@ -144,32 +134,33 @@ const Preview = () => {
         fontStyle: text.italic ? 'italic' : undefined,
       },
       heading: {
-          color: text.color || '#CCC',
-          fontFamily: text.fontFamily || 'Arial',
-          fontSize: `${text.fontSize}pt` || '20px',
-          fontWeight: 'bold',
-          fontStyle: text.italic ? 'italic' : undefined,
+        color: text.color || '#CCC',
+        fontFamily: text.fontFamily || 'Arial',
+        fontSize: `${text.fontSize}pt` || '20px',
+        fontWeight: 'bold',
+        fontStyle: text.italic ? 'italic' : undefined,
       },
     };
-    let file = "file:"+background.file;
+    let file = 'file:' + background.file;
     const versesClassName = classnames({
-      subtitle: textLocation.location === TEXT_LOCATION.subtitle
+      subtitle: textLocation.location === TEXT_LOCATION.subtitle,
     });
-    const getVerseClassName = (index) => classnames({
-      hide: textLocation.location === TEXT_LOCATION.subtitle && index !== HIGHLIGHT_VERSE_INDEX
-    });
+    const getVerseClassName = (index) =>
+      classnames({
+        hide: textLocation.location === TEXT_LOCATION.subtitle && index !== HIGHLIGHT_VERSE_INDEX,
+      });
 
     return (
       <AnimatedVisibility visible={!!firstChapter}>
-        <Background className='preview' style={styles.background}>
+        <Background className="preview" style={styles.background}>
           <BackgroundEditor />
-          {background.type === 'video' && <PreviewVideo src={file} id='myVideo' /> }
+          {background.type === 'video' && <PreviewVideo src={file} id="myVideo" />}
           <Verses className={versesClassName}>
             {verses.map((verse, index) => (
               <Verse
                 key={index}
                 className={getVerseClassName(index)}
-                style={verse.indexOf("<strong>") > -1 ? styles.heading : styles.verse}
+                style={verse.indexOf('<strong>') > -1 ? styles.heading : styles.verse}
               >
                 {index === HIGHLIGHT_VERSE_INDEX && (
                   <React.Fragment>
@@ -180,7 +171,7 @@ const Preview = () => {
                   </React.Fragment>
                 )}
                 <PreviewVerse
-                  verse={verse.replace("<strong>", "").replace("</strong>", "")}
+                  verse={verse.replace('<strong>', '').replace('</strong>', '')}
                   highlightVerse={index === HIGHLIGHT_VERSE_INDEX}
                   highlightColor={text.highlightColor}
                 />
@@ -190,7 +181,7 @@ const Preview = () => {
         </Background>
       </AnimatedVisibility>
     );
-  })
+  });
 };
 
 export default Preview;

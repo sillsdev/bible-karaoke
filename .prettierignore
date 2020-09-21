@@ -1,0 +1,5 @@
+# minified files aren't supposed to be Prettier
+*.min.*
+
+/dist/
+/build/
