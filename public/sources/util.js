@@ -76,26 +76,26 @@ const isDirectory = (source) => fs.lstatSync(source).isDirectory();
 const getDirectories = (source) => fs.readdirSync(source).filter((name) => isDirectory(path.join(source, name)));
 
 class Project {
-  constructor(projectType) {
+  constructor(projectType, name = '', books = []) {
     this.projectType = projectType;
-    this.name = '';
-    this.books = [];
+    this.name = name;
+    this.books = books;
   }
 }
 
 class Book {
-  constructor() {
-    this.name = '';
-    this.chapters = [];
+  constructor(name = '', chapters = []) {
+    this.name = name;
+    this.chapters = chapters;
   }
 }
 
 class Chapter {
-  constructor() {
-    this.name = '';
-    this.fullPath = '';
-    this.audioFiles = [];
-    this.textXmlFile = '';
+  constructor(name = '', fullPath = '', audioFiles = [], textXmlFile = '') {
+    this.name = name;
+    this.fullPath = fullPath;
+    this.audioFiles = audioFiles;
+    this.textXmlFile = textXmlFile;
   }
 }
 

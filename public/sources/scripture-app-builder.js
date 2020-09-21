@@ -21,19 +21,17 @@ function getProjectStructure(rootDirectories = []) {
 }
 
 function makeProject(name, directory) {
-  const project = new Project(PROJECT_TYPE);
-  project.name = name;
-
   const fileName = path.join(directory, name, name) + '.appDef';
   const contents = fs.readFileSync(fileName, 'utf8');
   const dom = new JSDOM(contents, { contentType: 'text/xml' });
-  project.books = makeBooks(dom.window.document);
 
-  return project;
+  return new Project(PROJECT_TYPE, name, makeBooks(dom.window.document));
 }
 
 function makeBooks(xmlDoc) {
   const books = [];
+  const booksIdElement = xmlDoc.querySelector('books[id]');
+  const collectionId = booksIdElement ? booksIdElement.id : '';
   const bookIdSelector = 'book[id]';
   const bookIds = _.map(xmlDoc.querySelectorAll(bookIdSelector), (n) => (n.id ? n.id : undefined)).filter(
     (id) => id != null && id !== ''
@@ -42,9 +40,7 @@ function makeBooks(xmlDoc) {
     const bookNameSelector = "book[id='" + bookId + "'] > name";
     const bookName = xmlDoc.querySelector(bookNameSelector).textContent;
     if (bookName != null && bookName !== '') {
-      const book = new Book();
-      book.name = bookName;
-      book.chapters = makeChapters(bookId, xmlDoc);
+      const book = new Book(bookName, makeChapters(collectionId, bookId, xmlDoc));
 
       if (book.chapters.length > 0) {
         books.push(book);
@@ -55,21 +51,30 @@ function makeBooks(xmlDoc) {
   return books;
 }
 
-function makeChapters(bookId, xmlDoc) {
+function makeChapters(collectionId, bookId, xmlDoc) {
   const chapters = [];
-  const chapterNumberSelector = "book[id='" + bookId + "'] > audio[chapter]"; //find all chapters with audio
-  const chapterNumbers = _.map(xmlDoc.querySelectorAll(chapterNumberSelector), (n) =>
-    n.hasAttributes() ? n.attributes.getNamedItem('chapter').value : undefined
+  // find all chapters with audio
+  let isPageSchema = true;
+  let chapterNumbers = _.map(xmlDoc.querySelectorAll("book[id='" + bookId + "'] > page[num] > audio"), (n) =>
+    n.parentElement.hasAttributes() ? n.parentElement.attributes.getNamedItem('num').value : undefined
   ).filter((cn) => cn != null && cn !== '');
+  if (chapterNumbers.length === 0) {
+    // attempt to use old schema
+    isPageSchema = false;
+    chapterNumbers = _.map(xmlDoc.querySelectorAll("book[id='" + bookId + "'] > audio[chapter]"), (n) =>
+      n.hasAttributes() ? n.attributes.getNamedItem('chapter').value : undefined
+    ).filter((cn) => cn != null && cn !== '');
+  }
+
   for (const chapterNumber of chapterNumbers) {
-    const fileSelector = "book[id='" + bookId + "'] > audio[chapter='" + chapterNumber + "'] > filename";
+    const chapterName = chapterNumber === '0' ? 'Intro' : '' + chapterNumber;
+    const fileSelector = isPageSchema
+      ? "book[id='" + bookId + "'] > page[num='" + chapterNumber + "'] > audio > filename"
+      : "book[id='" + bookId + "'] > audio[chapter='" + chapterNumber + "'] > filename";
     const fileNames = _.map(xmlDoc.querySelectorAll(fileSelector), (n) => n.textContent).filter(
       (fn) => fn != null && fn !== ''
     );
-    const chapter = new Chapter();
-    chapter.name = chapterNumber === '0' ? 'Intro' : chapterNumber;
-    chapter.audioFiles = fileNames;
-    chapters.push(chapter);
+    chapters.push(new Chapter(chapterName, '', fileNames));
   }
 
   return chapters;
