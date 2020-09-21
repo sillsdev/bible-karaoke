@@ -1,18 +1,15 @@
-/* eslint-disable */
 const fs = require('fs');
+const { JSDOM } = require('jsdom');
+const _ = require('lodash/core');
 const path = require('path');
-const libxmljs = require('libxmljs');
 const grammar = require('usfm-grammar');
-const { Project, Book, Chapter, getDirectories, findObjectByKey, getMatches, bibleNames } = require('./util');
+const { Project, Book, Chapter, getDirectories, bibleNames } = require('./util');
 
 const PROJECT_TYPE = 'scriptureAppBuilder';
 
-let xmlDoc;
-let xmlString; //used to hold the xml we are building
-
 function getProjectStructure(rootDirectories = []) {
   try {
-    return flatten(
+    return _.flatten(
       rootDirectories.map((directory) => {
         return getDirectories(directory).map((name) => makeProject(name, directory));
       })
@@ -27,94 +24,73 @@ function makeProject(name, directory) {
   const project = new Project(PROJECT_TYPE);
   project.name = name;
 
-  let fileName = path.join(directory, name, name);
-  fileName += '.appDef';
-
-  contents = fs.readFileSync(fileName, 'utf8');
-
-  xmlDoc = libxmljs.parseXml(contents);
-  project.books = makeBook(contents);
+  const fileName = path.join(directory, name, name) + '.appDef';
+  const contents = fs.readFileSync(fileName, 'utf8');
+  const dom = new JSDOM(contents, { contentType: 'text/xml' });
+  project.books = makeBooks(dom.window.document);
 
   return project;
 }
 
-function makeBook(fileContents) {
-  const booksRegex = /book\sid=\"(.*)\">/g;
-  const booksArray = getMatches(fileContents, booksRegex, 1);
-  let finalJsonString = '[';
+function makeBooks(xmlDoc) {
+  const books = [];
+  const bookIdSelector = 'book[id]';
+  const bookIds = _.map(xmlDoc.querySelectorAll(bookIdSelector), (n) => (n.id ? n.id : undefined)).filter(
+    (id) => id != null && id !== ''
+  );
+  for (const bookId of bookIds) {
+    const bookNameSelector = "book[id='" + bookId + "'] > name";
+    const bookName = xmlDoc.querySelector(bookNameSelector).textContent;
+    if (bookName != null && bookName !== '') {
+      const book = new Book();
+      book.name = bookName;
+      book.chapters = makeChapters(bookId, xmlDoc);
 
-  for (let i = 0; i < booksArray.length; i++) {
-    //loop through all the books
-    if (findObjectByKey(bibleNames, 'SAB', booksArray[i])) {
-      const bookName = findObjectByKey(bibleNames, 'SAB', booksArray[i])['BibleName'];
-      let jsonString = '{"name":"' + bookName + '","chapters":[';
-
-      const chapterString = "//book[@id='" + booksArray[i] + "']/audio/@chapter"; //find all chapters with audio
-      const chapterRegex = /chapter=\"([\d]*)\"/g;
-      const chaptersArray = getMatches(xmlDoc.find(chapterString).toString(), chapterRegex, 1).toString().split(',');
-
-      for (let j = 0; j < chaptersArray.length; j++) {
-        //loop through all the books
-        jsonString += '{"name":"' + chaptersArray[j] + '", "audioFiles": [';
-        const fileString =
-          "//book[@id='" + booksArray[i] + "']/audio[@chapter='" + chaptersArray[j] + "']/filename/text()";
-        fileName = xmlDoc.find(fileString).toString();
-
-        if (fileName) {
-          jsonString += '"' + fileName + '",';
-        } else {
-          jsonString = ''; //no audio chapter, empty out whole string
-        }
-
-        if (jsonString != '') {
-          jsonString = jsonString.substring(0, jsonString.length - 1); //chop off last comma
-          jsonString += ']},';
-          //"textXmlFile": "' + booksArray[i] + '-' + chaptersArray[j] + '.xml"},' //will handle xml building on demand
-        }
+      if (book.chapters.length > 0) {
+        books.push(book);
       }
-
-      if (jsonString != '') {
-        jsonString = jsonString.substring(0, jsonString.length - 1);
-        jsonString += ']},';
-      }
-      finalJsonString += jsonString;
     }
   }
 
-  if (finalJsonString == '[') {
-    finalJsonString = ''; //if only opening bracket means string is empty
-  }
-  if (finalJsonString != '') {
-    finalJsonString = finalJsonString.substring(0, finalJsonString.length - 1);
-    finalJsonString += ']';
-  }
-  if (finalJsonString != '') {
-    return JSON.parse(finalJsonString);
-  } else {
-    return [];
-  }
+  return books;
 }
 
+function makeChapters(bookId, xmlDoc) {
+  const chapters = [];
+  const chapterNumberSelector = "book[id='" + bookId + "'] > audio[chapter]"; //find all chapters with audio
+  const chapterNumbers = _.map(xmlDoc.querySelectorAll(chapterNumberSelector), (n) =>
+    n.hasAttributes() ? n.attributes.getNamedItem('chapter').value : undefined
+  ).filter((cn) => cn != null && cn !== '');
+  for (const chapterNumber of chapterNumbers) {
+    const fileSelector = "book[id='" + bookId + "'] > audio[chapter='" + chapterNumber + "'] > filename";
+    const fileNames = _.map(xmlDoc.querySelectorAll(fileSelector), (n) => n.textContent).filter(
+      (fn) => fn != null && fn !== ''
+    );
+    const chapter = new Chapter();
+    chapter.name = chapterNumber === '0' ? 'Intro' : chapterNumber;
+    chapter.audioFiles = fileNames;
+    chapters.push(chapter);
+  }
+
+  return chapters;
+}
+
+// eslint-disable-next-line no-unused-vars
 function makeTextXMLFile(project, book, chapter, dest, directory) {
-  let fileName = path.join(directory, project, project);
-  fileName += '.appDef';
-
-  const SABBookName = findObjectByKey(bibleNames, 'BibleName', book)['SAB']; //this converts the passed in regular bible book name into SAB abbreviation
-
+  const fileName = path.join(directory, project, project + '.appDef');
   const contents = fs.readFileSync(fileName, 'utf8');
-  xmlDoc = libxmljs.parseXml(contents);
+  const dom = new JSDOM(contents, { contentType: 'text/xml' });
+  const xmlDoc = dom.window.document;
 
-  // bookPath = '/Users/ray//AppBuilder/Scripture Apps/App Projects/ShanBiblePublish latest-Chant/ShanBiblePublish latest-Chant_data/books/'
-  const sfmFileName =
-    path.join(directory, project, project) +
-    '_data/books' +
-    '/' +
-    xmlDoc.get("string(//book[@id='" + SABBookName + "']/filename/text())");
+  const SABBookName = _.find(bibleNames, 'BibleName', book).SAB; //this converts the passed in regular bible book name into SAB abbreviation
+  const filename = xmlDoc.querySelector('book[id="' + SABBookName + '"] > filename').textContent;
+  console.log('SFM filename:', filename);
+  const sfmFileName = path.join(directory, project, project + '_data', 'books', 'C01', filename);
 
   let xmlString = '<?xml version="1.0" encoding="utf-8"?>';
   xmlString += '<ChapterInfo Number="' + chapter + '"><Recordings>';
 
-  fs.readFile(sfmFileName, 'utf8', function (err, fileContents) {
+  fs.readFile(sfmFileName, 'utf8', function (_err, fileContents) {
     //TODO prefix sfmFileName with path where SFM is located
     fileContents = fileContents.concat('\\EOF'); //end of file does not have chapter tag, add this tag manually so can match in one regex
 
@@ -127,7 +103,7 @@ function makeTextXMLFile(project, book, chapter, dest, directory) {
     const chapterText = firstLine + chapterArray[chapter - 1];
     const jsonCleanOutput = new grammar.USFMParser(chapterText, grammar.SCRIPTURE);
 
-    const regexpVerse = /\"verseText\":\"(.*?)\"/gs;
+    const regexpVerse = /"verseText":"(.*?)"/gs;
     const verseArray = JSON.stringify(jsonCleanOutput).match(regexpVerse);
 
     const regReplace = /<|<<|>|>>/gi;
@@ -145,11 +121,12 @@ function makeTextXMLFile(project, book, chapter, dest, directory) {
   });
 }
 
-// test case 1, jus to output result of the function, need to look out for projects with on audio files, they will be returned but the project.books array will be empty by design
-// console.log(JSON.stringify(getProjectStructure('')));
+// test case 1, just to output result of the function, need to look out for projects with on audio files, they will be returned but the project.books array will be empty by design
+// console.log(JSON.stringify(getProjectStructure(['C:/Users/Ira/Documents/App Builder/Scripture Apps/App Projects/']), null, 2));
 
-// test case 2: make xml file by passing (project, book, chapter, destination)
-// makeTextXMLFile('ShanBiblePublish latest-Chant', 'Leviticus', '2', '/Users/ray/Downloads', '');
+// test case 2: make xml file by passing (project, book, chapter, destination, directory)
+// makeTextXMLFile('ShanBiblePublish latest-Chant', 'Leviticus', '2', '/Users/ray/Downloads', '/Users/ray/Documents/AppBuilder/Scripture Apps/App Projects/');
+// makeTextXMLFile('World English Bible Sample', 'Genesis', '2', 'C:/Users/Ira/Downloads', 'C:/Users/Ira/Documents/App Builder/Scripture Apps/App Projects/');
 
 module.exports = {
   PROJECT_TYPE,

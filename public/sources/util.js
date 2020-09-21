@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const xml2json = require('xml-js');
+
 const bibleNames = [
   { BibleName: 'Genesis', SAB: 'GEN', FCBH: 'Gen' },
   { BibleName: 'Exodus', SAB: 'EXO', FCBH: 'Exod' },
@@ -126,25 +127,6 @@ function getSampleVerses(sourceDirectory) {
   }
 }
 
-function findObjectByKey(array, key, value) {
-  for (let i = 0; i < array.length; i++) {
-    if (array[i][key] === value) {
-      return array[i];
-    }
-  }
-  return null;
-}
-
-function getMatches(string, regex, index) {
-  index || (index = 1); // default to the first capturing group
-  const matches = [];
-  let match;
-  while ((match = regex.exec(string))) {
-    matches.push(match[index]);
-  }
-  return matches;
-}
-
 module.exports = {
   getSampleVerses,
   getDirectories,
@@ -152,6 +134,4 @@ module.exports = {
   Book,
   Chapter,
   bibleNames,
-  findObjectByKey,
-  getMatches,
 };
