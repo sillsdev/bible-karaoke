@@ -52,7 +52,7 @@
   },
   "scripts": {
     "cli": "node public/cli/index.js",
-    "electron-dev": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron-dev": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron . --inspect 9229\"",
     "start": "ffbinaries ffmpeg ffprobe -o=binaries && rescripts start",
     "build": "ffbinaries ffmpeg ffprobe -o=binaries && rescripts build",
     "test": "rescripts test",

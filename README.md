@@ -23,13 +23,26 @@ Install the dependencies:
 npm install
 ```
 
-Debug the application:
+### Debugging/Running the application
 
 ```sh
 npm run electron-dev
 ```
 
-Build the app manually for testing:
+### Debugging the Node Backend in VSCode
+
+We provide a debugging configuration for VSCode (defined in `.vscode/launch.json`)
+
+1. set a breakpoint in VSCode somewhere in the Node backend JS code (not front-end React code)
+2. `npm run electron-dev` (the Node debugger listens on port 9229)
+3. In VSCode, run the Debug Configuration named _Node Backend_. The VSCode status bar will turn orange when it is successfully attached to the debugger
+4. Use the Bible Karaoke application - the application will pause when a breakpoint is hit in VSCode
+
+### Debugging the React Frontend in VSCode
+
+TODO
+
+### Build and package the app manually for testing
 
 ```sh
 # Windows:
@@ -42,7 +55,7 @@ npm run electron-pack-linux
 
 Build the app automatically for distribution:
 
-- Push to a branch of the form `release/*`, e.g. `release/v0.3.4`, or `release/v0.3.4-rc1`.
+- Push to a branch of the form `release/*`, e.g. `release/v0.3.5`, or `release/v0.3.5-rc1`.
 - Look in the GitHub **Actions** tab for the build artifacts.
 
 Releasing
