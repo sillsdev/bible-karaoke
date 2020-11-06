@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ChapterInfo Number="1">
+  <Recordings>
+    <ScriptLine>
+      <LineNumber>1</LineNumber>
+      <Text>Chapter 1</Text>
+      <RecordingTime>2019-09-27T03:56:59.6484552Z</RecordingTime>
+      <Verse>0</Verse>
+      <Heading>true</Heading>
+      <HeadingType>c</HeadingType>
+    </ScriptLine>
+    <ScriptLine>
+      <LineNumber>2</LineNumber>
+      <Text>Tamangaò̌ raò̌rî rî̌kaò̌</Text>
+      <RecordingTime>2019-09-27T03:57:13.2196834Z</RecordingTime>
+      <Verse>0</Verse>
+      <Heading>true</Heading>
+      <HeadingType>s</HeadingType>
+    </ScriptLine>
+    <ScriptLine>
+      <LineNumber>3</LineNumber>
+      <Text>Tô̌, pracǎnsû̌, prathácô̌n dò Khrī, thapǔwaǐ Wein Kalòcè̌phao aò.</Text>
+      <RecordingTime>2019-09-27T03:57:23.0372199Z</RecordingTime>
+      <Verse>1-2</Verse>
+      <Heading>false</Heading>
+    </ScriptLine>
+  </Recordings>
+  <Source />
+</ChapterInfo>

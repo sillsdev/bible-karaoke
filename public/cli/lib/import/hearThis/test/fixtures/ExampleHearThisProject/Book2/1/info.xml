@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ChapterInfo Number="2">
+  <Recordings>
+    <ScriptLine>
+      <LineNumber>2</LineNumber>
+      <Text>Bweca marîmaraò́ pa dô̌ Khrī YeSyǔ khaucǎ</Text>
+      <RecordingTime>2019-02-05T04:28:49.2022694Z</RecordingTime>
+      <Verse>0</Verse>
+      <Heading>true</Heading>
+      <HeadingType>s</HeadingType>
+    </ScriptLine>
+    <ScriptLine>
+      <LineNumber>3</LineNumber>
+      <Text>Lǎrî̌hǎ nathû̌ mwaǐ takhòwèphao dò ma takarǎn katǎ khaucǎ nathû̌ mwaǐ pra thû̌kaǐ.</Text>
+      <RecordingTime>2019-02-05T04:29:29.2484371Z</RecordingTime>
+      <Verse>1</Verse>
+      <Heading>false</Heading>
+    </ScriptLine>
+    <ScriptLine>
+      <LineNumber>4</LineNumber>
+      <Text>Beǐnu hǎ nathû̌ macǔ kǎn ǔ caǔ atadaô dò nathû̌ nadeǐn takrau tayaò aò dô̌ maolǎ laǒlǎn akhau.</Text>
+      <RecordingTime>2019-02-05T04:29:58.3071505Z</RecordingTime>
+      <Verse>2</Verse>
+      <Heading>false</Heading>
+    </ScriptLine>
+  </Recordings>
+</ChapterInfo>
