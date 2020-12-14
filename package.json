@@ -46,7 +46,7 @@
     "shelljs": "^0.8.4",
     "styled-components": "^5.1.1",
     "styled-system": "^5.1.5",
-    "tempy": "^0.3.0",
+    "tempy": "^1.0.0",
     "winston": "^3.3.3",
     "xml-js": "^1.6.11"
   },
