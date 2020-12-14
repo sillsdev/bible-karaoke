@@ -97,7 +97,8 @@
     "cross-env": "^6.0.3",
     "electron": "^9.4.0",
     "electron-builder": "^22.7.0",
-    "eslint": "^6.6.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-ava": "^11.0.0",
     "eslint-plugin-react": "^7.20.6",
     "ffbinaries": "^1.1.4",
     "husky": "^4.3.0",
@@ -116,6 +117,9 @@
     "*.{ts,js,json,css,scss,less,html,md,yml}": "prettier --write"
   },
   "ava": {
+    "nonSemVerExperiments": {
+      "reverseTeardowns": true
+    },
     "files": [
       "**/*.spec.js"
     ]
