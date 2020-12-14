@@ -2,20 +2,17 @@ const puppeteer = require('puppeteer-core');
 const chromium = require('chromium');
 const path = require('path');
 
-/**
- *
- * @param {string} htmlContent
- * @param {number} numberOfFrames
- * @param {string} outputLocation
- * @param {boolean} logEachFrame
- * @param {Function} notifyEvent TODO: I don't know what object or function this is yet
- */
-module.exports.record = async function (
-  htmlContent,
-  numberOfFrames,
-  outputLocation,
+interface NotifyEvent {
+  emit(state: string, options: object): void;
+}
+declare function renderNextFrame(): void;
+
+export async function record(
+  htmlContent: string,
+  numberOfFrames: number,
+  outputLocation: string,
   logEachFrame = false,
-  notifyEvent = false
+  notifyEvent: NotifyEvent | null = null
 ) {
   // chromium.path may or may provide a path in an asar archive.  If it does
   // it is unusable, and we'll attempt to swap it out for the un-archived version
@@ -51,4 +48,4 @@ module.exports.record = async function (
       notifyEvent.emit('rendered', { curr: i, total: numberOfFrames });
     }
   }
-};
+}
