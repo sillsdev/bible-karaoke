@@ -23,6 +23,19 @@ Install the dependencies:
 npm install
 ```
 
+### Running AVA Unit Tests
+
+We use the [AVA Node.js test runner](https://github.com/avajs/ava). By default, the command below will execute tests in watch mode.
+
+```sh
+npm test
+```
+
+### Writing AVA Unit Tests
+
+Tests are traditionally placed in a spec.js file alongside the .js file under test. Our project looks for test files ending in \*.spec.js
+If a test is more complex with sample data and/or scenarios, a test folder can optionally be created with additional supporting files to keep things tidy.
+
 ### Debugging/Running the application
 
 ```sh
