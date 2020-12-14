@@ -55,7 +55,7 @@
     "electron-dev": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron . --inspect 9229\"",
     "start": "ffbinaries ffmpeg ffprobe -o=binaries && rescripts start",
     "build": "ffbinaries ffmpeg ffprobe -o=binaries && rescripts build",
-    "test": "rescripts test",
+    "test": "ava --watch",
     "eject": "react-scripts eject",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack-mac": "npm run build",
@@ -91,6 +91,7 @@
   "devDependencies": {
     "@rescripts/cli": "^0.0.13",
     "@rescripts/rescript-env": "^0.0.11",
+    "ava": "^3.13.0",
     "babel-eslint": "^10.1.0",
     "concurrently": "^5.2.0",
     "cross-env": "^6.0.3",
@@ -113,6 +114,11 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{ts,js,json,css,scss,less,html,md,yml}": "prettier --write"
+  },
+  "ava": {
+    "files": [
+      "**/*.spec.js"
+    ]
   },
   "build": {
     "appId": "org.digiserve.bible-karaoke",

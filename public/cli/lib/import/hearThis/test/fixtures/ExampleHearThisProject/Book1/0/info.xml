@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ChapterInfo Number="0">
+  <Recordings>
+    <ScriptLine>
+      <LineNumber>1</LineNumber>
+      <Text>Li Kalòcè̌ tatai theingǎ</Text>
+      <RecordingTime>2019-09-27T03:46:11.6011469Z</RecordingTime>
+      <Verse>0</Verse>
+      <Heading>true</Heading>
+      <HeadingType>imt</HeadingType>
+    </ScriptLine>
+    <ScriptLine>
+      <LineNumber>2</LineNumber>
+      <Text>Li Kalòcè̌ mè mwaǐ Pò̌lu tyanba Wein Kalòcè̌ ta-aòblonphao.</Text>
+      <RecordingTime>2019-09-27T03:46:52.6567965Z</RecordingTime>
+      <Verse>0</Verse>
+      <Heading>false</Heading>
+    </ScriptLine>
+    <ScriptLine>
+      <LineNumber>3</LineNumber>
+      <Text>Wein Kalòcè̌ ǔ mè aò bǎ Kǎn Asǐyǎ, Wein Ěphěsu amô̌nhtan dò aò dô̌ Rǒme tapain kalǎ.</Text>
+      <RecordingTime>2019-09-27T03:47:13.5250591Z</RecordingTime>
+      <Verse>0</Verse>
+      <Heading>false</Heading>
+    </ScriptLine>
+  </Recordings>
+  <Source />
+</ChapterInfo>

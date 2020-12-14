@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ChapterInfo Number="1">
+  <Recordings>
+    <ScriptLine>
+      <LineNumber>1</LineNumber>
+      <Text>Chapter 1</Text>
+      <RecordingTime>2019-02-05T03:56:07.656437Z</RecordingTime>
+      <Verse>0</Verse>
+      <Heading>true</Heading>
+      <HeadingType>c</HeadingType>
+    </ScriptLine>
+    <ScriptLine>
+      <LineNumber>2</LineNumber>
+      <Text>Ngaò̌mò̌n</Text>
+      <RecordingTime>2019-02-05T03:57:15.9056019Z</RecordingTime>
+      <Verse>0</Verse>
+      <Heading>true</Heading>
+      <HeadingType>s</HeadingType>
+    </ScriptLine>
+    <ScriptLine>
+      <LineNumber>3</LineNumber>
+      <Text>Tô̌ Pracǎnsû̌ dò pra thácô̌n dò Khrī YeSyǔ aò bǎ Wein Ephesu.</Text>
+      <RecordingTime>2019-02-05T03:58:19.3735217Z</RecordingTime>
+      <Verse>1</Verse>
+      <Heading>false</Heading>
+    </ScriptLine>
+  </Recordings>
+</ChapterInfo>

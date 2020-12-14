@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ChapterInfo Number="2">
+  <Recordings>
+    <ScriptLine>
+      <LineNumber>1</LineNumber>
+      <Text>Chapter 2</Text>
+      <RecordingTime>2019-09-27T04:23:03.4968656Z</RecordingTime>
+      <Verse>0</Verse>
+      <Heading>true</Heading>
+      <HeadingType>c</HeadingType>
+    </ScriptLine>
+    <ScriptLine>
+      <LineNumber>2</LineNumber>
+      <Text>Khǐ thayû̌ daô theingǎ nathû̌ bakyadò khǐ rwǎn ma dô̌ nathû̌ ngǎ cwaǐmǎ, dô̌ Wein Lò̌dikǐphao ngǎ dò pra cô̌ usûba khǐ lakhan lakhan ngǎ cwaǐmǎ arîkaǐ.</Text>
+      <RecordingTime>2019-09-27T04:23:26.7157034Z</RecordingTime>
+      <Verse>1</Verse>
+      <Heading>false</Heading>
+    </ScriptLine>
+    <ScriptLine>
+      <LineNumber>3</LineNumber>
+      <Text>Khǐ rwǎn ma cwaǐdò nathû̌ thá ka nî̌ba tamamo, ka aòbloncǔ dò tabathá, ka aòbábwaǐ dò tanāpau byan raò́ cwaǐdò ka theingǎ byan Bweca ta-aòhu aòbî mè mwaǐ Khrī.</Text>
+      <RecordingTime>2019-09-27T04:24:02.6880788Z</RecordingTime>
+      <Verse>2</Verse>
+      <Heading>false</Heading>
+    </ScriptLine>
+  </Recordings>
+  <Source />
+</ChapterInfo>
