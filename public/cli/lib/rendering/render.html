@@ -71,7 +71,7 @@
 
       window.onLoad = function () {
         let fps = <%= fps %>;
-        let timing = <%= timings %>;
+        let timings = <%= timings %>;
         let backgroundDataUri = '<%= backgroundDataUri %>';
         let backgroundVideoUrl = '<%= animationSettings.background.file %>';
         let highlightColor = '<%= animationSettings.text.highlightColor %>';
@@ -92,7 +92,6 @@
         }
 
         var subtitles = document.querySelector("#subtitles2");
-        var textObject = [];
         var rawSubTitle = "";
         var linePos = 0;
         var highlightColor = highlightColor;
@@ -100,13 +99,13 @@
         var speechBubbleOpacity = speechBubbleOpacity;
 
         // take the JSON obj that has the text and timings and display them on the page with animation
-        function createSubtitle(textObject) {
+        function createSubtitle(timings) {
           var lyrics = "";
           var i = 0;
           // we need to store these to access later easily when building the animations
           wordTiming = [];
           phraseTiming = [];
-          textObject.forEach((line) => {
+          timings.forEach((line) => {
             var line = line;
             var j = 0;
             text = "";
@@ -353,7 +352,7 @@
         }
 
         // call the create fuction now
-        createSubtitle(textObj);
+        createSubtitle(timings);
       };
       // the app will call this function and we will need to determin what the UI should
       // look like at a given moment in time with the fps converted into a time in miliseconds

@@ -24,8 +24,10 @@ test('getHtml() loads html from template', async (t) => {
 });
 
 test('getHtml() timing words are present in html', async (t) => {
-  // TODO implement this
-  t.pass();
+  let style = mockStyle();
+  let timings = mockTimings();
+  let htmlContent = await getHtml(timings, style);
+  t.regex(htmlContent, new RegExp('let timings = ' + JSON.stringify(timings).replace(/\[/g, '\\[')));
 });
 
 function mockStyle(): AnimationSettings {
@@ -56,5 +58,19 @@ function mockStyle(): AnimationSettings {
 
 function mockTimings(): Timings {
   // generate mock Timings here
-  return [];
+  return [
+    {
+      type: 'string',
+      index: 1,
+      start: 1,
+      end: 100,
+      duration: 100,
+      content: 'string',
+      text: 'string',
+      words: [
+        { word: 'Hello', start: 1, end: 5 },
+        { word: 'World', start: 6, end: 10 },
+      ],
+    },
+  ];
 }
