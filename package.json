@@ -95,6 +95,8 @@
     "@rescripts/cli": "^0.0.15",
     "@rescripts/rescript-env": "^0.0.12",
     "@tsconfig/node12": "^1.0.7",
+    "@types/lodash": "^4.14.168",
+    "@types/puppeteer-core": "^5.4.0",
     "ava": "^3.13.0",
     "babel-eslint": "^10.1.0",
     "concurrently": "^5.2.0",

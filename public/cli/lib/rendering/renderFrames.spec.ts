@@ -8,10 +8,10 @@ test('renderFrames smoke test', async (t) => {
 });
 
 test('getHtml() loads html from template', async (t) => {
-  let style = mockStyle();
-  let timings = mockTimings();
-  let htmlContent = await getHtml(timings, style);
-  let regexPatterns = [
+  const style = mockStyle();
+  const timings = mockTimings();
+  const htmlContent = await getHtml(timings, style);
+  const regexPatterns = [
     /font-family: "Arial";/,
     /font-weight: "normal";/,
     /font-style: "italic";/,

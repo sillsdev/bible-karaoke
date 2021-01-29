@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer-core');
+import puppeteer from 'puppeteer-core';
 const chromium = require('chromium');
-const path = require('path');
+import path from 'path';
 import { NotifyEvent } from '../../../models';
 
 declare function renderNextFrame(): void;

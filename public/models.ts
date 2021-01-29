@@ -1,35 +1,35 @@
 export interface AnimationSettings {
-  text: TextSettings;
-  background: BackgroundSettings;
-  speechBubble: SpeechBubbleSettings;
-  output: string;
-  textLocation: string;
+  readonly text: TextSettings;
+  readonly background: BackgroundSettings;
+  readonly speechBubble: SpeechBubbleSettings;
+  readonly output: string;
+  readonly textLocation: string;
 }
 
 export interface TextSettings {
-  fontFamily: string;
-  fontSize: number;
-  color: string;
-  bold: boolean;
-  italic: boolean;
-  highlightColor: string;
-  highlightRGB: string;
+  readonly fontFamily: string;
+  readonly fontSize: number;
+  readonly color: string;
+  readonly bold: boolean;
+  readonly italic: boolean;
+  readonly highlightColor: string;
+  readonly highlightRGB: string;
 }
 
 export interface BackgroundSettings {
-  color: string;
-  file: string;
-  type: string; // returns 'image' | 'video' | 'color'
+  readonly color: string;
+  readonly file: string;
+  readonly type: 'image' | 'video' | 'color';
 }
 
 export interface SpeechBubbleSettings {
-  color: string;
-  rgba: string;
-  opacity: number;
+  readonly color: string;
+  readonly rgba: string;
+  readonly opacity: number;
 }
 
 export interface ProjectData {
-  outputLocation: string;
+  readonly outputLocation: string;
 }
 
 export interface NotifyEvent {
@@ -40,20 +40,20 @@ export interface Timings extends Array<LineTiming> {}
 
 // this follows the spec ... ?
 interface LineTiming {
-  type: string; // not used
-  index: number;
-  start: number;
-  end: number;
-  duration: number;
-  content: string;
-  text: string; // not used
-  words: WordTimings;
+  readonly type: 'caption';
+  readonly index: number;
+  readonly start: number;
+  readonly end: number;
+  readonly duration: number;
+  readonly content: string;
+  readonly text: string; // not used
+  readonly words: WordTimings;
 }
 
 interface WordTimings extends Array<WordTiming> {}
 
 interface WordTiming {
-  word: string;
-  start: number;
-  end: number;
+  readonly word: string;
+  readonly start: number;
+  readonly end: number;
 }
