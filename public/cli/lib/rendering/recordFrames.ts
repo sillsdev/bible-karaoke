@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer-core';
 const chromium = require('chromium');
 import path from 'path';
-import { NotifyEvent } from '../../../models';
+import { EventEmitter } from 'events';
 
 declare function renderNextFrame(): void;
 
@@ -10,7 +10,7 @@ export async function record(
   numberOfFrames: number,
   outputLocation: string,
   logEachFrame = false,
-  notifyEvent: NotifyEvent | null = null
+  notifyEvent?: EventEmitter
 ) {
   // chromium.path may or may provide a path in an asar archive.  If it does
   // it is unusable, and we'll attempt to swap it out for the un-archived version
