@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer-core';
-const chromium = require('chromium');
+import { path as chromiumPath } from 'chromium';
 import path from 'path';
 import { EventEmitter } from 'events';
 
@@ -12,12 +12,10 @@ export async function record(
   logEachFrame = false,
   notifyEvent?: EventEmitter
 ) {
-  // chromium.path may or may provide a path in an asar archive.  If it does
-  // it is unusable, and we'll attempt to swap it out for the un-archived version
-  const chromiumPath = chromium.path.replace('app.asar', 'app.asar.unpacked');
-
   const browser = await puppeteer.launch({
-    executablePath: chromiumPath,
+    // chromium.path may or may provide a path in an asar archive.  If it does
+    // it is unusable, and we'll attempt to swap it out for the un-archived version
+    executablePath: chromiumPath.replace('app.asar', 'app.asar.unpacked'),
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
   const page = await browser.newPage();
