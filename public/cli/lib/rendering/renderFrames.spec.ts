@@ -17,11 +17,11 @@ test('getHtml() loads html from template', async (t) => {
     /color: #555;/,
     /font-style: "italic";/,
     /font-weight: "normal";/,
-    /let highlightColor = 'yellow';/,
+    /const highlightColor = 'yellow';/,
     /background: #333;/,
-    /let backgroundType = 'color';/,
-    /let speechBubbleColor = '#FFF'/,
-    /let speechBubbleOpacity = 1;/,
+    /const backgroundType = 'color';/,
+    /const speechBubbleColor = '#FFF'/,
+    /const speechBubbleOpacity = 1;/,
   ];
   t.plan(regexPatterns.length);
   regexPatterns.forEach((pattern) => {
@@ -33,7 +33,7 @@ test('getHtml() timing words are present in html', async (t) => {
   const style = mockStyle();
   const timings = mockTimings();
   const htmlContent = await getHtml(timings, style);
-  t.regex(htmlContent, new RegExp('let timings = ' + JSON.stringify(timings).replace(/\[/g, '\\[')));
+  t.regex(htmlContent, new RegExp('const timings = ' + JSON.stringify(timings).replace(/\[/g, '\\[')));
 });
 
 function mockStyle(): AnimationSettings {
