@@ -11,6 +11,14 @@
         "isDefault": true
       },
       "label": "tsc: watch - tsconfig.json"
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "group": "test",
+      "problemMatcher": [],
+      "label": "npm: test",
+      "detail": "tsc && ava"
     }
   ]
 }
