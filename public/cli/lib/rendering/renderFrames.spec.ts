@@ -19,8 +19,8 @@ test('renderFrames hello world', async (t) => {
 
 test('renderFrames loads html from template', async (t) => {
   let style = mockStyle();
-  let captions = mockCaptions();
-  let htmlContent = await getHtml(captions, style);
+  let timings = mockTimings();
+  let htmlContent = await getHtml(timings, style);
   let regexPatterns = [
     /font-family: "Arial";/,
     /font-weight: "normal";/,
@@ -59,7 +59,7 @@ function mockStyle(): AnimationSettings {
   };
 }
 
-function mockCaptions() {
+function mockTimings(): Timings {
   // TODO: Make sure timings work in template
-  return {};
+  return [];
 }

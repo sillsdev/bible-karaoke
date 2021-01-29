@@ -1,10 +1,8 @@
 const puppeteer = require('puppeteer-core');
 const chromium = require('chromium');
 const path = require('path');
+import { NotifyEvent } from '../../../models';
 
-interface NotifyEvent {
-  emit(state: string, options: object): void;
-}
 declare function renderNextFrame(): void;
 
 export async function record(

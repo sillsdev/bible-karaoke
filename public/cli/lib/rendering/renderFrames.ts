@@ -1,25 +1,21 @@
 import { record } from './recordFrames';
 import fs from 'fs';
 import path from 'path';
-import { AnimationSettings, Timings } from '../../../models';
+import { AnimationSettings, Timings, NotifyEvent } from '../../../models';
+import { allowedNodeEnvironmentFlags } from 'process';
 const _ = require('lodash');
 const DataURI = require('datauri').promise;
 
-export async function render(outputLocation: string) {
-  // collect UI options
-
-  // load caption/frames object
-  let captions = {};
-
+export async function render(animationSettings: AnimationSettings, timings: Timings, notify: NotifyEvent) {
   // create HTMLcontent
-  // const htmlContent = await getHtml(captions, {});
+  const htmlContent = await getHtml(timings, animationSettings);
 
   // run record
-  //await record(htmlContent, numberOfFrames, outputLocation, notifyEvent);
+  //await record(htmlContent, numberOfFrames, outputLocation, notify);
 }
 
 // TODO: Define style (should not be type any)
-export async function getHtml(timings: Timings, animationSettings: AnimationSettings, fps = 15) {
+export async function getHtml(timings: Timings, animationSettings: AnimationSettings, fps = 15): Promise<string> {
   let htmlTemplate = _.template(fs.readFileSync(path.join(__dirname, 'render.html'), { encoding: 'utf-8' }));
   let backgroundDataUri =
     animationSettings.background.file && animationSettings.background.type == 'image'
