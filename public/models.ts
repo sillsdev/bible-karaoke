@@ -32,10 +32,6 @@ export interface ProjectData {
   readonly outputLocation: string;
 }
 
-export interface NotifyEvent {
-  emit(state: string, options: object): void;
-}
-
 export interface Timings extends Array<LineTiming> {}
 
 // this follows the spec ... ?

@@ -1,16 +1,17 @@
 import { record } from './recordFrames';
 import fs from 'fs';
 import path from 'path';
-import { AnimationSettings, Timings, NotifyEvent, ProjectData } from '../../../models';
+import { AnimationSettings, Timings, ProjectData } from '../../../models';
 // import { allowedNodeEnvironmentFlags } from 'process'; //unsure if we will need this or not
 import { template } from 'lodash';
+import { EventEmitter } from 'events';
 const DataURI = require('datauri').promise;
 
 export async function render(
   animationSettings: AnimationSettings,
   projectData: ProjectData,
   timings: Timings,
-  notify: NotifyEvent
+  notify: EventEmitter
 ) {
   const logEachFrame = false;
   const fps = 15;
