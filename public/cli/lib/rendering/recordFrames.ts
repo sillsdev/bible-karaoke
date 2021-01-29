@@ -13,7 +13,7 @@ export async function record(
   notifyEvent?: EventEmitter
 ) {
   const browser = await puppeteer.launch({
-    // chromium.path may or may provide a path in an asar archive.  If it does
+    // chromium.path may or may not provide a path in an asar archive.  If it does
     // it is unusable, and we'll attempt to swap it out for the un-archived version
     executablePath: chromiumPath.replace('app.asar', 'app.asar.unpacked'),
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
