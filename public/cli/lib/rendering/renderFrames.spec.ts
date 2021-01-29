@@ -66,7 +66,7 @@ function mockTimings(): Timings {
   // generate mock Timings here
   return [
     {
-      type: 'string',
+      type: 'caption',
       index: 1,
       start: 1,
       end: 100,
