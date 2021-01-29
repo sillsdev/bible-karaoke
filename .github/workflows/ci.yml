@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    name: Build and test on node ${{ matrix.node_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -28,5 +28,10 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
       - run: npm ci
-      # - run: npm run build
+      - run: npm run build
+        env:
+          # ToDo: remove this.
+          #   Temporarily added because the build has 2 warnings (and warnings are normally treated as errors).
+          #   Both warnings say: React Hook React.useEffect has a missing dependency: 'analytics'.
+          CI: ''
       - run: npm test
