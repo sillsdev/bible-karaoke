@@ -2,7 +2,7 @@ import test from 'ava';
 import tempy from 'tempy';
 import fs from 'fs';
 import { record } from './recordFrames';
-
+// TODO: Add a pupteer mock model
 test('recordFrames: render 5 mock frames', async (t) => {
   let htmlContent = createMockHtml();
   const numberOfFrames = 5;
