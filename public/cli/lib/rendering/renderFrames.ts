@@ -33,11 +33,11 @@ export async function getHtml(
     animationSettings.background.file && animationSettings.background.type == 'image'
       ? await DataURI(animationSettings.background.file)
       : null;
-  let data = {
+  const data = {
     timings: JSON.stringify(timings),
-    fps: fps,
-    animationSettings: animationSettings,
-    backgroundDataUri: backgroundDataUri,
+    fps,
+    animationSettings,
+    backgroundDataUri,
   };
   return htmlTemplate(data);
 }

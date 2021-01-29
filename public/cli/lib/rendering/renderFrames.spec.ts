@@ -30,9 +30,9 @@ test('getHtml() loads html from template', async (t) => {
 });
 
 test('getHtml() timing words are present in html', async (t) => {
-  let style = mockStyle();
-  let timings = mockTimings();
-  let htmlContent = await getHtml(timings, style);
+  const style = mockStyle();
+  const timings = mockTimings();
+  const htmlContent = await getHtml(timings, style);
   t.regex(htmlContent, new RegExp('let timings = ' + JSON.stringify(timings).replace(/\[/g, '\\[')));
 });
 
