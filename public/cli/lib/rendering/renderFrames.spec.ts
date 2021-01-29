@@ -13,9 +13,15 @@ test('getHtml() loads html from template', async (t) => {
   const htmlContent = await getHtml(timings, style);
   const regexPatterns = [
     /font-family: "Arial";/,
-    /font-weight: "normal";/,
+    /font-size: 20pt;/,
+    /color: #555;/,
     /font-style: "italic";/,
+    /font-weight: "normal";/,
     /let highlightColor = 'yellow';/,
+    /background: #333;/,
+    /let backgroundType = 'color';/,
+    /let speechBubbleColor = '#FFF'/,
+    /let speechBubbleOpacity = 1;/,
   ];
   t.plan(regexPatterns.length);
   regexPatterns.forEach((pattern) => {
