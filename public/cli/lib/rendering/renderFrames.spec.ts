@@ -13,9 +13,15 @@ test('getHtml() loads html from template', async (t) => {
   const htmlContent = await getHtml(timings, style);
   const regexPatterns = [
     /font-family: "Arial";/,
-    /font-weight: "normal";/,
+    /font-size: 20pt;/,
+    /color: #555;/,
     /font-style: "italic";/,
-    /let highlightColor = 'yellow';/,
+    /font-weight: "normal";/,
+    /const highlightColor = 'yellow';/,
+    /background: #333;/,
+    /const backgroundType = 'color';/,
+    /const speechBubbleColor = '#FFF'/,
+    /const speechBubbleOpacity = 1;/,
   ];
   t.plan(regexPatterns.length);
   regexPatterns.forEach((pattern) => {
@@ -24,8 +30,10 @@ test('getHtml() loads html from template', async (t) => {
 });
 
 test('getHtml() timing words are present in html', async (t) => {
-  // TODO implement this
-  t.pass();
+  const style = mockStyle();
+  const timings = mockTimings();
+  const htmlContent = await getHtml(timings, style);
+  t.regex(htmlContent, new RegExp('const timings = ' + JSON.stringify(timings).replace(/\[/g, '\\[')));
 });
 
 function mockStyle(): AnimationSettings {
@@ -56,5 +64,19 @@ function mockStyle(): AnimationSettings {
 
 function mockTimings(): Timings {
   // generate mock Timings here
-  return [];
+  return [
+    {
+      type: 'caption',
+      index: 1,
+      start: 1,
+      end: 100,
+      duration: 100,
+      content: 'string',
+      text: 'string',
+      words: [
+        { word: 'Hello', start: 1, end: 5 },
+        { word: 'World', start: 6, end: 10 },
+      ],
+    },
+  ];
 }
