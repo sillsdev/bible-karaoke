@@ -28,7 +28,9 @@ export interface SpeechBubbleSettings {
   opacity: number;
 }
 
-export interface ProjectData {}
+export interface ProjectData {
+  outputLocation: string;
+}
 
 export interface NotifyEvent {
   emit(state: string, options: object): void;

@@ -2,22 +2,11 @@ import test from 'ava';
 import { getHtml } from './renderFrames';
 import { AnimationSettings, Timings } from '../../../models';
 
-test('renderFrames hello world', async (t) => {
-  /*
-  let htmlContent = createMockHtml();
-  const numberOfFrames = 5;
-  await tempy.directory.task(async (outputLocation) => {
-    let files = fs.readdirSync(outputLocation);
-    t.is(files.length, 0);
-    await record(htmlContent, numberOfFrames, outputLocation);
-    files = fs.readdirSync(outputLocation);
-    t.is(files.length, numberOfFrames);
-  });
-  */
+test('renderFrames smoke test', async (t) => {
   t.pass();
 });
 
-test('renderFrames loads html from template', async (t) => {
+test('getHtml() loads html from template', async (t) => {
   let style = mockStyle();
   let timings = mockTimings();
   let htmlContent = await getHtml(timings, style);
@@ -32,6 +21,8 @@ test('renderFrames loads html from template', async (t) => {
     t.regex(htmlContent, pattern);
   });
 });
+
+test('getHtml() timing words are present in html', async (t) => {});
 
 function mockStyle(): AnimationSettings {
   return {
@@ -60,6 +51,6 @@ function mockStyle(): AnimationSettings {
 }
 
 function mockTimings(): Timings {
-  // TODO: Make sure timings work in template
+  // generate mock Timings here
   return [];
 }
