@@ -1,18 +1,19 @@
-import { record } from './recordFrames';
 import fs from 'fs';
 import path from 'path';
-import { AnimationSettings, Timings, ProjectData } from '../../../models';
 // import { allowedNodeEnvironmentFlags } from 'process'; //unsure if we will need this or not
 import { template } from 'lodash';
 import { EventEmitter } from 'events';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const DataURI = require('datauri').promise;
+import { record } from './recordFrames';
+import { AnimationSettings, Timings, ProjectData } from '../../../models';
 
 export async function render(
   animationSettings: AnimationSettings,
   projectData: ProjectData,
   timings: Timings,
   notify: EventEmitter
-) {
+): Promise<void> {
   const logEachFrame = false;
   const fps = 15;
 
@@ -23,11 +24,7 @@ export async function render(
   await record(htmlContent, Math.round(durationInSeconds * fps), projectData.outputLocation, logEachFrame, notify);
 }
 
-export async function getHtml(
-  timings: Timings,
-  animationSettings: AnimationSettings,
-  fps: number = 15
-): Promise<string> {
+export async function getHtml(timings: Timings, animationSettings: AnimationSettings, fps = 15): Promise<string> {
   const htmlTemplate = template(fs.readFileSync(path.join(__dirname, 'render.html'), { encoding: 'utf-8' }));
   const backgroundDataUri =
     animationSettings.background.file && animationSettings.background.type == 'image'

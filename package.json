@@ -58,7 +58,7 @@
     "electron-dev": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron . --inspect 9229\"",
     "start": "ffbinaries ffmpeg ffprobe -o=binaries && rescripts start",
     "build": "tsc && ffbinaries ffmpeg ffprobe -o=binaries && rescripts build",
-    "test": "tsc && ava",
+    "test": "tsc --project tsconfig.spec.json && ava",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack-mac": "npm run build",
     "preelectron-pack-win": "npm run build",
@@ -97,6 +97,8 @@
     "@tsconfig/node12": "^1.0.7",
     "@types/lodash": "^4.14.168",
     "@types/puppeteer-core": "^5.4.0",
+    "@typescript-eslint/eslint-plugin": "^4.14.1",
+    "@typescript-eslint/parser": "^4.14.1",
     "ava": "^3.13.0",
     "babel-eslint": "^10.1.0",
     "concurrently": "^5.2.0",
@@ -119,13 +121,19 @@
     }
   },
   "lint-staged": {
-    "*.js": "eslint --cache --fix",
+    "*.{ts,js}": "eslint --cache --fix",
     "*.{ts,js,json,css,scss,less,html,md,yml}": "prettier --write"
   },
   "ava": {
     "nonSemVerExperiments": {
       "reverseTeardowns": true
     },
+    "extensions": [
+      "cjs",
+      "mjs",
+      "js",
+      "ts"
+    ],
     "files": [
       "**/*.spec.js"
     ]

@@ -2,7 +2,7 @@ import test from 'ava';
 import { getHtml } from './renderFrames';
 import { AnimationSettings, Timings } from '../../../models';
 
-test('renderFrames smoke test', async (t) => {
+test('renderFrames smoke test', (t) => {
   // TODO implement this
   t.pass();
 });
