@@ -23,11 +23,11 @@
       }
 
       .karaoke-caption {
-        font-size: CAPTION_FONT_SIZE;
+        font-size: <%= animationSettings.text.fontSize %>pt;
         padding-top: 175px;
-        font-family: "CAPTION_FONT_FAMILY";
-        font-weight: CAPTION_FONT_BOLD;
-        font-style: CAPTION_FONT_ITALIC;
+        font-family: "<%= animationSettings.text.fontFamily %>";
+        font-weight: "<% if(animationSettings.text.bold){ %>bold<% }else{ %>normal<% } %>";
+        font-style: "<% if(animationSettings.text.italic){ %>italic<% }else{ %>normal<% } %>";
         margin: 0px 46px;
         width: 628px;
         position: absolute;
@@ -40,7 +40,7 @@
       }
 
       .karaoke-caption .words {
-        color: CAPTION_FONT_COLOR;
+        color: <%= animationSettings.text.color %>;
         line-height: 32px;
         margin: 0 -5px;
         padding: 0 5px;
@@ -54,7 +54,7 @@
         width: 720px;
         height: 480px;
         margin: 0 auto;
-        background: BG_COLOR;
+        background: <%= animationSettings.background.color %>;
         background-repeat: no-repeat;
         background-size: cover;
         background-position: 50% 50%;
@@ -69,17 +69,18 @@
     <script>
       var animations = [];
 
-      window.afterLoadKar = function (
-        textObj,
-        backgroundImage,
-        fps,
-        bgType,
-        backgroundVideoUrl,
-        highlightColor,
-        speechBubbleColor,
-        speechBubbleOpacity,
-        phraseLocation
-      ) {
+      window.onLoad = function () {
+        let fps = <%= fps %>;
+        let timing = <%= timings %>;
+        let backgroundDataUri = '<%= backgroundDataUri %>';
+        let backgroundVideoUrl = '<%= animationSettings.background.file %>';
+        let highlightColor = '<%= animationSettings.text.highlightColor %>';
+        let speechBubbleColor = '<%= animationSettings.speechBubble.color %>';
+        let speechBubbleOpacity = '<%= animationSettings.speechBubble.opacity %>';
+        let backgroundType = '<%= animationSettings.background.type %>';
+        let bgFilePath = '<%= animationSettings.background.file %>';
+        let phraseLocation = '<%= animationSettings.textLocation %>';
+
         var showSpeechBubble = true;
         if (bgType == "color") {
           showSpeechBubble = false;
@@ -120,12 +121,23 @@
               // concat the containers together for later
               text += "<div class='words w" + j + "'>" + word + "</div> ";
               // this makes the animation creation easier later
-              wordTiming.push({ word: word, index: j, start: wordStart, duration: line.end, line: i });
+              wordTiming.push({
+                word: word,
+                index: j,
+                start: wordStart,
+                duration: line.end,
+                line: i,
+              });
               j++;
             });
 
             // this makes the phrase timeing easier for later
-            phraseTiming.push({ id: "p" + i, start: line.start, end: line.end, next: "p" + (i + 1) });
+            phraseTiming.push({
+              id: "p" + i,
+              start: line.start,
+              end: line.end,
+              next: "p" + (i + 1),
+            });
             // concat the lines together with all words inside
             lyrics += "<div class='phrase' id='p" + i + "'>" + text + "</div>";
             i++;
@@ -159,14 +171,25 @@
           });
 
           // word animation function
-          function highlight(container, start, line, previousContainer, animations, previousDuration, duration) {
+          function highlight(
+            container,
+            start,
+            line,
+            previousContainer,
+            animations,
+            previousDuration,
+            duration
+          ) {
             var previousContainer = previousContainer;
             var currentLine = line;
 
             var elem = document.querySelector("#p" + line + " ." + container);
             var wordAnimateOn = elem.animate(
               {
-                background: [highlightColor.replace(/,[^,]*$/, ",0)"), highlightColor],
+                background: [
+                  highlightColor.replace(/,[^,]*$/, ",0)"),
+                  highlightColor,
+                ],
               },
               {
                 duration: 250,
@@ -182,7 +205,10 @@
 
             var wordAnimateOff = elem.animate(
               {
-                background: [highlightColor, highlightColor.replace(/,[^,]*$/, ",0)")],
+                background: [
+                  highlightColor,
+                  highlightColor.replace(/,[^,]*$/, ",0)"),
+                ],
               },
               {
                 duration: 500,
@@ -240,7 +266,10 @@
                     background: speechBubbleColor.replace(/,[^,]*$/, ",0)"),
                   },
                   {
-                    background: speechBubbleColor.replace(/,[^,]*$/, "," + speechBubbleOpacity + ")"),
+                    background: speechBubbleColor.replace(
+                      /,[^,]*$/,
+                      "," + speechBubbleOpacity + ")"
+                    ),
                   },
                 ],
                 {
@@ -257,7 +286,10 @@
               var phraseBackgroundOff = line.animate(
                 [
                   {
-                    background: speechBubbleColor.replace(/,[^,]*$/, "," + speechBubbleOpacity + ")"),
+                    background: speechBubbleColor.replace(
+                      /,[^,]*$/,
+                      "," + speechBubbleOpacity + ")"
+                    ),
                   },
                   {
                     background: speechBubbleColor.replace(/,[^,]*$/, ",0)"),
@@ -340,16 +372,14 @@
         document.getElementById("bgVideo").currentTime = curPos / 1000;
       }
     </script>
-    <!-- this comment get's replaced with content that has the background image
-    and vtt file. It then calls `afterLoadKar` with the loaded values -->
-    <!-- replaced-HACK -->
+
     <meta name="data-replace" />
   </head>
   <body>
     <div id="imgParent">
       <div class="line subs karaoke-caption" id="subtitles2"></div>
       <video muted loop id="bgVideo">
-        <source src="file:VIDEO_SRC" type="video/mp4" />
+        <source src="file:<%= animationSettings.background.file %>" type="video/mp4" />
       </video>
     </div>
   </body>

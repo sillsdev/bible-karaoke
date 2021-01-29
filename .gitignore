@@ -29,3 +29,6 @@ binaries/ffmpeg
 binaries/ffprobe
 
 .eslintcache
+
+# incrementally move to typescript.  Here are ignored JS files that are compiled
+/public/**/*.js

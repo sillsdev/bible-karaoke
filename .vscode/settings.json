@@ -29,5 +29,6 @@
     "tempy",
     "usfm",
     "webm"
-  ]
+  ],
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }
