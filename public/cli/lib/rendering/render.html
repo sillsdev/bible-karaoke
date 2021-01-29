@@ -23,11 +23,11 @@
       }
 
       .karaoke-caption {
-        font-size: <%= style.fontSize %>pt;
+        font-size: <%= animationSettings.text.fontSize %>pt;
         padding-top: 175px;
-        font-family: "<%= style.fontFamily %>";
-        font-weight: "<% if(style.fontBold){ %>bold<% }else{ %>normal<% } %>";
-        font-style: "<% if(style.fontItalic){ %>italic<% }else{ %>normal<% } %>";
+        font-family: "<%= animationSettings.text.fontFamily %>";
+        font-weight: "<% if(animationSettings.text.bold){ %>bold<% }else{ %>normal<% } %>";
+        font-style: "<% if(animationSettings.text.italic){ %>italic<% }else{ %>normal<% } %>";
         margin: 0px 46px;
         width: 628px;
         position: absolute;
@@ -40,7 +40,7 @@
       }
 
       .karaoke-caption .words {
-        color: <%= style.fontColor %>;
+        color: <%= animationSettings.text.color %>;
         line-height: 32px;
         margin: 0 -5px;
         padding: 0 5px;
@@ -54,7 +54,7 @@
         width: 720px;
         height: 480px;
         margin: 0 auto;
-        background: <%= style.backgroundColor %>;
+        background: <%= animationSettings.background.color %>;
         background-repeat: no-repeat;
         background-size: cover;
         background-position: 50% 50%;
@@ -73,13 +73,13 @@
         let fps = <%= fps %>;
         let timing = <%= timings %>;
         let backgroundDataUri = '<%= backgroundDataUri %>';
-        let backgroundVideoUrl = '<%= style.bgFilePath %>';
-        let highlightColor = '<%= style.highlightColor %>';
-        let speechBubbleColor = '<%= style.speechBubbleColor %>';
-        let speechBubbleOpacity = '<%= style.speechBubbleOpacity %>';
-        let backgroundType = '<%= style.bgType %>';
-        let bgFilePath = '<%= style.bgFile %>';
-        let phraseLocation = '<%= style.textLocation %>';
+        let backgroundVideoUrl = '<%= animationSettings.background.file %>';
+        let highlightColor = '<%= animationSettings.text.highlightColor %>';
+        let speechBubbleColor = '<%= animationSettings.speechBubble.color %>';
+        let speechBubbleOpacity = '<%= animationSettings.speechBubble.opacity %>';
+        let backgroundType = '<%= animationSettings.background.type %>';
+        let bgFilePath = '<%= animationSettings.background.file %>';
+        let phraseLocation = '<%= animationSettings.textLocation %>';
 
         var showSpeechBubble = true;
         if (bgType == "color") {
@@ -379,7 +379,7 @@
     <div id="imgParent">
       <div class="line subs karaoke-caption" id="subtitles2"></div>
       <video muted loop id="bgVideo">
-        <source src="file:<%= style.bgFile %>" type="video/mp4" />
+        <source src="file:<%= animationSettings.background.file %>" type="video/mp4" />
       </video>
     </div>
   </body>

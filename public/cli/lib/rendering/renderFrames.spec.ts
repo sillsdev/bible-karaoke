@@ -1,5 +1,6 @@
 import test from 'ava';
 import { getHtml } from './renderFrames';
+import { AnimationSettings, Timings } from '../../../models';
 
 test('renderFrames hello world', async (t) => {
   /*
@@ -32,19 +33,29 @@ test('renderFrames loads html from template', async (t) => {
   });
 });
 
-function mockStyle() {
+function mockStyle(): AnimationSettings {
   return {
-    bgType: 'color',
-    bgFile: false,
-    bgColor: '#333',
-    fontFamily: 'Arial',
-    fontSize: 20,
-    fontColor: '#555',
-    fontItalic: true,
-    fontBold: false,
-    highlightColor: 'yellow',
-    speechBubbleColor: '#FFF',
-    speechBubbleOpacity: 1,
+    text: {
+      fontFamily: 'Arial',
+      fontSize: 20,
+      color: '#555',
+      italic: true,
+      bold: false,
+      highlightColor: 'yellow',
+      highlightRGB: '',
+    },
+    background: {
+      type: 'color',
+      file: '',
+      color: '#333',
+    },
+    speechBubble: {
+      color: '#FFF',
+      rgba: '',
+      opacity: 1,
+    },
+    output: '',
+    textLocation: '',
   };
 }
 

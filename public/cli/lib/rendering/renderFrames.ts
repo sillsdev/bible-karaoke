@@ -12,7 +12,7 @@ export async function render(outputLocation: string) {
   let captions = {};
 
   // create HTMLcontent
-  const htmlContent = await getHtml(captions, {});
+  // const htmlContent = await getHtml(captions, {});
 
   // run record
   //await record(htmlContent, numberOfFrames, outputLocation, notifyEvent);
@@ -28,7 +28,7 @@ export async function getHtml(timings: Timings, animationSettings: AnimationSett
   let data = {
     timings: timings,
     fps: fps,
-    style: animationSettings,
+    animationSettings: animationSettings,
     backgroundDataUri: backgroundDataUri,
   };
   return htmlTemplate(data);
