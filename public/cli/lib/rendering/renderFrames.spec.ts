@@ -3,6 +3,7 @@ import { getHtml } from './renderFrames';
 import { AnimationSettings, Timings } from '../../../models';
 
 test('renderFrames smoke test', async (t) => {
+  // TODO implement this
   t.pass();
 });
 
@@ -22,7 +23,10 @@ test('getHtml() loads html from template', async (t) => {
   });
 });
 
-test('getHtml() timing words are present in html', async (t) => {});
+test('getHtml() timing words are present in html', async (t) => {
+  // TODO implement this
+  t.pass();
+});
 
 function mockStyle(): AnimationSettings {
   return {
