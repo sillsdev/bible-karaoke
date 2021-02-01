@@ -4,18 +4,26 @@
     "commonjs": true,
     "es6": true
   },
-  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:ava/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:ava/recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
     },
     "ecmaVersion": 2018
   },
-  "plugins": ["react"],
+  "plugins": ["react", "@typescript-eslint"],
   "settings": {
     "react": {
       "version": "detect"
     }
   },
-  "rules": {}
+  "rules": {
+    "ava/no-ignored-test-files": ["error", { "files": ["**/*.spec.{ts,js}"] }]
+  }
 }

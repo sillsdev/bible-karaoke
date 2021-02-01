@@ -1,17 +1,10 @@
 {
-  "extends": "@tsconfig/node12/tsconfig.json",
+  "extends": "./tsconfig.spec.json",
   "compilerOptions": {
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "preserveConstEnums": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react"
-  },
-  "include": ["public/cli/lib/rendering/**/*.ts"],
-  "exclude": ["node_modules"]
+    "noEmit": true
+  }
 }

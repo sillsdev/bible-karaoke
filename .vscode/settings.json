@@ -2,6 +2,7 @@
   "editor.formatOnSave": true,
   "editor.rulers": [120],
   "editor.wordWrapColumn": 120,
+  "eslint.validate": ["typescript", "typescriptreact"],
   "cSpell.words": [
     "apos",
     "arial",

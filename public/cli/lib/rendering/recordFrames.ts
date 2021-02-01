@@ -11,7 +11,7 @@ export async function record(
   outputLocation: string,
   logEachFrame = false,
   notifyEvent?: EventEmitter
-) {
+): Promise<void> {
   const browser = await puppeteer.launch({
     // chromium.path may or may not provide a path in an asar archive.  If it does
     // it is unusable, and we'll attempt to swap it out for the un-archived version
@@ -35,7 +35,7 @@ export async function record(
     });
 
     const paddedIndex = `${i}`.padStart(6, '0');
-    let fileName = `frame_${paddedIndex}.png`;
+    const fileName = `frame_${paddedIndex}.png`;
     await page.screenshot({
       omitBackground: false,
       path: path.join(outputLocation, fileName),

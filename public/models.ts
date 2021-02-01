@@ -32,7 +32,7 @@ export interface ProjectData {
   readonly outputLocation: string;
 }
 
-export interface Timings extends Array<LineTiming> {}
+export type Timings = Array<LineTiming>;
 
 // this follows the spec ... ?
 interface LineTiming {
@@ -46,7 +46,7 @@ interface LineTiming {
   readonly words: WordTimings;
 }
 
-interface WordTimings extends Array<WordTiming> {}
+type WordTimings = Array<WordTiming>;
 
 interface WordTiming {
   readonly word: string;
