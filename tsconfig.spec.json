@@ -12,5 +12,5 @@
     "jsx": "react"
   },
   "include": ["public/cli/lib/rendering/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "**/*.integration.ts"]
 }

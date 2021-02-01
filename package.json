@@ -58,7 +58,8 @@
     "electron-dev": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron . --inspect 9229\"",
     "start": "ffbinaries ffmpeg ffprobe -o=binaries && rescripts start",
     "build": "tsc && ffbinaries ffmpeg ffprobe -o=binaries && rescripts build",
-    "test": "tsc --project tsconfig.spec.json && ava",
+    "test": "tsc --project tsconfig.spec.json && ava **/*.spec.js",
+    "integration": "tsc --project tsconfig.integration.json && ava **/*.integration.js",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack-mac": "npm run build",
     "preelectron-pack-win": "npm run build",
@@ -135,7 +136,7 @@
       "ts"
     ],
     "files": [
-      "**/*.spec.js"
+      "**/*.{spec,integration}.js"
     ]
   },
   "build": {
