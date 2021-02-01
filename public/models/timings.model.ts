@@ -1,7 +1,7 @@
 export type Timings = LineTiming[];
 
 // this follows the spec ... ?
-interface LineTiming {
+export interface LineTiming {
   readonly type: 'caption';
   readonly index: number;
   readonly start: number;
