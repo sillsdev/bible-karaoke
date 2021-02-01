@@ -35,36 +35,34 @@ async function convertChapter(
   };
   const sourceChapterDir = path.join(project.fullPath, book.name, chapter.name);
   const infoXmlPath = path.join(sourceChapterDir, 'info.xml');
-  const infoXmlFileContents: string = fs.readFileSync(infoXmlPath, (err: Error) => {
-    if (err) {
-      return err;
+  try {
+    const infoXmlFileContents = fs.readFileSync(infoXmlPath, { encoding: 'utf-8' });
+    const chapterInfo = JSON.parse(xml2json(infoXmlFileContents, { compact: true }));
+    for await (const scriptLine of chapterInfo.ChapterInfo.Recordings.ScriptLine) {
+      const verse = parseInt(scriptLine.LineNumber._text, 10) - 1;
+      const audioPath: string = path.join(sourceChapterDir, `${verse}.wav`);
+      const duration = await getAudioDurationInMiliSeconds(audioPath, ffprobePath);
+      chapterDetails.audio.filenames?.push(audioPath);
+      chapterDetails.segments.push({
+        segmentId: chapterDetails.segments.length + 1,
+        text: scriptLine.Text._text,
+        verse: verse.toString(),
+        startTime: chapterDetails.audio.length,
+        length: duration,
+      });
+      chapterDetails.audio.length += duration;
     }
-  });
-  const chapterInfo = JSON.parse(xml2json(infoXmlFileContents, { compact: true }));
-  for await (const scriptLine of chapterInfo.ChapterInfo.Recordings.ScriptLine) {
-    const verse = parseInt(scriptLine.LineNumber._text, 10) - 1;
-    const audioPath: string = path.join(sourceChapterDir, `${verse}.wav`);
-    const duration = await getAudioDurationInMiliSeconds(audioPath, ffprobePath);
-    chapterDetails.audio.filenames?.push(audioPath);
-    chapterDetails.segments.push({
-      segmentId: chapterDetails.segments.length + 1,
-      text: scriptLine.Text._text,
-      verse: verse.toString(),
-      startTime: chapterDetails.audio.length,
-      length: duration,
-    });
-    chapterDetails.audio.length += duration;
+    const jsonFilename = path.join(chapterDir, 'chapter.json');
+    const jsonFileContents = JSON.stringify(chapterDetails, null, 2);
+    try {
+      fs.writeFileSync(jsonFilename, jsonFileContents);
+    } catch (e) {
+      return e;
+    }
+    return jsonFilename;
+  } catch (e) {
+    return e;
   }
-  const jsonFilename = path.join(chapterDir, 'chapter.json');
-  const jsonFileContents = JSON.stringify(chapterDetails, null, 2);
-  fs.writeFileSync(jsonFilename, jsonFileContents, (err: Error) => {
-    if (err) {
-      return err;
-    } else {
-      return jsonFilename;
-    }
-  });
-  return new Error('Something went wrong');
 }
 
 export async function convert(project: ConvertProject, ffprobePath: string): Promise<string> {
