@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.spec.json",
-  "include": ["public/cli/lib/rendering/**/*.ts"],
+  "include": ["public/cli/**/*.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

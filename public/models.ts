@@ -53,3 +53,51 @@ interface WordTiming {
   readonly start: number;
   readonly end: number;
 }
+
+// BK Project Format
+export interface BKProject {
+  dirName: string;
+  books: Array<BKBook>;
+}
+
+interface BKBook {
+  name: string;
+  chapters: Array<BKChapter>;
+}
+
+export interface BKChapter {
+  book: string;
+  chapter: string;
+  audio: BKAudio;
+  segments: Array<BKSegment>;
+}
+
+interface BKAudio {
+  filenames?: Array<string>;
+  filename?: string;
+  length: number;
+}
+
+interface BKSegment {
+  segmentId: number;
+  text: string;
+  verse: string;
+  startTime: number;
+  length: number;
+}
+
+//Used in the convert functions
+export interface ConvertProject {
+  name: string;
+  fullPath: string;
+  books: Array<ConvertBook>;
+}
+
+export interface ConvertBook {
+  name: string;
+  chapters: Array<ConvertChapter>;
+}
+
+export interface ConvertChapter {
+  name: string;
+}

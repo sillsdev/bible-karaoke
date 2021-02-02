@@ -11,6 +11,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "jsx": "react"
   },
-  "include": ["public/cli/lib/rendering/**/*.ts"],
+  "include": ["public/cli/**/*.ts"],
   "exclude": ["node_modules", "**/*.integration.ts"]
 }
