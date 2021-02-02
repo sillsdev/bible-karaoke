@@ -6,7 +6,7 @@ import fs from 'fs';
 import { scenarios } from './scenarios';
 import { convert } from '../hearThisConvert';
 import { BKProject } from '../../../../../models';
-const ffprobePath = '';
+const ffprobePath = path.resolve(__dirname + '../../../../../../../binaries/ffprobe.exe');
 
 interface Scenario {
   input: any;
@@ -16,19 +16,20 @@ interface Scenario {
 const testScenario = async (scenario: Scenario, t: any) => {
   const { input, output } = scenario;
   const projectDir = await convert(input.project, ffprobePath);
-  output.books.forEach((book) => {
-    book.chapters.forEach((chapter) => {
-      const outputJsonContents = fs.readFileSync(path.join(projectDir, book.name, chapter.chapter, 'chapter.json'), {
-        encoding: 'utf-8',
+  if (typeof projectDir == 'string') {
+    output.books.forEach((book) => {
+      book.chapters.forEach((chapter) => {
+        const outputJsonContents = fs.readFileSync(path.join(projectDir, book.name, chapter.chapter, 'chapter.json'), {
+          encoding: 'utf-8',
+        });
+        const outputJson = JSON.parse(outputJsonContents);
+        t.deepEqual(outputJson, chapter);
       });
-      const outputJson = JSON.parse(outputJsonContents);
-      console.log(outputJson);
-      t.deepEqual(outputJson, chapter);
     });
-  });
+  }
 };
 
-test.failing('hearThisImport converts test folders as expected', async (t) => {
+test('hearThisImport converts test folders as expected', async (t) => {
   t.plan(scenarios.length);
   await Promise.all(map(scenarios, (scenario: Scenario) => testScenario(scenario, t)));
 });

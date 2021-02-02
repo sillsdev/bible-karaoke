@@ -65,14 +65,17 @@ async function convertChapter(
   }
 }
 
-export async function convert(project: ConvertProject, ffprobePath: string): Promise<string> {
+export async function convert(project: ConvertProject, ffprobePath: string): Promise<string | Error> {
   const projectDir = path.join(getIntermediateRootDir(), project.name);
   mkDir(projectDir);
   for await (const book of project.books) {
     const bookDir = path.join(projectDir, book.name);
     mkDir(bookDir);
     for await (const chapter of book.chapters) {
-      convertChapter(chapter, book, project, projectDir, ffprobePath);
+      const result = await convertChapter(chapter, book, project, projectDir, ffprobePath);
+      if (result instanceof Error) {
+        throw result;
+      }
     }
   }
   return projectDir;
