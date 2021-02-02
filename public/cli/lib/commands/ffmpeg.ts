@@ -5,7 +5,7 @@ import tempy from 'tempy';
 import path from 'path';
 import { FfmpegSettings } from '../../../models';
 
-export async function execute(settings: FfmpegSettings) {
+export async function execute(settings: FfmpegSettings): Promise<void> {
   // set default value
   settings.ffmpegPath = settings.ffmpegPath || 'ffmpeg';
 
@@ -20,7 +20,7 @@ export async function execute(settings: FfmpegSettings) {
       `"${settings.ffmpegPath}" -framerate ${settings.framerateIn} -i "${path.join(
         settings.imagesPath,
         'frame_%06d.png'
-      )}" -i 
+      )}" -i
       "${executeAudioPath}" ${settings.framerateOut ? `${settings.framerateOut} ` : ''} -pix_fmt yuv420p "${
         settings.outputName
       }"`,
@@ -36,7 +36,7 @@ export async function execute(settings: FfmpegSettings) {
   });
 }
 
-async function combineAudioIfNecessary(
+export async function combineAudioIfNecessary(
   ffmpegExe: string,
   fileOrFolderPath: string,
   skipAudioFiles: Array<string>
@@ -45,10 +45,10 @@ async function combineAudioIfNecessary(
     // if we have a directory, read the files in the directory
     if (fs.lstatSync(fileOrFolderPath).isDirectory()) {
       // read files in the directory
-      readdirSorted(fileOrFolderPath, { numeric: true }).then(async (filesSorted) => {
-        const files = (filesSorted || []).map((fileName) => path.join(fileOrFolderPath, fileName)),
-          mp3Files = files.filter((f) => f.indexOf('.mp3') > -1),
-          wavFiles = files.filter((f) => f.indexOf('.wav') > -1);
+      readdirSorted(fileOrFolderPath, { numeric: true }).then(async (filesSorted: string[]) => {
+        const files = (filesSorted || []).map((fileName: string) => path.join(fileOrFolderPath, fileName)),
+          mp3Files = files.filter((f: string) => f.indexOf('.mp3') > -1),
+          wavFiles = files.filter((f: string) => f.indexOf('.wav') > -1);
 
         // If this folder contains wave and mp3 files, then throw error
         if (mp3Files.length && wavFiles.length) {
@@ -72,7 +72,7 @@ async function combineAudioIfNecessary(
   });
 }
 
-async function mergeWavFiles(
+export async function mergeWavFiles(
   ffmpegExe: string,
   wavFiles: Array<string>,
   skipAudioFiles: Array<string>
@@ -104,7 +104,7 @@ async function mergeWavFiles(
   });
 }
 
-function getGlobFormat(mp3Files: Array<string>, skipAudioFiles: Array<string>) {
+export function getGlobFormat(mp3Files: string[], skipAudioFiles: string[]): string {
   const audioFiles = mp3Files.filter((f) => !skipAudioFiles.includes(f));
   return `concat:${audioFiles.join('|')}`;
 }

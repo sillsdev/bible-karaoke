@@ -1,1 +1,1 @@
-declare module 'readdir-sorted.d';
+declare module 'readdir-sorted';
