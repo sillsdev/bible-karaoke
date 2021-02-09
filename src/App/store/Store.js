@@ -134,12 +134,14 @@ class Store {
     if (localStorage.background) {
       const background = JSON.parse(localStorage.background);
       // check to see if we set the file attribute
-      if (typeof background['file'] !== 'undefined') {
+      if (background.type === "file" || background.type === "image") {
         // check to see if the file attribute isn't an empty string
         const setBgToColor = {
-          type: 'color'
+          type: 'color',
+          file: '',
+          color: '#CCC'
         }
-        if (background.file.length) {
+        if (background.file && background.file.length) {
           // check to see if referenced background file is available
           const fileExists = fs.existsSync(background.file);
           if (!fileExists) {
@@ -169,10 +171,11 @@ class Store {
       }
     } else {
       this.background.imageSrc = '';
-      this.background.color = '#000';
+      this.background.file = '';
+      //this.background.color = '#000';
       this.background.type = 'color';
     }
-    this.saveLocalProperties('background', background);
+    this.saveLocalProperties('background', this.background);
   }
   
   @action.bound
