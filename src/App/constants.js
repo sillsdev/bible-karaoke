@@ -28,13 +28,13 @@ export const fileFilters = {
   background: [
     {
       name: 'Background files',
-      extensions: ['jpg', 'png', 'mpeg4', 'mp4', 'webm'],
+      extensions: ['jpg', 'png', 'mp4'],
     },
   ],
   output: [
     {
       name: 'Video files',
-      extensions: ['mp4','mov','avi'],
+      extensions: ['mp4'],
     },
   ],
 };

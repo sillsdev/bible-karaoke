@@ -2,79 +2,75 @@
 <html id="html">
 
 <head>
-   <meta charset='utf-8'>
-   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-   <title>Bible Karaoke</title>
-   <meta name='viewport' content='width=device-width, initial-scale=1'>
-   <meta name="description" content="Bible Karaoke - Demo">
-   <style>
-      body {
-         background: #000;
-         font-family: 'Lato', sans-serif;
-         font-size: 1.5em;
-         line-height: 1.1em;
-         letter-spacing: .05em;
-         margin: 0
-      }
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Bible Karaoke</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta name="description" content="Bible Karaoke - Demo">
+    <style>
+        body {
+            background: #000;
+            font-family: 'Lato', sans-serif;
+            font-size: 1.5em;
+            line-height: 1.1em;
+            letter-spacing: .05em;
+            margin: 0
+        }
 
-      .subs span {
-         color: white;
-         /* text-transform: capitalize; */
-         /* background-color: yellow; */
-      }
+        .subs span {
+            color: white;
+            /* text-transform: capitalize; */
+            /* background-color: yellow; */
+        }
 
-      .karaoke-caption {
-         font-size: CAPTION_FONT_SIZE;
-         padding-top: 175px;
-         font-family: "CAPTION_FONT_FAMILY";
-         font-weight: CAPTION_FONT_BOLD;
-         font-style: CAPTION_FONT_ITALIC;
-         margin: 0px 46px;
-         width: 628px;
-         position: absolute;
-      }
+        .karaoke-caption {
+            font-size: CAPTION_FONT_SIZE;
+            padding-top: 175px;
+            font-family: "CAPTION_FONT_FAMILY";
+            font-weight: CAPTION_FONT_BOLD;
+            font-style: CAPTION_FONT_ITALIC;
+            margin: 0px 46px;
+            width: 628px;
+            position: absolute;
+        }
 
-      .karaoke-caption .phrase {
-         padding: 15px 10px;
-         border-radius: 10px;
-         line-height: 40px;
-      }
+        .karaoke-caption .phrase {
+            padding: 15px 10px;
+            border-radius: 10px;
+            line-height: 40px;
+        }
 
-      .karaoke-caption .words {
-         color: CAPTION_FONT_COLOR;
-         line-height: 32px;
-         margin: 0 -5px;
-         padding: 0 5px;
-         /* border-radius: 10px; */
-      }
+        .karaoke-caption .words {
+            color: CAPTION_FONT_COLOR;
+            line-height: 32px;
+            margin: 0 -5px;
+            padding: 0 5px;
+            /* border-radius: 10px; */
+        }
 
-      .karaoke-caption .words {
-         display: inline-block;
-      }
+        .karaoke-caption .words {
+            display: inline-block;
+        }
 
-      #imgParent {
-         width: 720px;
-         height: 480px;
-         margin: 0 auto;
-         background: BG_COLOR;
-         background-repeat: no-repeat;
-         background-size: cover;
-         background-position: 50% 50%;
-         position: relative;
-      }
-   </style>
-   <script>
+        #imgParent {
+            width: 720px;
+            height: 480px;
+            margin: 0 auto;
+            background: BG_COLOR;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 50% 50%;
+            position: relative;
+        }
+    </style>
+    <script>
         var animations = [];
 
         window.afterLoadKar = function(textObj, backgroundImage, fps, bgType, highlightColor, speechBubbleColor, speechBubbleOpacity, phraseLocation) {
             var showSpeechBubble = true;
-            if (bgType == "color") {
-                showSpeechBubble = false;
-                document.getElementById("bgVideo").style.display = "none";
-            } else if (bgType == "image") {
+            if (bgType == "image") {
                 let imageParent = document.getElementById("imgParent");
                 imageParent.style.backgroundImage = "url("+backgroundImage+")";
-                document.getElementById("bgVideo").style.display = "none";
             } else if (bgType == "video") {
                 document.getElementById("body").style = "background-color: transparent;";
                 document.getElementById("html").style = "background-color: transparent;";
@@ -308,16 +304,16 @@
             });
         }
     </script>
-   <!-- this comment get's replaced with content that has the background image
+    <!-- this comment get's replaced with content that has the background image
     and vtt file. It then calls `afterLoadKar` with the loaded values -->
-   <!-- replaced-HACK -->
-   <meta name="data-replace">
+    <!-- replaced-HACK -->
+    <meta name="data-replace">
 </head>
 
 <body id="body">
-   <div id="imgParent">
-      <div class="line subs karaoke-caption" id="subtitles2"></div>
-   </div>
+    <div id="imgParent">
+        <div class="line subs karaoke-caption" id="subtitles2"></div>
+    </div>
 
 </body>
 

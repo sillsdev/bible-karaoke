@@ -162,7 +162,7 @@ class Store {
     this.background = background;
     if (this.background.file) {
       const ext = this.background.file.split('.').pop();
-      if (['mpeg4', 'mp4', 'webm'].includes(ext)) {
+      if (['mp4'].includes(ext)) {
         this.background.type = 'video';
       } else {
         this.background.type = 'image';
