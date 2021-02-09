@@ -1,4 +1,5 @@
 import React from 'react';
+import fs from 'fs';
 import './Preview.scss';
 
 const HIGHLIGHT_VERSE_INDEX = 0;
@@ -21,6 +22,21 @@ const PreviewVerse = ({ verse, highlightVerse, highlightStyle }) => {
       </React.Fragment>
     );
   });
+};
+
+const getViewBlob = (background) => {
+  if (!background.file) {
+    return "";
+  }
+  const URL = window.URL || window.webkitURL;
+  var video = null;
+  try {
+    video = fs.readFileSync(background.file);
+    var fileURL = URL.createObjectURL(new Blob([video], { "type": "video/mp4" }));
+    return fileURL;
+  } catch (err) {
+    return "";
+  }
 };
 
 const Preview = ({ verses, background, text, speechBubble, textLocation }) => {
@@ -52,7 +68,7 @@ const Preview = ({ verses, background, text, speechBubble, textLocation }) => {
       backgroundColor: text.highlightColor || 'transparent',
     },
   };
-  let file = "file:"+background.file;
+  let file = getViewBlob(background);
   return (
     <div className='preview' style={styles.background}>
       {background.type === 'video' ? (

@@ -27,8 +27,6 @@ const FFMPEG = require(path.join(__dirname, "ffmpeg.js"));
 
 // var Setup = require(path.join(__dirname, "setup.js"));
 
-const FFPROBE_EXE = process.platform === 'win32' ? 'ffprobe.exe' : 'ffprobe';
-
 var Options = {}; // the running options for this command.
 var skipAudioFiles =  null;  // {array} a list of audio files to NOT include
 
@@ -89,6 +87,7 @@ Command.help = function() {
                         setting --noBGImage prevents being asked for one
     --fps            : (optional) the frames per second of the output (15)
     --ffmpegPath     : (optional) path to your ffmpeg executable
+    --ffprobePath    : (optional) path to your ffprobe executable
     -f               : (optional) overwrite the output file if it exists
     --fontFamily     : The name of the system font to use.
     --fontSize       : The size of the font used.
@@ -125,6 +124,11 @@ Command.run = function(options) {
                     if (Options.ffmpegPath) {
                         if (!path.isAbsolute(Options.ffmpegPath)) {
                             Options.ffmpegPath = path.join(process.cwd(), Options.ffmpegPath);
+                        }
+                    }
+                    if (Options.ffprobePath) {
+                        if (!path.isAbsolute(Options.ffprobePath)) {
+                            Options.ffprobe = path.join(procese.cwd(), Options.ffprobePath);
                         }
                     }
                     if (Options.onProgress && typeof Options.onProgress !== "function") {
@@ -424,7 +428,7 @@ function execute(done) {
                 input: pathToInfo,
                 output: pathBBKFile,
                 Log,
-                ffprobePath: ffprobePath(Options.ffmpegPath || null)
+                ffprobePath: Options.ffprobePath || null
             });
         })
         .then((skipFiles) => {
@@ -470,7 +474,10 @@ function execute(done) {
                 output: Options.output,
                 Log,
                 framerateOut: Options.fps || 15,
-                ffmpegPath: Options.ffmpegPath || null
+                ffmpegPath: Options.ffmpegPath || null,
+                ffprobePath: Options.ffprobePath || null,
+                backgroundVideoUrl: Options.bgFile,
+                backgroundType: Options.bgType
             });
         })
         .then(() => {
@@ -483,11 +490,4 @@ function execute(done) {
 
 function onProgress(status, percent) {
     Options.onProgress && Options.onProgress({status, percent});
-}
-
-function ffprobePath(ffmpegPath) {
-  if (!ffmpegPath) {
-    return null;
-  }
-  return path.join(path.dirname(ffmpegPath), FFPROBE_EXE);
 }

@@ -96,7 +96,6 @@ async function getHtmlPage(timingFilePath, textLocation, bgType, bgFilePath, bgC
         let fps = ${fps};
         let timing = ${timings};
         let backgroundDataUri = '${backgroundDataUri}';
-        let backgroundVideoUrl = '${bgFilePath}';
         let highlightColor = '${highlightColor}';
         let speechBubbleColor = '${speechBubbleColor}';
         let speechBubbleOpacity = '${speechBubbleOpacity}';
@@ -104,7 +103,7 @@ async function getHtmlPage(timingFilePath, textLocation, bgType, bgFilePath, bgC
         let bgFilePath = '${bgFilePath}';
         let phraseLocation = '${textLocation}';
         window.onload = function () {
-            window.afterLoadKar(timing, backgroundDataUri, fps, backgroundType, backgroundVideoUrl, highlightColor, speechBubbleColor, speechBubbleOpacity, phraseLocation);
+            window.afterLoadKar(timing, backgroundDataUri, fps, backgroundType, highlightColor, speechBubbleColor, speechBubbleOpacity, phraseLocation);
         }
     </script>
     `
@@ -114,6 +113,5 @@ async function getHtmlPage(timingFilePath, textLocation, bgType, bgFilePath, bgC
         .replace(fontColorPlaceholder, fontColor || fallbackFontColor)
         .replace(fontItalicPlaceholder, fontItalic || fallbackFontItalic)
         .replace(fontBoldPlaceholder, fontBold || fallbackFontBold)
-        .replace(bgColorPlaceholder, bgColor || fallbackBgColor)
-        .replace(videoSrcPlaceholder, bgFilePath || fallbackVideoSrc);
+        .replace(bgColorPlaceholder, bgColor || fallbackBgColor);
 }

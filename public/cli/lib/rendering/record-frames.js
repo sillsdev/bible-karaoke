@@ -34,7 +34,7 @@ module.exports.record = async function(options) {
         const paddedIndex = `${i}`.padStart(6, "0");
         let fileName = `frame_${paddedIndex}.png`;
         let screenshot = await page.screenshot({
-            omitBackground: false,
+            omitBackground: true,
             path: path.join(outLocation, fileName)
         });
         if (options.notify) {

@@ -134,7 +134,7 @@ class Store {
     if (localStorage.background) {
       const background = JSON.parse(localStorage.background);
       // check to see if we set the file attribute
-      if (background.type === "file" || background.type === "image") {
+      if (background.type === "file" || background.type === "image" || background.type === "video") {
         // check to see if the file attribute isn't an empty string
         const setBgToColor = {
           type: 'color',

@@ -35,17 +35,20 @@ module.exports = Command;
 Command.help = function() {
     console.log(`
 
-  usage: $ bbk ffmpeg --images=[images] --audio=[audio] --output=[output] --ffmpegPath=[/path/to/ffmpeg]
+  usage: $ bbk ffmpeg --images=[images] --audio=[audio] --output=[output] --ffmpegPath=[/path/to/ffmpeg] --ffprobePath=[/path/to/ffprobe]
 
   [name] : the name of the directory to install the AppBuilder Runtime into.
 
   [options] :
-    --images        : path to the image folder
-    --audio         : path to the audio file
-    --output        : output name
-    --ffmpegPath    : (optional) path to the ffmpeg executable
-    --framerateIn   : (optional) {number} what rate are the images taken at 
-    --framerateOut  : (optional) {number} what is the resulting framerate of the video
+    --images                : path to the image folder
+    --audio                 : path to the audio file
+    --output                : output name
+    --backgroundVideoUrl    : path to background video
+    --backgroundType        : type of background ("image", "photo", "video")
+    --ffmpegPath            : (optional) path to the ffmpeg executable
+    --ffprobePath           : (optional) path to the ffprobe executable
+    --framerateIn           : (optional) {number} what rate are the images taken at 
+    --framerateOut          : (optional) {number} what is the resulting framerate of the video
 
   examples:
 
@@ -202,33 +205,158 @@ function checkDependencies(done) {
         done();
         return;
     }
+    if (Options.ffprobePath) {
+        done();
+        return;
+    }
 
     // verify we have 'ffmpeg'
-    utils.checkDependencies(["ffmpeg"], done);
+    utils.checkDependencies(["ffmpeg", "ffprobe"], done);
 }
 
 function execute(done, err) {
     var ffmpegExe = "ffmpeg";
+    var ffprobeExe = "ffprobe";
+    var totalLength = 0;
+    var backgroundLength = 0;
+    var loopsNeeded = 1;
     if (Options.ffmpegPath) {
         ffmpegExe = Options.ffmpegPath;
     }
+    if (Options.ffprobePath) {
+        ffprobeExe = Options.ffprobePath;
+    }
 
-    shell.exec(
-        `"${ffmpegExe}" -framerate ${Options.framerateIn} -i "${path.join(
-            Options.images,
-            "frame_%06d.png"
-        )}" -i "${Options.audioInput}" ${
-            Options.framerateOut ? `${Options.framerateOut} ` : ""
-        } -pix_fmt yuv420p "${Options.output}"`,
-        (code, stdout, stderr) => {
-            if (code != 0) {
-                var error = new Error(stderr || stdout);
-                done(error);
-                return;
+    if (Options.backgroundType == "video") {
+        let backgroundResized = path.join(Options.images, "bgResized" + Options.backgroundVideoUrl.replace(/^[^.]*./, "."));
+        let backgroundLooped = path.join(Options.images, "bgLooped" + Options.backgroundVideoUrl.replace(/^[^.]*./, "."));
+        let videoAlpha = path.join(Options.images, "videoAlpha.avi");
+        let loopFile = path.join(Options.images, "list.txt");
+        let videoLayered = path.join(Options.images, "videoLayered" + Options.output.replace(/^[^.]*./, "."));
+        
+        shell.exec(
+            `"${ffmpegExe}" -i "${Options.backgroundVideoUrl}" -filter:v scale="720:trunc(ow/a/2)*2" -c:a copy "${backgroundResized}"`,
+            (code, stdout, stderr) => {
+                if (code != 0) {
+                    var error = new Error(stderr || stdout);
+                    done(error);
+                    return;
+                }
+                shell.exec(
+                    `"${ffprobeExe}" -i "${Options.audioInput}" -v error -select_streams a:0 -show_format -show_streams`,
+                    (code, stdout, stderr) => {
+                        if (code != 0) {
+                            var error = new Error(stderr || stdout);
+                            done(error);
+                            return;
+                        }
+                        var matched = stdout.match(/duration="?(\d*\.\d*)"?/);
+                        if (matched && matched[1]) {
+                            totalLength = parseFloat(matched[1]);
+                            console.log("---------------------> totalLength: ", totalLength);
+                        } else {
+                            var error = new Error('No duration found!');
+                            done(error);
+                            return;
+                        }
+                        shell.exec(
+                            `"${ffprobeExe}" -i "${backgroundResized}" -v error -select_streams a:0 -show_format -show_streams`,
+                            (code, stdout, stderr) => {
+                                if (code != 0) {
+                                    var error = new Error(stderr || stdout);
+                                    done(error);
+                                    return;
+                                }
+                                var matched = stdout.match(/duration="?(\d*\.\d*)"?/);
+                                if (matched && matched[1]) {
+                                    backgroundLength = parseFloat(matched[1]);
+                                    console.log("---------------------> backgroundLength: ", backgroundLength);
+                                    if (backgroundLength < totalLength) {
+                                        loopsNeeded = Math.ceil(totalLength/backgroundLength);
+                                    }
+                                } else {
+                                    var error = new Error('No duration found!');
+                                    done(error);
+                                    return;
+                                }
+                                shell.exec(
+                                    `for i in {1..${loopsNeeded}}; do printf "file '%s'\n" "${backgroundResized}" >> "${loopFile}"; done`,
+                                    (code, stdout, stderr) => {
+                                        if (code != 0) {
+                                            var error = new Error(stderr || stdout);
+                                            done(error);
+                                            return;
+                                        }
+                                        shell.exec(
+                                            `"${ffmpegExe}" -f concat -safe 0 -i "${loopFile}" -c copy "${backgroundLooped}"`,
+                                            (code, stdout, stderr) => {
+                                                if (code != 0) {
+                                                    var error = new Error(stderr || stdout);
+                                                    done(error);
+                                                    return;
+                                                }
+                                                shell.exec(
+                                                    `"${ffmpegExe}" -framerate ${Options.framerateIn} -i "${path.join(
+                                                        Options.images,
+                                                        "frame_%06d.png"
+                                                    )}" -vcodec ffvhuff "${videoAlpha}"`,
+                                                    (code, stdout, stderr) => {
+                                                        if (code != 0) {
+                                                            var error = new Error(stderr || stdout);
+                                                            done(error);
+                                                            return;
+                                                        }
+                                                        shell.exec(
+                                                            `"${ffmpegExe}" -i "${backgroundLooped}" -i "${videoAlpha}" -filter_complex "[0:0][1:0]overlay[out]" -shortest -map [out] -map 1:0 -pix_fmt yuv420p -c:a copy -c:v libx264 -crf 18 "${videoLayered}"`,
+                                                            (code, stdout, stderr) => {
+                                                                if (code != 0) {
+                                                                    var error = new Error(stderr || stdout);
+                                                                    done(error);
+                                                                    return;
+                                                                }
+                                                                shell.exec(
+                                                                    `"${ffmpegExe}" -i "${videoLayered}" -i "${Options.audioInput}" -pix_fmt yuv420p "${Options.output}"`,
+                                                                    (code, stdout, stderr) => {
+                                                                        if (code != 0) {
+                                                                            var error = new Error(stderr || stdout);
+                                                                            done(error);
+                                                                            return;
+                                                                        }
+                                                                        done();
+                                                                    }
+                                                                );
+                                                            }
+                                                        );
+                                                    }
+                                                );
+                                            }
+                                        );
+                                    }
+                                );
+                            }
+                        );
+                    }
+                );
             }
-            done();
-        }
-    );
+        );
+    } else {
+        shell.exec(
+            `"${ffmpegExe}" -framerate ${Options.framerateIn} -i "${path.join(
+                Options.images,
+                "frame_%06d.png"
+            )}" -i "${Options.audioInput}" ${
+                Options.framerateOut ? `${Options.framerateOut} ` : ""
+            } -pix_fmt yuv420p "${Options.output}"`,
+            (code, stdout, stderr) => {
+                if (code != 0) {
+                    var error = new Error(stderr || stdout);
+                    done(error);
+                    return;
+                }
+                done();
+            }
+        );
+    }
 
     // done();
 }

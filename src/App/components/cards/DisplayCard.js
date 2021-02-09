@@ -150,7 +150,7 @@ class DisplayCard extends React.PureComponent {
             <div className='card--inline card--bspace'>
               <Radio
                 className='display-card__bg-radio'
-                label='Image'
+                label='Image or Video'
                 checked={backgroundOption === BG.FILE}
                 onChange={() => {
                   this.setBackgroundOption(BG.FILE);

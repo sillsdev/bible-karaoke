@@ -4,6 +4,7 @@ const path = require('path');
 const { setupFfmpeg } = require('./ffmpeg');
 
 const FFMPEG_EXE = process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
+const FFPROBE_EXE = process.platform === 'win32' ? 'ffprobe.exe' : 'ffprobe';
 
 module.exports = {
   execute,
@@ -20,11 +21,14 @@ async function execute({
 }) {
   try {
     let ffmpegFolder = await setupFfmpeg();
+    let ffprobeFolder = await setupFfmpeg(); // ffprobe is included with ffmpeg
     const ffmpegPath = path.join(ffmpegFolder, FFMPEG_EXE);
+    const ffprobePath = path.join(ffprobeFolder, FFPROBE_EXE);
     await bbkConvert({
       _: [hearThisFolder],
       output,
       ffmpegPath,
+      ffprobePath,
       textLocation: textLocation.location,
       bgType: background.type,
       bgFile: background.file,
