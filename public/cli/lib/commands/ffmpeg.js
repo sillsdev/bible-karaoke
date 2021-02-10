@@ -115,7 +115,7 @@ Command.run = function(options) {
             (err) => {
                 // shell.popd("-q");
                 // if there was an error that wasn't an ESKIP error:
-                if (err && (!err.code || err.code != "ESKIP")) {
+                if (err && (!err.code || err.code !== "ESKIP")) {
                     reject(err);
                     return;
                 }
@@ -148,14 +148,14 @@ function checkAudioInput(done) {
                 return done(new Error("Conflicting audio types"));
             } else if (mp3Files.length) {
                 // can use glob format with .mp3 files
-                audioFiles = mp3Files.filter((f)=>{ return Options.skipAudioFiles.indexOf(f) == -1; });
+                audioFiles = mp3Files.filter((f)=>{ return Options.skipAudioFiles.indexOf(f) === -1; });
                 Options.audioInput = "concat:" + audioFiles.join("|");
                 done();
             } else if (wavFiles.length) {
                 // NOTE: cannot use glob format with .wav files
                 // we will combine them into a single file and use that in our encode.
                 // but skip the ones we've been told to skip
-                audioFiles = wavFiles.filter((f)=>{ return Options.skipAudioFiles.indexOf(f) == -1; });
+                audioFiles = wavFiles.filter((f)=>{ return Options.skipAudioFiles.indexOf(f) === -1; });
 
                 Options.audioInput = path.join(
                     tempy.directory(),
@@ -227,7 +227,7 @@ function execute(done, err) {
         ffprobeExe = Options.ffprobePath;
     }
 
-    if (Options.backgroundType == "video") {
+    if (Options.backgroundType === "video") {
         let backgroundResized = path.join(Options.images, "bgResized" + Options.backgroundVideoUrl.replace(/^[^.]*./, "."));
         let backgroundLooped = path.join(Options.images, "bgLooped" + Options.backgroundVideoUrl.replace(/^[^.]*./, "."));
         let videoAlpha = path.join(Options.images, "videoAlpha.avi");
@@ -237,7 +237,7 @@ function execute(done, err) {
         shell.exec(
             `"${ffmpegExe}" -i "${Options.backgroundVideoUrl}" -filter:v scale="720:trunc(ow/a/2)*2" -c:a copy "${backgroundResized}"`,
             (code, stdout, stderr) => {
-                if (code != 0) {
+                if (code !== 0) {
                     var error = new Error(stderr || stdout);
                     done(error);
                     return;
@@ -245,9 +245,8 @@ function execute(done, err) {
                 shell.exec(
                     `"${ffprobeExe}" -i "${Options.audioInput}" -v error -select_streams a:0 -show_format -show_streams`,
                     (code, stdout, stderr) => {
-                        if (code != 0) {
-                            var error = new Error(stderr || stdout);
-                            done(error);
+                        if (code !== 0) {
+                            done(new Error(stderr || stdout));
                             return;
                         }
                         var matched = stdout.match(/duration="?(\d*\.\d*)"?/);
@@ -255,16 +254,14 @@ function execute(done, err) {
                             totalLength = parseFloat(matched[1]);
                             console.log("---------------------> totalLength: ", totalLength);
                         } else {
-                            var error = new Error('No duration found!');
-                            done(error);
+                            done(new Error('No duration found!'));
                             return;
                         }
                         shell.exec(
                             `"${ffprobeExe}" -i "${backgroundResized}" -v error -select_streams a:0 -show_format -show_streams`,
                             (code, stdout, stderr) => {
-                                if (code != 0) {
-                                    var error = new Error(stderr || stdout);
-                                    done(error);
+                                if (code !== 0) {
+                                    done(new Error(stderr || stdout));
                                     return;
                                 }
                                 var matched = stdout.match(/duration="?(\d*\.\d*)"?/);
@@ -275,12 +272,14 @@ function execute(done, err) {
                                         loopsNeeded = Math.ceil(totalLength/backgroundLength);
                                     }
                                 } else {
-                                    var error = new Error('No duration found!');
-                                    done(error);
+                                    done(new Error('No duration found!'));
                                     return;
                                 }
-                                var loopText = "";
-                                for (i = 0; i < loopsNeeded; i++) {
+                                let loopText = '';
+                                if (process.platform === 'win32') {
+                                    backgroundResized = backgroundResized.replace(/\\/g, '\\\\');
+                                }
+                                for (let i = 0; i < loopsNeeded; i++) {
                                     loopText += `file ${backgroundResized}\n`;
                                 }
                                 console.log("loopText: ", loopText);
@@ -288,7 +287,7 @@ function execute(done, err) {
                                 shell.exec(
                                     `"${ffmpegExe}" -f concat -safe 0 -i "${loopFile}" -c copy "${backgroundLooped}"`,
                                     (code, stdout, stderr) => {
-                                        if (code != 0) {
+                                        if (code !== 0) {
                                             var error = new Error(stderr || stdout);
                                             done(error);
                                             return;
@@ -299,7 +298,7 @@ function execute(done, err) {
                                                 "frame_%06d.png"
                                             )}" -vcodec ffvhuff "${videoAlpha}"`,
                                             (code, stdout, stderr) => {
-                                                if (code != 0) {
+                                                if (code !== 0) {
                                                     var error = new Error(stderr || stdout);
                                                     done(error);
                                                     return;
@@ -307,7 +306,7 @@ function execute(done, err) {
                                                 shell.exec(
                                                     `"${ffmpegExe}" -i "${backgroundLooped}" -i "${videoAlpha}" -filter_complex "[0:0][1:0]overlay[out]" -shortest -map [out] -map 1:0 -pix_fmt yuv420p -c:a copy -c:v libx264 -crf 18 "${videoLayered}"`,
                                                     (code, stdout, stderr) => {
-                                                        if (code != 0) {
+                                                        if (code !== 0) {
                                                             var error = new Error(stderr || stdout);
                                                             done(error);
                                                             return;
@@ -315,7 +314,7 @@ function execute(done, err) {
                                                         shell.exec(
                                                             `"${ffmpegExe}" -i "${videoLayered}" -i "${Options.audioInput}" -pix_fmt yuv420p "${Options.output}"`,
                                                             (code, stdout, stderr) => {
-                                                                if (code != 0) {
+                                                                if (code !== 0) {
                                                                     var error = new Error(stderr || stdout);
                                                                     done(error);
                                                                     return;
@@ -344,7 +343,7 @@ function execute(done, err) {
                 Options.framerateOut ? `${Options.framerateOut} ` : ""
             } -pix_fmt yuv420p "${Options.output}"`,
             (code, stdout, stderr) => {
-                if (code != 0) {
+                if (code !== 0) {
                     var error = new Error(stderr || stdout);
                     done(error);
                     return;
