@@ -279,8 +279,14 @@ function execute(done, err) {
                                     done(error);
                                     return;
                                 }
+                                var loopText = "";
+                                for (i = 0; i < loopsNeeded; i++) {
+                                    loopText += `file ${backgroundResized}\n`;
+                                }
+                                console.log("loopText: ", loopText);
+                                fs.writeFileSync(loopFile, loopText);
                                 shell.exec(
-                                    `for i in {1..${loopsNeeded}}; do printf "file '%s'\n" "${backgroundResized}" >> "${loopFile}"; done`,
+                                    `"${ffmpegExe}" -f concat -safe 0 -i "${loopFile}" -c copy "${backgroundLooped}"`,
                                     (code, stdout, stderr) => {
                                         if (code != 0) {
                                             var error = new Error(stderr || stdout);
@@ -288,7 +294,10 @@ function execute(done, err) {
                                             return;
                                         }
                                         shell.exec(
-                                            `"${ffmpegExe}" -f concat -safe 0 -i "${loopFile}" -c copy "${backgroundLooped}"`,
+                                            `"${ffmpegExe}" -framerate ${Options.framerateIn} -i "${path.join(
+                                                Options.images,
+                                                "frame_%06d.png"
+                                            )}" -vcodec ffvhuff "${videoAlpha}"`,
                                             (code, stdout, stderr) => {
                                                 if (code != 0) {
                                                     var error = new Error(stderr || stdout);
@@ -296,10 +305,7 @@ function execute(done, err) {
                                                     return;
                                                 }
                                                 shell.exec(
-                                                    `"${ffmpegExe}" -framerate ${Options.framerateIn} -i "${path.join(
-                                                        Options.images,
-                                                        "frame_%06d.png"
-                                                    )}" -vcodec ffvhuff "${videoAlpha}"`,
+                                                    `"${ffmpegExe}" -i "${backgroundLooped}" -i "${videoAlpha}" -filter_complex "[0:0][1:0]overlay[out]" -shortest -map [out] -map 1:0 -pix_fmt yuv420p -c:a copy -c:v libx264 -crf 18 "${videoLayered}"`,
                                                     (code, stdout, stderr) => {
                                                         if (code != 0) {
                                                             var error = new Error(stderr || stdout);
@@ -307,24 +313,14 @@ function execute(done, err) {
                                                             return;
                                                         }
                                                         shell.exec(
-                                                            `"${ffmpegExe}" -i "${backgroundLooped}" -i "${videoAlpha}" -filter_complex "[0:0][1:0]overlay[out]" -shortest -map [out] -map 1:0 -pix_fmt yuv420p -c:a copy -c:v libx264 -crf 18 "${videoLayered}"`,
+                                                            `"${ffmpegExe}" -i "${videoLayered}" -i "${Options.audioInput}" -pix_fmt yuv420p "${Options.output}"`,
                                                             (code, stdout, stderr) => {
                                                                 if (code != 0) {
                                                                     var error = new Error(stderr || stdout);
                                                                     done(error);
                                                                     return;
                                                                 }
-                                                                shell.exec(
-                                                                    `"${ffmpegExe}" -i "${videoLayered}" -i "${Options.audioInput}" -pix_fmt yuv420p "${Options.output}"`,
-                                                                    (code, stdout, stderr) => {
-                                                                        if (code != 0) {
-                                                                            var error = new Error(stderr || stdout);
-                                                                            done(error);
-                                                                            return;
-                                                                        }
-                                                                        done();
-                                                                    }
-                                                                );
+                                                                done();
                                                             }
                                                         );
                                                     }
