@@ -4,7 +4,8 @@ import { xml2json } from 'xml-js';
 import { getIntermediateRootDir, mkDir } from '../import-util';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const shell = require('shelljs');
-import { ConvertProject, ConvertBook, ConvertChapter, BKChapter } from '../../../../models';
+import { BKChapter } from '../../../../models/projectFormat.model';
+import { ConvertProject, ConvertBook, ConvertChapter } from '../../../../models/convertFormat.model';
 
 //Defines a ScriptLine as expected after parsing the hearthis xml
 interface ScriptLine {
@@ -28,7 +29,7 @@ async function convertChapter(
     book: book.name,
     chapter: chapter.name,
     audio: {
-      filenames: [],
+      files: [],
       length: 0,
     },
     segments: [],
@@ -38,19 +39,23 @@ async function convertChapter(
   try {
     const infoXmlFileContents = fs.readFileSync(infoXmlPath, { encoding: 'utf-8' });
     const chapterInfo = JSON.parse(xml2json(infoXmlFileContents, { compact: true }));
-    for await (const scriptLine of chapterInfo.ChapterInfo.Recordings.ScriptLine) {
+    let chapterAudioLength = 0;
+    for await (const scriptLine of chapterInfo.ChapterInfo.Recordings.ScriptLine as ScriptLine[]) {
       const verse = parseInt(scriptLine.LineNumber._text, 10) - 1;
       const audioPath: string = path.join(sourceChapterDir, `${verse}.wav`);
-      const duration = await getAudioDurationInMiliSeconds(audioPath, ffprobePath);
-      chapterDetails.audio.filenames?.push(audioPath);
+      const duration = await getAudioDurationInMilliseconds(audioPath, ffprobePath);
+      if ('files' in chapterDetails.audio) {
+        chapterDetails.audio.files.push({ filename: audioPath, length: duration });
+      }
       chapterDetails.segments.push({
         segmentId: chapterDetails.segments.length + 1,
         text: scriptLine.Text._text,
         verse: verse.toString(),
-        startTime: chapterDetails.audio.length,
+        startTime: chapterAudioLength,
         length: duration,
       });
-      chapterDetails.audio.length += duration;
+      chapterAudioLength += duration;
+      chapterDetails.audio.length = chapterAudioLength;
     }
     const jsonFilename = path.join(chapterDir, 'chapter.json');
     const jsonFileContents = JSON.stringify(chapterDetails, null, 2);
@@ -82,7 +87,7 @@ export async function convert(project: ConvertProject, ffprobePath: string): Pro
 }
 
 // Adapted from https://github.com/caffco/get-audio-duration:
-async function getAudioDurationInMiliSeconds(filePath: string, ffprobePath: string): Promise<number> {
+async function getAudioDurationInMilliseconds(filePath: string, ffprobePath: string): Promise<number> {
   const command = ffprobePath + ' -v error -select_streams a:0 -show_format -show_streams ' + filePath;
   const { stdout } = shell.exec(command, { silent: true });
   const matched = stdout.match(/duration="?(\d*\.\d*)"?/);

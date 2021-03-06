@@ -5,7 +5,7 @@ const map = require('lodash/map');
 import fs from 'fs';
 import { scenarios } from './scenarios';
 import { convert } from '../hearThisConvert';
-import { BKProject } from '../../../../../models';
+import { BKProject } from '../../../../../models/projectFormat.model';
 const ffprobePath = path.resolve(__dirname + '../../../../../../../binaries/ffprobe.exe');
 
 interface Scenario {
@@ -13,7 +13,7 @@ interface Scenario {
   output: BKProject;
 }
 
-const testScenario = async (scenario: Scenario, t: any) => {
+const testScenario = async (scenario: Scenario, t: any): Promise<void> => {
   const { input, output } = scenario;
   const projectDir = await convert(input.project, ffprobePath);
   if (typeof projectDir == 'string') {

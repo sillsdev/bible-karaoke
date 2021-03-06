@@ -6,7 +6,9 @@ import { EventEmitter } from 'events';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const DataURI = require('datauri').promise;
 import { record } from './recordFrames';
-import { AnimationSettings, Timings, ProjectData } from '../../../models';
+import { AnimationSettings } from '../../../models/animationSettings.model';
+import { ProjectData } from '../../../models/projectData.model';
+import { Timings } from '../../../models/timings.model';
 
 export async function render(
   animationSettings: AnimationSettings,
