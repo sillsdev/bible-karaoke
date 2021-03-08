@@ -1,6 +1,7 @@
 import test from 'ava';
 import { getHtml } from './renderFrames';
-import { AnimationSettings, Timings } from '../../../models';
+import { AnimationSettings } from '../../../models/animationSettings.model';
+import { Timings } from '../../../models/timings.model';
 
 test('renderFrames smoke test', (t) => {
   // TODO implement this
