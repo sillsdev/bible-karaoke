@@ -3,7 +3,7 @@ import readdirSorted from 'readdir-sorted';
 import shell from 'shelljs';
 import tempy from 'tempy';
 import path from 'path';
-import { FfmpegSettings } from '../../../models';
+import { FfmpegSettings } from '../../../models/ffmpegSettings.model';
 
 export async function execute(settings: FfmpegSettings): Promise<void> {
   // set default value
