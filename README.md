@@ -23,17 +23,25 @@ Install the dependencies:
 npm install
 ```
 
-### Running AVA Unit Tests
+### Running AVA Unit and Integration Tests
 
-We use the [AVA Node.js test runner](https://github.com/avajs/ava). By default, the command below will execute tests in watch mode.
+We use the [AVA Node.js test runner](https://github.com/avajs/ava). When testing a single code unit use a unit test. When testing more than one unit of code or if the test takes time to execute then use an integration test. By default, the commands below will NOT execute tests in watch mode. If changing branches you may have to clear out `*.spec.js` and `*.integration.js` files.
+
+For unit tests run:
 
 ```sh
 npm test
 ```
 
-### Writing AVA Unit Tests
+For integration tests run:
 
-Tests are traditionally placed in a spec.js file alongside the .js file under test. Our project looks for test files ending in \*.spec.js
+```sh
+npm run integration
+```
+
+### Writing AVA Unit and Integration Tests
+
+Unit tests are placed in a `<unit>.spec.ts` file alongside the `<unit>.ts` file under test. Integration tests are placed in a `*.integration.ts` file. Our project looks for compiled test files ending in `\*.spec.js` or `\*.integration.js` depending on what type of test is being run.
 If a test is more complex with sample data and/or scenarios, a test folder can optionally be created with additional supporting files to keep things tidy.
 
 ### Debugging/Running the application

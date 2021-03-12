@@ -129,6 +129,7 @@
     "nonSemVerExperiments": {
       "reverseTeardowns": true
     },
+    "verbose": true,
     "extensions": [
       "cjs",
       "mjs",
