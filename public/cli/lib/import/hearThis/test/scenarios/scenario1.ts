@@ -29,10 +29,10 @@ export const scenario1 = {
             book: 'Book1',
             chapter: '0',
             audio: {
-              filenames: [
-                path.join(sourceRoot, 'Book1', '0', '0.wav'),
-                path.join(sourceRoot, 'Book1', '0', '1.wav'),
-                path.join(sourceRoot, 'Book1', '0', '2.wav'),
+              files: [
+                { filename: path.join(sourceRoot, 'Book1', '0', '0.wav'), length: 2300 },
+                { filename: path.join(sourceRoot, 'Book1', '0', '1.wav'), length: 5500 },
+                { filename: path.join(sourceRoot, 'Book1', '0', '2.wav'), length: 9500 },
               ],
               length: 17300,
             },
