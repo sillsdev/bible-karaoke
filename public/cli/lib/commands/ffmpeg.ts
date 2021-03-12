@@ -39,7 +39,7 @@ export async function execute(settings: FfmpegSettings): Promise<void> {
 export async function combineAudioIfNecessary(
   ffmpegExe: string,
   fileOrFolderPath: string,
-  skipAudioFiles: Array<string>
+  skipAudioFiles: string[]
 ): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     // if we have a directory, read the files in the directory
@@ -47,20 +47,20 @@ export async function combineAudioIfNecessary(
       // read files in the directory
       readdirSorted(fileOrFolderPath, { numeric: true }).then(async (filesSorted: string[]) => {
         const files = (filesSorted || []).map((fileName: string) => path.join(fileOrFolderPath, fileName)),
-          mp3Files = files.filter((f: string) => f.indexOf('.mp3') > -1),
-          wavFiles = files.filter((f: string) => f.indexOf('.wav') > -1);
+          mp3Files = files.filter((f: string) => f.endsWith('.mp3')),
+          wavFiles = files.filter((f: string) => f.endsWith('.wav'));
 
-        // If this folder contains wave and mp3 files, then throw error
-        if (mp3Files.length && wavFiles.length) {
+        // If this folder contains wav and mp3 files, then throw error
+        if (mp3Files.length > 0 && wavFiles.length > 0) {
           reject(new Error('Conflicting audio types'));
         }
         // if we have wav files, then we merge them into one file
         // and return the combined file path
-        else if (wavFiles.length) {
+        else if (wavFiles.length > 0) {
           resolve(await mergeWavFiles(ffmpegExe, wavFiles, skipAudioFiles));
         }
         // if we have mp3 files, return the glob format with .mp3 files
-        else if (mp3Files.length) {
+        else if (mp3Files.length > 0) {
           resolve(getGlobFormat(mp3Files, skipAudioFiles));
         }
       });
@@ -77,11 +77,7 @@ export async function combineAudioIfNecessary(
  * See https://superuser.com/questions/587511/concatenate-multiple-wav-files-using-single-command-without-extra-file
  * for more information.
  */
-export async function mergeWavFiles(
-  ffmpegExe: string,
-  wavFiles: Array<string>,
-  skipAudioFiles: Array<string>
-): Promise<string> {
+export async function mergeWavFiles(ffmpegExe: string, wavFiles: string[], skipAudioFiles: string[]): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     // NOTE: cannot use glob format with .wav files
     // we will combine them into a single file and use that in our encode.
@@ -103,9 +99,13 @@ export async function mergeWavFiles(
     fs.writeFileSync(fileDir, fileText);
 
     // combine wav files
-    shell.exec(`"${ffmpegExe}" -f concat -safe 0 -i "${fileDir}" -c copy "${combinedWavFilePath}"`, (err) => {
-      err ? reject(err) : resolve(combinedWavFilePath);
-    });
+    shell.exec(
+      `"${ffmpegExe}" -f concat -safe 0 -i "${fileDir}" -c copy "${combinedWavFilePath}"`,
+      { silent: true },
+      (err) => {
+        err ? reject(err) : resolve(combinedWavFilePath);
+      }
+    );
   });
 }
 
