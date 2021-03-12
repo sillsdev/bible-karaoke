@@ -72,6 +72,11 @@ export async function combineAudioIfNecessary(
   });
 }
 
+/* Note: FFMPEG cannot merge WAV files and MP3 files in the same way.  MP3 files can be merged using something called
+ * the 'concat protocol' while WAV files must be re-encoded and use the 'concat filter'.
+ * See https://superuser.com/questions/587511/concatenate-multiple-wav-files-using-single-command-without-extra-file
+ * for more information.
+ */
 export async function mergeWavFiles(
   ffmpegExe: string,
   wavFiles: Array<string>,
