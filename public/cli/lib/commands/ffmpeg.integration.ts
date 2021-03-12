@@ -1,7 +1,6 @@
 import test from 'ava';
-import tempy from 'tempy';
 import fs from 'fs';
-import { mergeWavFiles, combineAudioIfNecessary } from './ffmpeg';
+import { mergeWavFiles } from './ffmpeg';
 
 let _ffmpegPath = '';
 function getFFMpegPath(): string {
