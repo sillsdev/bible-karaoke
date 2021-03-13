@@ -6,8 +6,7 @@ import fs from 'fs';
 import { scenarios } from './scenarios';
 import { convert } from '../hearThisConvert';
 import { BKProject } from '../../../../../models/projectFormat.model';
-
-const ffprobePath = path.resolve(__dirname + '../../../../../../../binaries/ffprobe.exe');
+import { paths } from '../../../path-constants';
 
 interface Scenario {
   input: any;
@@ -16,7 +15,7 @@ interface Scenario {
 
 const testScenario = async (scenario: Scenario, t: any): Promise<void> => {
   const { input, output } = scenario;
-  const projectDir = await convert(input.project, ffprobePath);
+  const projectDir = await convert(input.project, paths.ffprobe);
   if (typeof projectDir == 'string') {
     output.books.forEach((book) => {
       book.chapters.forEach((chapter) => {

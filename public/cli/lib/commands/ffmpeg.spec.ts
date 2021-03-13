@@ -1,6 +1,4 @@
 import test from 'ava';
-import tempy from 'tempy';
-import fs from 'fs';
 import { getGlobFormat } from './ffmpeg';
 
 /*
