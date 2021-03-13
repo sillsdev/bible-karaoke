@@ -2,8 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { xml2json } from 'xml-js';
 import { getIntermediateRootDir, mkDir } from '../import-util';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const shell = require('shelljs');
+import shell from 'shelljs';
 import { BKChapter } from '../../../../models/projectFormat.model';
 import { ConvertProject, ConvertBook, ConvertChapter } from '../../../../models/convertFormat.model';
 

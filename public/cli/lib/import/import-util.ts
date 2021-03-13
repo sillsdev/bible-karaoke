@@ -1,13 +1,12 @@
 import fs from 'fs';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const tempy = require('tempy');
+import tempy from 'tempy';
 
-export function getIntermediateRootDir() {
+export function getIntermediateRootDir(): string {
   // TODO: Use a directory within AppData where the cache can persist
   return tempy.directory();
 }
 
-export function mkDir(dirPath: string) {
+export function mkDir(dirPath: string): void {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath);
   }

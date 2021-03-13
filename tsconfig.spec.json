@@ -9,7 +9,11 @@
     "preserveConstEnums": true,
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": "./",
+    "paths": {
+      "*": ["./typings/*"]
+    }
   },
   "include": ["public/cli/**/*.ts"],
   "exclude": ["node_modules", "**/*.integration.ts"]
