@@ -87,7 +87,7 @@ export async function convert(project: ConvertProject, ffprobePath: string): Pro
 
 // Adapted from https://github.com/caffco/get-audio-duration:
 async function getAudioDurationInMilliseconds(filePath: string, ffprobePath: string): Promise<number> {
-  const command = ffprobePath + ' -v error -select_streams a:0 -show_format -show_streams ' + filePath;
+  const command = `${ffprobePath} -v error -select_streams a:0 -show_format -show_streams ${filePath}`;
   const { stdout } = shell.exec(command, { silent: true });
   const matched = stdout.match(/duration="?(\d*\.\d*)"?/);
   if (matched && matched[1]) {

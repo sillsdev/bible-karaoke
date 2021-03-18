@@ -1,12 +1,15 @@
 import test from 'ava';
 import fs from 'fs';
+import path from 'path';
 import { mergeWavFiles } from './ffmpeg';
+import { paths } from '../path-constants';
+import { testPaths } from '../test/test-path-constants';
 
 let _ffmpegPath = '';
 function getFFMpegPath(): string {
   if (_ffmpegPath == '') {
     // do complicated setup
-    _ffmpegPath = 'ffmpeg';
+    _ffmpegPath = paths.ffmpeg;
   }
   return _ffmpegPath;
 }
@@ -28,7 +31,10 @@ test('combineAudioIfNecessary: mixed file types: throws error', (t) => {
 
 test('mergeWavFiles smoke test: multiple files: success', async (t) => {
   const ffmpegPath = getFFMpegPath();
-  const wavFiles = [`${__dirname}/test/fixtures/sampleWav/one.wav`, `${__dirname}/test/fixtures/sampleWav/two.wav`];
+  const wavFiles = [
+    path.join(testPaths.exampleHearThisProject, 'Book1', '1', '1.wav'),
+    path.join(testPaths.exampleHearThisProject, 'Book1', '1', '2.wav'),
+  ];
   const skipFiles: string[] = [];
   const newFilePath = await mergeWavFiles(ffmpegPath, wavFiles, skipFiles);
 

@@ -1,12 +1,11 @@
 import path from 'path';
-
-const sourceRoot: string = path.join(__dirname, '..', 'fixtures', 'ExampleHearThisProject');
+import { testPaths } from '../../../../test/test-path-constants';
 
 export const scenario1 = {
   input: {
     project: {
       name: 'ExampleHearThisProject',
-      fullPath: sourceRoot,
+      fullPath: testPaths.exampleHearThisProject,
       books: [
         {
           name: 'Book1',
@@ -30,9 +29,9 @@ export const scenario1 = {
             chapter: '0',
             audio: {
               files: [
-                { filename: path.join(sourceRoot, 'Book1', '0', '0.wav'), length: 2300 },
-                { filename: path.join(sourceRoot, 'Book1', '0', '1.wav'), length: 5500 },
-                { filename: path.join(sourceRoot, 'Book1', '0', '2.wav'), length: 9500 },
+                { filename: path.join(testPaths.exampleHearThisProject, 'Book1', '0', '0.wav'), length: 2300 },
+                { filename: path.join(testPaths.exampleHearThisProject, 'Book1', '0', '1.wav'), length: 5500 },
+                { filename: path.join(testPaths.exampleHearThisProject, 'Book1', '0', '2.wav'), length: 9500 },
               ],
               length: 17300,
             },

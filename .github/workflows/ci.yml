@@ -35,3 +35,4 @@ jobs:
           #   Both warnings say: React Hook React.useEffect has a missing dependency: 'analytics'.
           CI: ''
       - run: npm test
+      - run: npm run integration
