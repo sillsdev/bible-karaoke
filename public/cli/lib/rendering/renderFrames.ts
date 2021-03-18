@@ -1,10 +1,9 @@
+import DataURI from 'datauri';
+import { EventEmitter } from 'events';
 import fs from 'fs';
+import { template } from 'lodash';
 import path from 'path';
 // import { allowedNodeEnvironmentFlags } from 'process'; //unsure if we will need this or not
-import { template } from 'lodash';
-import { EventEmitter } from 'events';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const DataURI = require('datauri').promise;
 import { record } from './recordFrames';
 import { AnimationSettings } from '../../../models/animationSettings.model';
 import { ProjectData } from '../../../models/projectData.model';
@@ -30,7 +29,7 @@ export async function getHtml(timings: Timings, animationSettings: AnimationSett
   const htmlTemplate = template(fs.readFileSync(path.join(__dirname, 'render.html'), { encoding: 'utf-8' }));
   const backgroundDataUri =
     animationSettings.background.file && animationSettings.background.type == 'image'
-      ? await DataURI(animationSettings.background.file)
+      ? await DataURI.promise(animationSettings.background.file)
       : null;
   const data = {
     timings: JSON.stringify(timings),

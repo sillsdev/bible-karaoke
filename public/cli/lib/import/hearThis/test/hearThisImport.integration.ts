@@ -1,19 +1,19 @@
-import test from 'ava';
-import path from 'path';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const map = require('lodash/map');
+import test, { ExecutionContext } from 'ava';
 import fs from 'fs';
+import { map } from 'lodash';
+import path from 'path';
 import { scenarios } from './scenarios';
 import { convert } from '../hearThisConvert';
 import { BKProject } from '../../../../../models/projectFormat.model';
+import { ConvertProject } from '../../../../../models/convertFormat.model';
 import { paths } from '../../../path-constants';
 
 interface Scenario {
-  input: any;
+  input: { project: ConvertProject };
   output: BKProject;
 }
 
-const testScenario = async (scenario: Scenario, t: any): Promise<void> => {
+const testScenario = async (scenario: Scenario, t: ExecutionContext<unknown>): Promise<void> => {
   const { input, output } = scenario;
   const projectDir = await convert(input.project, paths.ffprobe);
   if (typeof projectDir == 'string') {
