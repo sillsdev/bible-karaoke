@@ -15,6 +15,6 @@
       "*": ["./typings/*"]
     }
   },
-  "include": ["public/cli/**/*.ts"],
+  "include": ["public/*.ts", "public/**/*.ts"],
   "exclude": ["node_modules", "**/*.integration.ts"]
 }
