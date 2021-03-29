@@ -71,7 +71,7 @@ async function convertChapter(
   return chapterDetails;
 }
 
-export async function convert(project: ConvertProject, ffprobePath: string): Promise<BKProject> {
+export async function bkImport(project: ConvertProject, ffprobePath: string): Promise<BKProject> {
   const bkProject: BKProject = { dirName: project.fullPath, books: [] };
   for await (const book of project.books) {
     const chapters = [];

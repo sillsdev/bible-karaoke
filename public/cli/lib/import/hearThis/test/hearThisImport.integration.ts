@@ -1,7 +1,7 @@
 import test, { ExecutionContext } from 'ava';
 import { map } from 'lodash';
 import { scenarios } from './scenarios';
-import { convert } from '../hearThisConvert';
+import { bkImport } from '../hearThisImport';
 import { BKProject } from '../../../../../models/projectFormat.model';
 import { ConvertProject } from '../../../../../models/convertFormat.model';
 import { paths } from '../../../path-constants';
@@ -13,7 +13,7 @@ interface Scenario {
 
 const testScenario = async (scenario: Scenario, t: ExecutionContext<unknown>): Promise<void> => {
   const { input, output } = scenario;
-  const bkProject = await convert(input.project, paths.ffprobe);
+  const bkProject = await bkImport(input.project, paths.ffprobe);
   output.books.forEach((book, i) => {
     book.chapters.forEach((chapter, j) => {
       const bkChapter = bkProject.books[i].chapters[j];
