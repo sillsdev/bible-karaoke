@@ -21,6 +21,7 @@
     "electron-ga-uuid": "^1.0.0",
     "electron-is-dev": "^1.2.0",
     "execa": "^3.3.0",
+    "ffmpeg-progress-wrapper": "1.1.7",
     "font-list": "^1.2.11",
     "inquirer": "^7.3.2",
     "junk": "^3.1.0",
