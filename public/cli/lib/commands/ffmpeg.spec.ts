@@ -1,21 +1,6 @@
 import test from 'ava';
 import { getGlobFormat } from './ffmpeg';
 
-/*
-test('combineAudioIfNecessary: only mp3 files: nothing combined', (t) => {
-  t.fail();
-    //t.is(directoryOfFrameFiles.length, numberOfFrames);
-});
-
-test('combineAudioIfNecessary: wav files: combined into single wav file', (t) => {
-  t.fail();
-});
-
-test('combineAudioIfNecessary: mixed file types: throws error', (t) => {
-  t.fail();
-});
-*/
-
 test('getGlobFormat: nothing skipped: expected format', (t) => {
   const mp3Files = ['one.mp3', 'two.mp3'];
   const skippedFiles: string[] = [];

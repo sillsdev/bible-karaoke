@@ -16,10 +16,11 @@ test('recordFrames: render 5 mock frames', async (t) => {
 });
 
 function createMockHtml(): string {
+  // mocks render.html
   return `
   <html>
   <script>
-  function renderNextFrame() {}
+  function renderNextFrame(time) {}
   </script>
   <body>
   </body>
