@@ -59,7 +59,7 @@
     "start": "ffbinaries ffmpeg ffprobe -o=binaries && rescripts start",
     "build": "tsc && ffbinaries ffmpeg ffprobe -o=binaries && rescripts build",
     "test": "tsc --project tsconfig.spec.json && ava **/*.spec.js",
-    "integration": "tsc --project tsconfig.integration.json && ava **/*.integration.js",
+    "integration": "tsc --project tsconfig.integration.json && ffbinaries ffmpeg ffprobe -o=binaries && ava **/*.integration.js",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack-mac": "npm run build",
     "preelectron-pack-win": "npm run build",
