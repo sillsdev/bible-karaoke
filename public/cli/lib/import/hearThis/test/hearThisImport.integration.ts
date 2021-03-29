@@ -1,9 +1,7 @@
 import test, { ExecutionContext } from 'ava';
-import fs from 'fs';
 import { map } from 'lodash';
-import path from 'path';
 import { scenarios } from './scenarios';
-import { convert } from '../hearThisConvert';
+import { bkImport } from '../hearThisImport';
 import { BKProject } from '../../../../../models/projectFormat.model';
 import { ConvertProject } from '../../../../../models/convertFormat.model';
 import { paths } from '../../../path-constants';
@@ -15,18 +13,13 @@ interface Scenario {
 
 const testScenario = async (scenario: Scenario, t: ExecutionContext<unknown>): Promise<void> => {
   const { input, output } = scenario;
-  const projectDir = await convert(input.project, paths.ffprobe);
-  if (typeof projectDir == 'string') {
-    output.books.forEach((book) => {
-      book.chapters.forEach((chapter) => {
-        const outputJsonContents = fs.readFileSync(path.join(projectDir, book.name, chapter.chapter, 'chapter.json'), {
-          encoding: 'utf-8',
-        });
-        const outputJson = JSON.parse(outputJsonContents);
-        t.deepEqual(outputJson, chapter);
-      });
+  const bkProject = await bkImport(input.project, paths.ffprobe);
+  output.books.forEach((book, i) => {
+    book.chapters.forEach((chapter, j) => {
+      const bkChapter = bkProject.books[i].chapters[j];
+      t.deepEqual(bkChapter, chapter);
     });
-  }
+  });
 };
 
 test('hearThisImport converts test folders as expected', async (t) => {
