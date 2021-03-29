@@ -75,6 +75,7 @@ const Preview = ({ verses, background, text, speechBubble, textLocation }) => {
         <video
           src={file}
           loop
+          muted
           autoPlay
           width='720'
           height='480'

@@ -235,7 +235,7 @@ function execute(done, err) {
         let videoLayered = path.join(Options.images, "videoLayered" + Options.output.replace(/^[^.]*./, "."));
         
         shell.exec(
-            `"${ffmpegExe}" -i "${Options.backgroundVideoUrl}" -filter:v scale="720:trunc(ow/a/2)*2" -c:a copy "${backgroundResized}"`,
+            `"${ffmpegExe}" -i "${Options.backgroundVideoUrl}" -vf "crop=in_h*3/2:in_h,scale=-2:480" -c:a copy "${backgroundResized}"`,
             (code, stdout, stderr) => {
                 if (code !== 0) {
                     var error = new Error(stderr || stdout);
