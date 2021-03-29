@@ -4,6 +4,7 @@
 //
 // options:
 //
+const {FFMpegProgress} = require('ffmpeg-progress-wrapper');
 var async = require("async");
 var path = require("path");
 var fs = require("fs");
@@ -67,6 +68,7 @@ Command.run = function(options) {
                 // copy our passed in options to our Options
                 (done) => {
                     for (var o in options) {
+                        console.log(o);
                         Options[o] = options[o];
                     }
 
@@ -234,107 +236,208 @@ function execute(done, err) {
         let loopFile = path.join(Options.images, "list.txt");
         let videoLayered = path.join(Options.images, "videoLayered" + Options.output.replace(/^[^.]*./, "."));
         
-        shell.exec(
-            `"${ffmpegExe}" -i "${Options.backgroundVideoUrl}" -vf "crop=in_h*3/2:in_h,scale=-2:480" -c:a copy "${backgroundResized}"`,
-            (code, stdout, stderr) => {
-                if (code !== 0) {
-                    var error = new Error(stderr || stdout);
-                    done(error);
-                    return;
-                }
+        
+        
+        new Promise((resolve, reject) => {
+        
+            console.log("step 1");
+            const cropResize = new FFMpegProgress(["-i", Options.backgroundVideoUrl, "-vf", "crop=in_h*3/2:in_h,scale=-2:480", "-c:a", "copy", backgroundResized], {
+                cmd: ffmpegExe
+            });
+            cropResize.on('progress', (data) => {
+                console.log(JSON.stringify(data));
+
+                const percent = Math.floor(data.progress * 100);
+                let remainingTime = Math.round(data.eta);
+                let message = `Step 2 of 6: Resizing background video... ${percent}% (Approximately ${remainingTime}s remaining)`;
+                console.log(message, data.progress);
+                Options.onProgress(
+                    message,
+                    percent,
+                );
+            });
+            
+            cropResize.once('end', (data) => {
+                resolve();
+            });
+
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                
+                console.log("step 2");
                 shell.exec(
                     `"${ffprobeExe}" -i "${Options.audioInput}" -v error -select_streams a:0 -show_format -show_streams`,
                     (code, stdout, stderr) => {
                         if (code !== 0) {
-                            done(new Error(stderr || stdout));
-                            return;
+                            reject(new Error(stderr || stdout));
                         }
                         var matched = stdout.match(/duration="?(\d*\.\d*)"?/);
                         if (matched && matched[1]) {
                             totalLength = parseFloat(matched[1]);
                             console.log("---------------------> totalLength: ", totalLength);
+                            resolve();
                         } else {
-                            done(new Error('No duration found!'));
+                            reject(new Error('No duration found!'));
+                        }
+                    });
+                
+            });
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                
+                console.log("step 3");
+                shell.exec(
+                    `"${ffprobeExe}" -i "${backgroundResized}" -v error -select_streams a:0 -show_format -show_streams`,
+                    (code, stdout, stderr) => {
+                        if (code !== 0) {
+                            reject(new Error(stderr || stdout));
                             return;
                         }
-                        shell.exec(
-                            `"${ffprobeExe}" -i "${backgroundResized}" -v error -select_streams a:0 -show_format -show_streams`,
-                            (code, stdout, stderr) => {
-                                if (code !== 0) {
-                                    done(new Error(stderr || stdout));
-                                    return;
-                                }
-                                var matched = stdout.match(/duration="?(\d*\.\d*)"?/);
-                                if (matched && matched[1]) {
-                                    backgroundLength = parseFloat(matched[1]);
-                                    console.log("---------------------> backgroundLength: ", backgroundLength);
-                                    if (backgroundLength < totalLength) {
-                                        loopsNeeded = Math.ceil(totalLength/backgroundLength);
-                                    }
-                                } else {
-                                    done(new Error('No duration found!'));
-                                    return;
-                                }
-                                let loopText = '';
-                                if (process.platform === 'win32') {
-                                    backgroundResized = backgroundResized.replace(/\\/g, '\\\\');
-                                }
-                                for (let i = 0; i < loopsNeeded; i++) {
-                                    loopText += `file ${backgroundResized}\n`;
-                                }
-                                console.log("loopText: ", loopText);
-                                fs.writeFileSync(loopFile, loopText);
-                                shell.exec(
-                                    `"${ffmpegExe}" -f concat -safe 0 -i "${loopFile}" -c copy "${backgroundLooped}"`,
-                                    (code, stdout, stderr) => {
-                                        if (code !== 0) {
-                                            var error = new Error(stderr || stdout);
-                                            done(error);
-                                            return;
-                                        }
-                                        shell.exec(
-                                            `"${ffmpegExe}" -framerate ${Options.framerateIn} -i "${path.join(
-                                                Options.images,
-                                                "frame_%06d.png"
-                                            )}" -vcodec ffvhuff "${videoAlpha}"`,
-                                            (code, stdout, stderr) => {
-                                                if (code !== 0) {
-                                                    var error = new Error(stderr || stdout);
-                                                    done(error);
-                                                    return;
-                                                }
-                                                shell.exec(
-                                                    `"${ffmpegExe}" -i "${backgroundLooped}" -i "${videoAlpha}" -filter_complex "[0:0][1:0]overlay[out]" -shortest -map [out] -map 1:0 -pix_fmt yuv420p -c:a copy -c:v libx264 -crf 18 "${videoLayered}"`,
-                                                    (code, stdout, stderr) => {
-                                                        if (code !== 0) {
-                                                            var error = new Error(stderr || stdout);
-                                                            done(error);
-                                                            return;
-                                                        }
-                                                        shell.exec(
-                                                            `"${ffmpegExe}" -i "${videoLayered}" -i "${Options.audioInput}" -pix_fmt yuv420p "${Options.output}"`,
-                                                            (code, stdout, stderr) => {
-                                                                if (code !== 0) {
-                                                                    var error = new Error(stderr || stdout);
-                                                                    done(error);
-                                                                    return;
-                                                                }
-                                                                done();
-                                                            }
-                                                        );
-                                                    }
-                                                );
-                                            }
-                                        );
-                                    }
-                                );
+                        var matched = stdout.match(/duration="?(\d*\.\d*)"?/);
+                        if (matched && matched[1]) {
+                            backgroundLength = parseFloat(matched[1]);
+                            console.log("---------------------> backgroundLength: ", backgroundLength);
+                            if (backgroundLength < totalLength) {
+                                loopsNeeded = Math.ceil(totalLength/backgroundLength);
                             }
-                        );
-                    }
-                );
-            }
-        );
+                        } else {
+                            reject(new Error('No duration found!'));
+                            return;
+                        }
+                        let loopText = '';
+                        if (process.platform === 'win32') {
+                            backgroundResized = backgroundResized.replace(/\\/g, '\\\\');
+                        }
+                        for (let i = 0; i < loopsNeeded; i++) {
+                            loopText += `file ${backgroundResized}\n`;
+                        }
+                        console.log("loopText: ", loopText);
+                        fs.writeFileSync(loopFile, loopText);
+                        resolve();
+                    });
+                
+            });
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                
+                console.log("step 4");
+                let message = `Step 3 of 6: Adjusting background video time to match animation...`;
+                const adjustTime = new FFMpegProgress(["-f", "concat", "-safe", 0, "-i", loopFile, "-c", "copy", backgroundLooped], {
+                    cmd: ffmpegExe
+                });
+                adjustTime.on('progress', (data) => {
+                    console.log(JSON.stringify(data));
+
+                    const percent = Math.floor(data.progress * 100);
+                    let remainingTime = Math.round(data.eta);
+                    ;
+                    console.log(message, data.progress);
+                    Options.onProgress(
+                        `${message} ${percent}% (Approximately ${remainingTime}s remaining)`,
+                        percent,
+                    );
+                });
+                
+                adjustTime.once('end', (data) => {
+                    Options.onProgress(
+                        `${message} 100%`,
+                        100,
+                    );
+                    resolve();
+                });
+                
+            });
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+            
+                console.log("step 5");
+                let message = `Step 4 of 6: Combining animation frames...`;
+                const combinePNGs = new FFMpegProgress(["-framerate", Options.framerateIn, "-i", path.join(Options.images,"frame_%06d.png"), "-vcodec", "ffvhuff", videoAlpha], {
+                    cmd: ffmpegExe
+                });
+                combinePNGs.on('progress', (data) => {
+                    console.log(JSON.stringify(data));
+
+                    const percent = Math.floor(data.progress * 100);
+                    let remainingTime = Math.round(data.eta);
+                    console.log(message, data.progress);
+                    Options.onProgress(
+                        `${message} ${percent}% (Approximately ${remainingTime}s remaining)`,
+                        percent,
+                    );
+                });
+                
+                combinePNGs.once('end', (data) => {
+                    Options.onProgress(
+                        `${message}... 100%`,
+                        100,
+                    );
+                    resolve();
+                });
+            });
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+            
+                console.log("step 6");
+                let message = `Step 5 of 6: Combining background video and animation...`;
+                const combinePNGs = new FFMpegProgress(["-i", backgroundLooped, "-i", videoAlpha, "-filter_complex", "[0:0][1:0]overlay[out]", "-shortest", "-map", "[out]", "-map", "1:0", "-pix_fmt", "yuv420p", "-c:a", "copy", "-c:v", "libx264", "-crf", 18, videoLayered], {
+                    cmd: ffmpegExe
+                });
+                combinePNGs.on('progress', (data) => {
+                    console.log(JSON.stringify(data));
+
+                    const percent = Math.floor(data.progress * 100);
+                    let remainingTime = Math.round(data.eta);
+                    console.log(message, data.progress);
+                    Options.onProgress(
+                        `${message} ${percent}% (Approximately ${remainingTime}s remaining)`,
+                        percent,
+                    );
+                });
+                
+                combinePNGs.once('end', (data) => {
+                    Options.onProgress(
+                        `${message}... 100%`,
+                        100,
+                    );
+                    resolve();
+                });
+            });
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+            
+                console.log("step 7");
+                let message = `Step 6 of 6: Adding audio to video...`;
+                const combinePNGs = new FFMpegProgress(["-i", videoLayered, "-i", Options.audioInput, "-pix_fmt", "yuv420p", Options.output], {
+                    cmd: ffmpegExe
+                });
+                combinePNGs.on('progress', (data) => {
+                    console.log(JSON.stringify(data));
+
+                    const percent = Math.floor(data.progress * 100);
+                    let remainingTime = Math.round(data.eta);
+                    console.log(message, data.progress);
+                    Options.onProgress(
+                        `${message} ${percent}% (Approximately ${remainingTime}s remaining)`,
+                        percent,
+                    );
+                });
+                
+                combinePNGs.once('end', (data) => {
+                    Options.onProgress(
+                        `${message}... 100%`,
+                        100,
+                    );
+                    done();
+                });
+            });
+        }).catch((err) => {
+            done(err);
+        });
+
     } else {
+        
+        Options.onProgress("Step 6 of 6: Combining audio and frames into video...", 100);
         shell.exec(
             `"${ffmpegExe}" -framerate ${Options.framerateIn} -i "${path.join(
                 Options.images,
@@ -353,5 +456,4 @@ function execute(done, err) {
         );
     }
 
-    // done();
 }

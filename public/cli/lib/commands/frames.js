@@ -233,7 +233,7 @@ const onProgress = utils.throttle(data => {
     const percent = (data.curr / data.total) * 100;
     let remainingTime = calculateRemainTime(data.curr, data.total);
     Options.onProgress(
-        `Rendering video frames... ${Math.floor(percent)}% ${remainingTime}`,
+        `Step 1 of 6: Rendering video frames... ${Math.floor(percent)}% ${remainingTime}`,
         percent,
     );
 }, 1000);

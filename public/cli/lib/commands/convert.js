@@ -460,13 +460,12 @@ function execute(done) {
             opts.Log = Log;
             Log("Options: ", Options);
             Log("opt: ", opts);
-            onProgress("Rendering video frames...", 0);
+            onProgress("Step 1 of 6: Rendering video frames...", 0);
             return Frames.run(opts);
         })
         .then((pathFrames) => {
             Log(`>> path to generated frames folder: ${pathFrames}`);
 
-            onProgress("Combining audio and frames into video...", 100);
             return FFMPEG.run({
                 images: pathFrames,
                 audio: path.dirname(Options.pathFolder),
@@ -477,7 +476,8 @@ function execute(done) {
                 ffmpegPath: Options.ffmpegPath || null,
                 ffprobePath: Options.ffprobePath || null,
                 backgroundVideoUrl: Options.bgFile,
-                backgroundType: Options.bgType
+                backgroundType: Options.bgType,
+                onProgress: onProgress
             });
         })
         .then(() => {
