@@ -55,7 +55,7 @@
   "scripts": {
     "cli": "node public/cli/index.js",
     "electron-dev": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron . --inspect 9229\"",
-    "start": "npm run ff && rescripts start",
+    "start": "tsc && npm run ff && rescripts start",
     "build": "tsc && npm run ff && rescripts build",
     "test": "tsc --project tsconfig.spec.json && ava **/*.spec.js",
     "integration": "tsc --project tsconfig.integration.json && npm run ff && ava **/*.integration.js",
@@ -71,7 +71,7 @@
     "electron-pack-win": "electron-builder -w",
     "electron-pack-linux": "electron-builder -l"
   },
-  "main": "public/electron.js",
+  "main": "start/electron.js",
   "bin": {
     "bbk": "./public/cli/index.js"
   },

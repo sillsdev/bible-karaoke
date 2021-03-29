@@ -1,9 +1,8 @@
-import { app, ipcMain, shell, Menu, BrowserWindow } from 'electron';
+import { app, ipcMain, shell, Menu, BrowserWindow, Event, IpcMainEvent } from 'electron';
 import { map, flatten } from 'lodash';
 import fontList from 'font-list';
 import path from 'path';
 import isDev from 'electron-is-dev';
-
 import SourceIndex from './sources/index';
 import { Project, getSampleVerses } from './sources/util';
 import { Verses } from './models/verses.model';
@@ -31,7 +30,7 @@ export function createWindow(): void {
   mainWindow.on('closed', (): void => {
     mainWindow = null;
   });
-  mainWindow.webContents.on('will-navigate', (event: any, url: string): void => {
+  mainWindow.webContents.on('will-navigate', (event: Event, url: string): void => {
     if (url.startsWith('http:') || url.startsWith('https:')) {
       event.preventDefault();
       shell.openExternal(url);
@@ -42,7 +41,7 @@ export function createWindow(): void {
 export function handleGetFonts(): void {
   ipcMain.on(
     'did-start-getfonts',
-    async (event: any): Promise<void> => {
+    async (event: IpcMainEvent): Promise<void> => {
       console.log('Getting system fonts');
       try {
         const fonts = await fontList.getFonts();
@@ -59,7 +58,7 @@ export function handleGetFonts(): void {
 }
 
 export function handleGetSampleVerses(): void {
-  ipcMain.on('did-start-getverses', (event: any, args: Verses): void => {
+  ipcMain.on('did-start-getverses', (event: IpcMainEvent, args: Verses): void => {
     const { sourceDirectory } = args;
     console.log('Getting sample verses', sourceDirectory);
     const verses = getSampleVerses(sourceDirectory);
@@ -68,19 +67,23 @@ export function handleGetSampleVerses(): void {
   });
 }
 
+// NOTE: RootDirectories type is the [rootDirectories] property of App/store/Settings.js
+// {
+//   [constants.js - PROJECT_TYPE.hearThis]: string[]
+//   [constants.js - PROJECT_TYPE.scriptureAppBuilder]: string[]
+// }
+interface RootDirectories {
+  hearThis: string[];
+  scriptureAppBuilder: string[];
+}
+
 export function handleGetProjects(): void {
-  // NOTE: rootDirectories type is the [rootDirectories] property of App/store/Settings.js
-  // {
-  //		[constancts.js - PROJECT_TYPE.hearThis]: string[]
-  //		[constancts.js - PROJECT_TYPE.scriptureAppBuilder]: string[]
-  // }
-  // I don't sure how to define the TypeScript interface with dynamic propery name
-  ipcMain.on('did-start-getprojectstructure', (event: any, rootDirectories: any): void => {
+  ipcMain.on('did-start-getprojectstructure', (event: IpcMainEvent, rootDirectories: RootDirectories): void => {
     const projects = flatten(
       map(rootDirectories, (directories: string[], projectType: string): Project[] => {
-        // .getProjectStructure is in /public/sources/hear-this.js or scripture-app-builder.js
+        // .getProjectStructure is in /public/sources/hear-this.ts or scripture-app-builder.ts
         const project = SourceIndex.getProject(projectType);
-        return project ? project.getProjectStructure(directories) : [];
+        return project != null ? project.getProjectStructure(directories) : [];
       })
     );
     event.sender.send('did-finish-getprojectstructure', projects);
