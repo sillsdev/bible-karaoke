@@ -13,6 +13,7 @@ interface ScriptLine {
   RecordingTime: { _text: string };
   Verse: { _text: string };
   Heading: { _text: string };
+  HeadingType?: { _text: string };
 }
 
 async function convertChapter(
@@ -38,20 +39,34 @@ async function convertChapter(
   try {
     const infoXmlFileContents = fs.readFileSync(infoXmlPath, { encoding: 'utf-8' });
     const chapterInfo = JSON.parse(xml2json(infoXmlFileContents, { compact: true }));
+    // make sure ScriptLine is an array
+    if (!Array.isArray(chapterInfo.ChapterInfo.Recordings.ScriptLine)) {
+      chapterInfo.ChapterInfo.Recordings.ScriptLine = [chapterInfo.ChapterInfo.Recordings.ScriptLine];
+    }
+
     let chapterAudioLength = 0;
     for await (const scriptLine of chapterInfo.ChapterInfo.Recordings.ScriptLine as ScriptLine[]) {
-      const verse = parseInt(scriptLine.LineNumber._text, 10) - 1;
-      const audioPath: string = path.join(sourceChapterDir, `${verse}.wav`);
+      // Fix #20 : ignore Chapter Headings
+      if (scriptLine.HeadingType != null && scriptLine.HeadingType._text == 'c') {
+        continue;
+      }
+
+      const segmentId = parseInt(scriptLine.LineNumber._text, 10);
+      const audioPath: string = path.join(sourceChapterDir, `${segmentId - 1}.wav`);
       const duration = await getAudioDurationInMilliseconds(audioPath, ffprobePath);
-      if ('files' in chapterDetails.audio) {
+      // if only one audio file then simplify audio property
+      if (chapterInfo.ChapterInfo.Recordings.ScriptLine.length === 1) {
+        chapterDetails.audio = { filename: audioPath, length: duration };
+      } else if ('files' in chapterDetails.audio) {
         chapterDetails.audio.files.push({ filename: audioPath, length: duration });
       }
       chapterDetails.segments.push({
-        segmentId: chapterDetails.segments.length + 1,
+        segmentId,
         text: scriptLine.Text._text,
-        verse: verse.toString(),
+        verse: scriptLine.Verse._text,
         startTime: chapterAudioLength,
         length: duration,
+        isHeading: scriptLine.Heading._text === 'true',
       });
       chapterAudioLength += duration;
       chapterDetails.audio.length = chapterAudioLength;

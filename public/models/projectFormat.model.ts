@@ -12,17 +12,17 @@ interface BKBook {
 export interface BKChapter {
   readonly book: string;
   readonly chapter: string;
-  readonly audio: BKAudio | BKAudioMultipleFiles;
+  audio: BKAudio | BKAudioMultipleFiles;
   readonly segments: BKSegment[];
 }
 
 interface BKAudio {
-  readonly filename: string;
+  filename: string;
   length: number;
 }
 
 interface BKAudioMultipleFiles {
-  readonly files: BKAudio[];
+  files: BKAudio[];
   length?: number;
 }
 
@@ -32,4 +32,5 @@ interface BKSegment {
   readonly verse: string;
   readonly startTime: number;
   readonly length: number;
+  readonly isHeading: boolean;
 }
