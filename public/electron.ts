@@ -4,14 +4,13 @@ import fontList from 'font-list';
 import path from 'path';
 import isDev from 'electron-is-dev';
 
-import sources from './sources'; // TODO: CHECK pull whole folders
-import { Project } from './sources/util';
-import { getSampleVerses } from './sources/util';
+import SourceIndex from './sources/index';
+import { Project, getSampleVerses } from './sources/util';
 import { Verses } from './models/verses.model';
 
-let mainWindow;
+let mainWindow: BrowserWindow | null;
 
-function createWindow(): void {
+export function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 1100,
     height: 970,
@@ -29,8 +28,10 @@ function createWindow(): void {
 
   mainWindow.maximize();
 
-  mainWindow.on('closed', (): void => (mainWindow = null));
-  mainWindow.webContents.on('will-navigate', (event: Event, url: string): void => {
+  mainWindow.on('closed', (): void => {
+    mainWindow = null;
+  });
+  mainWindow.webContents.on('will-navigate', (event: any, url: string): void => {
     if (url.startsWith('http:') || url.startsWith('https:')) {
       event.preventDefault();
       shell.openExternal(url);
@@ -38,7 +39,7 @@ function createWindow(): void {
   });
 }
 
-function handleGetFonts(): void {
+export function handleGetFonts(): void {
   ipcMain.on(
     'did-start-getfonts',
     async (event: any): Promise<void> => {
@@ -48,7 +49,7 @@ function handleGetFonts(): void {
         event.sender.send(
           'did-finish-getfonts',
           // Font names with spaces are wrapped in quotation marks
-          fonts.map((font) => font.replace(/^"|"$/g, '')).sort()
+          fonts.map((font: string) => font.replace(/^"|"$/g, '')).sort()
         );
       } catch (err) {
         event.sender.send('did-finish-getfonts', err);
@@ -57,7 +58,7 @@ function handleGetFonts(): void {
   );
 }
 
-function handleGetSampleVerses(): void {
+export function handleGetSampleVerses(): void {
   ipcMain.on('did-start-getverses', (event: any, args: Verses): void => {
     const { sourceDirectory } = args;
     console.log('Getting sample verses', sourceDirectory);
@@ -67,7 +68,7 @@ function handleGetSampleVerses(): void {
   });
 }
 
-function handleGetProjects(): void {
+export function handleGetProjects(): void {
   // NOTE: rootDirectories type is the [rootDirectories] property of App/store/Settings.js
   // {
   //		[constancts.js - PROJECT_TYPE.hearThis]: string[]
@@ -76,9 +77,10 @@ function handleGetProjects(): void {
   // I don't sure how to define the TypeScript interface with dynamic propery name
   ipcMain.on('did-start-getprojectstructure', (event: any, rootDirectories: any): void => {
     const projects = flatten(
-      map(rootDirectories, (directories: string[], projectType: string[]): Project[] => {
-        // .getProjectStructure is in /public/sources/hear-this.js
-        return sources[projectType].getProjectStructure(directories);
+      map(rootDirectories, (directories: string[], projectType: string): Project[] => {
+        // .getProjectStructure is in /public/sources/hear-this.js or scripture-app-builder.js
+        const project = SourceIndex.getProject(projectType);
+        return project ? project.getProjectStructure(directories) : [];
       })
     );
     event.sender.send('did-finish-getprojectstructure', projects);
