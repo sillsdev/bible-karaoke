@@ -248,7 +248,7 @@ function execute(done, err) {
                 console.log(JSON.stringify(data));
 
                 const percent = Math.floor(data.progress * 100);
-                let remainingTime = Math.round(data.eta);
+                let remainingTime = Math.round(data.eta/1000);
                 let message = `Step 2 of 6: Resizing background video... ${percent}% (Approximately ${remainingTime}s remaining)`;
                 console.log(message, data.progress);
                 Options.onProgress(
@@ -329,7 +329,7 @@ function execute(done, err) {
                     console.log(JSON.stringify(data));
 
                     const percent = Math.floor(data.progress * 100);
-                    let remainingTime = Math.round(data.eta);
+                    let remainingTime = Math.round(data.eta/1000);
                     ;
                     console.log(message, data.progress);
                     Options.onProgress(
@@ -359,7 +359,7 @@ function execute(done, err) {
                     console.log(JSON.stringify(data));
 
                     const percent = Math.floor(data.progress * 100);
-                    let remainingTime = Math.round(data.eta);
+                    let remainingTime = Math.round(data.eta/1000);
                     console.log(message, data.progress);
                     Options.onProgress(
                         `${message} ${percent}% (Approximately ${remainingTime}s remaining)`,
@@ -387,7 +387,7 @@ function execute(done, err) {
                     console.log(JSON.stringify(data));
 
                     const percent = Math.floor(data.progress * 100);
-                    let remainingTime = Math.round(data.eta);
+                    let remainingTime = Math.round(data.eta/1000);
                     console.log(message, data.progress);
                     Options.onProgress(
                         `${message} ${percent}% (Approximately ${remainingTime}s remaining)`,
@@ -415,7 +415,7 @@ function execute(done, err) {
                     console.log(JSON.stringify(data));
 
                     const percent = Math.floor(data.progress * 100);
-                    let remainingTime = Math.round(data.eta);
+                    let remainingTime = Math.round(data.eta/1000);
                     console.log(message, data.progress);
                     Options.onProgress(
                         `${message} ${percent}% (Approximately ${remainingTime}s remaining)`,
