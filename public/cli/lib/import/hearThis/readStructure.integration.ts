@@ -1,0 +1,19 @@
+import test from 'ava';
+import { getProjectStructure } from './readStructure';
+import { ConvertProject } from '../../../../models/convertFormat.model';
+import { testPaths } from '../../test/test-path-constants';
+
+test('reads-hearthis-project-structure', (t) => {
+  const actual = getProjectStructure([testPaths.fixtures]);
+  const expected: Array<ConvertProject> = [
+    {
+      name: 'ExampleHearThisProject',
+      fullPath: testPaths.exampleHearThisProject,
+      books: [
+        { name: 'Book1', chapters: [{ name: '0' }, { name: '1' }, { name: '2' }, { name: '3' }] },
+        { name: 'Book2', chapters: [{ name: '0' }, { name: '1' }, { name: '2' }] },
+      ],
+    },
+  ];
+  t.deepEqual(actual, expected);
+});
