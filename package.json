@@ -55,8 +55,8 @@
   "scripts": {
     "cli": "node public/cli/index.js",
     "electron-dev": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron . --inspect 9229\"",
-    "start": "tsc && npm run ff && rescripts start",
-    "build": "tsc && npm run ff && rescripts build",
+    "start": "tsc --project tsconfig.electron.json && npm run ff && rescripts start",
+    "build": "tsc --project tsconfig.electron.json && npm run ff && rescripts build",
     "test": "tsc --project tsconfig.spec.json && ava **/*.spec.js",
     "integration": "tsc --project tsconfig.integration.json && npm run ff && ava **/*.integration.js",
     "ff": "ffbinaries ffmpeg ffprobe -o=binaries",
@@ -99,6 +99,7 @@
     "@types/lodash": "^4.14.168",
     "@types/puppeteer-core": "^5.4.0",
     "@types/shelljs": "^0.8.8",
+    "@types/styled-components": "^5.1.9",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "ava": "^3.13.0",

@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.spec.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": "start"
+  },
+  "include": ["public/*.ts", "public/**/*.ts", "src/*.tsx", "src/**/*.tsx", "typings"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.integration.ts"]
+}

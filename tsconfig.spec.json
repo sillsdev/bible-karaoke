@@ -11,6 +11,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "jsx": "react"
   },
-  "include": ["public/cli/**/*.ts", "typings"],
+  "include": ["public/*.ts", "public/**/*.ts", "typings"],
   "exclude": ["node_modules", "**/*.integration.ts"]
 }
