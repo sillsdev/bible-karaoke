@@ -44,8 +44,14 @@ if (cpuCount < 1) cpuCount = 1;
 // we will create a worker for each core and divide all the frames to be 
 // generated across these workers.
 
+var electronPath = require('electron/index.js');
+// {string} 
+// electron-workers needs to find the path to our electron package.
+// The index.js actually returns the installed path to the electron package.
+
 const electronWorkers = require('electron-workers')({
     connectionMode:'ipc',
+    pathToElectron: electronPath,
     pathToScript: __dirname + '/record-frames.js',
     numberOfWorkers: cpuCount,
     timeout: 2147483647, 
