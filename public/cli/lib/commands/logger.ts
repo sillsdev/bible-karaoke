@@ -30,7 +30,7 @@ export function prepareLogger(numLogsToKeep = 10, pathToLogDir = ''): winston.Lo
     const fileToRemove = entries.shift();
     if (fileToRemove != undefined) {
       const pathToFile = join(pathToLogDir, fileToRemove);
-      fs.rmSync(pathToFile);
+      fs.removeSync(pathToFile);
     } else {
       break;
     }
