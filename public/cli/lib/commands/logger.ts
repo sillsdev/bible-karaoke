@@ -44,7 +44,12 @@ export function prepareLogger(numLogsToKeep = 10, pathToLogDir = ''): winston.Lo
     level: 'info',
     format: winston.format.json(),
     defaultMeta: { service: 'user-service' },
-    transports: [new winston.transports.File({ filename: pathLogFile })],
+    transports: [
+      new winston.transports.File({
+        filename: pathLogFile,
+        handleExceptions: true,
+      }),
+    ],
   });
   logger.info('Logger Initialized');
 
