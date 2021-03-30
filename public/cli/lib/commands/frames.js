@@ -8,6 +8,7 @@ var async = require("async");
 var EventEmitter = require("events");
 var fs = require("fs");
 var path = require("path");
+const prettyTime = require("pretty-time");
 var ProgressBar = require("progress");
 var {render} = require("../rendering/render-frames.js");
 var shell = require("shelljs");
@@ -179,9 +180,11 @@ function callRender(done) {
         }
     });
     Log("calling render with Options:", Options);
-    render(Options.inputJSON, Options.textLocation, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, Options.speechBubbleOpacity, notify)
+    var startTime = process.hrtime();
+    render(Options.inputJSON, Options.textLocation, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, Options.speechBubbleOpacity, notify, Log)
         .then((location) => {
             // console.log("frames location:", location);
+            Log("Render Frames finished in :", prettyTime(process.hrtime(startTime)))
             pathFramesFolder = location;
             done();
         })

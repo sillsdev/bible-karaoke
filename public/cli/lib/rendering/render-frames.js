@@ -115,10 +115,12 @@ function workerJob(options) {
  * @param notifyEvent
  * @returns {Promise<string>}
  */
-async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity, notifyEvent) {
+async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity, notifyEvent, Log) {
     let timingObj = require(timingFilePath);
     let duration = timingObj[timingObj.length - 1].end / 1000;
     let fps = 15;
+    Log = Log || console.log;
+
     // let ffmpegLocation = await setupFfmpeg();
     let htmlContent = await getHtmlPage(timingObj, textLocation, bgType, bgFilePath, bgColor, fps, font, fontColor, fontSize, fontItalic, fontBold, highlightColor, speechBubbleColor, speechBubbleOpacity);
 
@@ -173,7 +175,7 @@ async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor,
         lastBatchFrame = options.framesEnd;
 
         // start the render job
-        console.log(`render job ${i+1}: ${options.framesBeg} - ${options.framesEnd}`);
+        Log(`render job ${i+1}: ${options.framesBeg} - ${options.framesEnd}`);
         allRecords.push(workerJob(options));
     }
 
