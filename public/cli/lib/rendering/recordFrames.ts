@@ -3,7 +3,10 @@ import { path as chromiumPath } from 'chromium';
 import path from 'path';
 import { EventEmitter } from 'events';
 
-declare function renderNextFrame(): void;
+// function defined in render.html
+declare function renderNextFrame(
+  time?: number // milliseconds
+): void;
 
 export async function record(
   htmlContent: string,
@@ -30,7 +33,6 @@ export async function record(
 
     await page.evaluate(() => {
       // executing in browser
-      // eslint-disable-next-line no-undef
       renderNextFrame();
     });
 
@@ -40,7 +42,7 @@ export async function record(
       omitBackground: false,
       path: path.join(outputLocation, fileName),
     });
-    if (notifyEvent) {
+    if (notifyEvent != null) {
       notifyEvent.emit('rendered', { curr: i, total: numberOfFrames });
     }
   }

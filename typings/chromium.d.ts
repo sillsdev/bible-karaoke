@@ -1,1 +1,3 @@
-declare module 'chromium';
+declare module 'chromium' {
+  const path: string;
+}

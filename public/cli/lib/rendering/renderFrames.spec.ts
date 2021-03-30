@@ -3,11 +3,6 @@ import { getHtml } from './renderFrames';
 import { AnimationSettings } from '../../../models/animationSettings.model';
 import { Timings } from '../../../models/timings.model';
 
-test('renderFrames smoke test', (t) => {
-  // TODO implement this
-  t.pass();
-});
-
 test('getHtml() loads html from template', async (t) => {
   const style = mockStyle();
   const timings = mockTimings();
@@ -64,16 +59,15 @@ function mockStyle(): AnimationSettings {
 }
 
 function mockTimings(): Timings {
-  // generate mock Timings here
   return [
     {
       type: 'caption',
       index: 1,
-      start: 1,
+      start: 0,
       end: 100,
       duration: 100,
-      content: 'string',
-      text: 'string',
+      content: 'Hello World',
+      text: '',
       words: [
         { word: 'Hello', start: 1, end: 5 },
         { word: 'World', start: 6, end: 10 },
