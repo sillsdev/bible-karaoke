@@ -128,7 +128,7 @@ Command.run = function(options) {
                     }
                     if (Options.ffprobePath) {
                         if (!path.isAbsolute(Options.ffprobePath)) {
-                            Options.ffprobe = path.join(procese.cwd(), Options.ffprobePath);
+                            Options.ffprobe = path.join(process.cwd(), Options.ffprobePath);
                         }
                     }
                     if (Options.onProgress && typeof Options.onProgress !== "function") {
