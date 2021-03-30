@@ -12,14 +12,12 @@ const fontColorPlaceholder = "CAPTION_FONT_COLOR";
 const fontItalicPlaceholder = "CAPTION_FONT_ITALIC";
 const fontBoldPlaceholder = "CAPTION_FONT_BOLD";
 const bgColorPlaceholder = "BG_COLOR";
-const videoSrcPlaceholder = "VIDEO_SRC"
 const fallbackFont = "Helvetica Neue, Helvetica, Arial, sans-serif";
 const fallbackFontSize = "20pt";
 const fallbackFontColor = "#555";
 const fallbackFontItalic = "normal";
 const fallbackFontBold = "normal";
 const fallbackBgColor = "#CCC";
-const fallbackVideoSrc = "";
 
 // (async function mainIIFE() {
 //     try {
@@ -57,9 +55,10 @@ async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor,
             });
             await page.setContent(htmlContent);
         },
-        render: async (browser, page, frame) => {
+        render: async (_browser, page, frame) => {
             await page.evaluate(() => {
                 //executing in browser
+                // eslint-disable-next-line no-undef
                 renderNextFrame();
             });
         },
@@ -75,7 +74,7 @@ async function getHtmlPage(timingFilePath, textLocation, bgType, bgFilePath, bgC
     });
     let timings = JSON.stringify(require(timingFilePath), null, 4); // fs.readFileSync(timingFilePath, { encoding: "utf-8" });
     let backgroundDataUri = null;
-    if (bgFilePath && bgType == "image") {
+    if (bgFilePath && bgType === "image") {
         backgroundDataUri = await DataURI(bgFilePath);
     }
     if (fontItalic) {
