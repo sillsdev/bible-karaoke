@@ -12,11 +12,23 @@ var shell = require("shelljs");
 var utils = require(path.join(__dirname, "..", "utils", "utils"));
 var xml2json = require("xml-js");
 
-var Options = {}; // the running options for this command.
+/**
+ * timing options
+ * @typedef {{output: string, input: string, ffprobePath: string, Log: function}} TimingOptions
+ */
+var Options = {
+    output: undefined,
+    input: undefined,
+    ffprobePath: undefined,
+    Log: function (){}
+}; // the running options for this command.
 
 var inputData = null;
 var finalFormat = [];
 
+/**
+ * @type {string[]}
+ */
 var skipFiles = [];
 var allFiles = [];
 
@@ -56,6 +68,11 @@ Command.help = function() {
 
 var Log = null;
 
+/**
+ *
+ * @param {TimingOptions} options
+ * @returns {Promise<string[]>}
+ */
 Command.run = function(options) {
     return new Promise((resolve, reject) => {
         async.series(
@@ -200,11 +217,11 @@ function convertIt(done) {
                 // console.log(`${tObj.content} : ${tObj.duration}`);
                 cb();
             }).catch(err => {
-              var error = new Error(`Error trying to read audio length [${fileName}]`);
+              var error = new Error(`Error trying to read audio length [${fileName}]. ` + err);
               cb(error);
             });
         } catch (e) {
-            var error = new Error(`Error trying to open file [${fileName}]`);
+            var error = new Error(`Error trying to open file [${fileName}]. ` + e);
             cb(error);
         }
     };

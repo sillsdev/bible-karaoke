@@ -8,11 +8,24 @@ var async = require("async");
 var EventEmitter = require("events");
 var fs = require("fs");
 var path = require("path");
+const prettyTime = require("pretty-time");
 var ProgressBar = require("progress");
-var { render } = require("../rendering/render-frames.js");
+var {render} = require("../rendering/render-frames.js");
 var shell = require("shelljs");
 var utils = require(path.join(__dirname, "..", "utils", "utils"));
+/**
+ * @typedef {{
+ *      Log: function,
+ *      inputJSON: string,
+ *      bgFile: string,
+ *      bgType: ('color'|'image'),
+ *      bgColor: string,
+ *      output: string,
+ *      onProgress: function
+ * }} FramesOptions
+ */
 
+/** @type {FramesOptions} */
 var Options = {}; // the running options for this command.
 var pathFramesFolder = null; // the path to the folder where the frames are generated.
 var lastCurrentFrame = 0;
@@ -34,7 +47,7 @@ var Command = new utils.Resource({
 
 module.exports = Command;
 
-Command.help = function() {
+Command.help = function () {
     console.log(`
 
   usage: $ bbk frames --inputJSON=[bbkFormat.js] --bgFile=[path/to/image.png] --fontFamily=[name of font family] --output=[path/to/output/folder]
@@ -61,7 +74,11 @@ Command.help = function() {
 `);
 };
 
-Command.run = function(options) {
+/**
+ * @param {FramesOptions} options
+ * @returns {Promise<string>}
+ */
+Command.run = function (options) {
     return new Promise((resolve, reject) => {
         async.series(
             [
@@ -145,6 +162,7 @@ function checkDependencies(done) {
 function callRender(done) {
     var notify = new EventEmitter();
     var bar;
+    var lastCount = 0;
     notify.on("rendered", (data) => {
         if (Options.onProgress) {
             onProgress(data);
@@ -157,13 +175,16 @@ function callRender(done) {
                 incomplete: " "
             });
         } else {
-            bar.tick();
+            bar.tick(data.curr - lastCount);
+            lastCount = data.curr;
         }
     });
     Log("calling render with Options:", Options);
-    render(Options.inputJSON, Options.textLocation, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, Options.speechBubbleOpacity, notify)
+    var startTime = process.hrtime();
+    render(Options.inputJSON, Options.textLocation, Options.bgType, Options.bgFile, Options.bgColor, Options.fontFamily, Options.fontColor, Options.fontSize, Options.fontItalic, Options.fontBold, Options.highlightColor, Options.speechBubbleColor, Options.speechBubbleOpacity, notify, Log)
         .then((location) => {
             // console.log("frames location:", location);
+            Log("Render Frames finished in :", prettyTime(process.hrtime(startTime)))
             pathFramesFolder = location;
             done();
         })
@@ -172,7 +193,7 @@ function callRender(done) {
 
 /**
  * @function calculateRemainTime
- * 
+ *
  * @param {number} currFrame
  * @param {number} totalFrame
  * @return {string}
@@ -202,7 +223,7 @@ function calculateRemainTime(currFrame, totalFrame) {
 
         if (seconds < 1)
             result = "";
-        else if (seconds < 60) 
+        else if (seconds < 60)
             result = `${seconds} second${seconds > 1 ? 's' : ''}`;
         else if (minutes == 1)
             result = `1 minute ${seconds - 60} seconds`;
