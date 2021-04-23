@@ -1,25 +1,36 @@
 import { paths } from '../path-constants';
-import { spawn } from 'child_process';
+import { spawnSync } from 'child_process';
 import winston from 'winston';
 import { EventEmitter } from 'events';
-import fs from 'fs';
+import { writeFileSync } from 'fs';
 import tempy from 'tempy';
-import path from 'path';
 
-export function combineVideos(videoPaths: Array<string>, outputFilePath: string, notifyEvent?: EventEmitter) {
-  tempy.directory.task((dir) => {
-    winston.info('Generating videoList.txt');
-    notifyEvent && notifyEvent.emit('Generating videoList.txt');
-    //Create a list file to concatenate (see https://trac.ffmpeg.org/wiki/Concatenate)
-    const listFile = path.join(dir, 'videoList.txt');
-    fs.writeFile(listFile, videoPaths.map((videoPath) => `file '${videoPath}'`).join('\n'), (err) => {
-      winston.error(err);
-    });
-    winston.info('Combining Videos');
-    notifyEvent && notifyEvent.emit('Combining Videos');
-    const combineProcess = spawn(paths.ffmpeg, ['f concat -safe 0 -i', listFile, '-c copy', outputFilePath]);
-    combineProcess.stderr.on('data', (err: Error) => {
-      winston.error(err);
-    });
-  });
+export async function combineVideos(videoPaths: Array<string>, outputFilePath: string, notifyEvent?: EventEmitter) {
+  winston.info('Generating videoList file');
+  notifyEvent && notifyEvent.emit('Generating videoList file');
+  //Create a temportatry list file to concatenate videos (see https://trac.ffmpeg.org/wiki/Concatenate)
+  tempy.file.task(
+    (file) => {
+      const contents = videoPaths.map((videoPath) => `file '${videoPath}'`).join('\n');
+      writeFileSync(file, contents);
+      winston.info('Combining Videos');
+      notifyEvent && notifyEvent.emit('Combining Videos');
+      const combineProcess = spawnSync(
+        paths.ffmpeg,
+        ['-f', 'concat', '-loglevel', 'error', '-safe', '0', '-i', file, '-c', 'copy', outputFilePath],
+        {
+          stdio: 'pipe',
+        }
+      );
+      const stderr = combineProcess.stderr.toString();
+      if (stderr !== '') {
+        winston.error(stderr);
+        throw new Error(stderr);
+      } else {
+        winston.info('Videos Combined');
+        notifyEvent && notifyEvent.emit('Videos Combined');
+      }
+    },
+    { extension: 'txt' }
+  );
 }
