@@ -5,10 +5,14 @@ import { EventEmitter } from 'events';
 import { writeFileSync } from 'fs';
 import tempy from 'tempy';
 
-export async function combineVideos(videoPaths: Array<string>, outputFilePath: string, notifyEvent?: EventEmitter) {
+export async function combineVideos(
+  videoPaths: string[],
+  outputFilePath: string,
+  notifyEvent?: EventEmitter
+): Promise<void> {
   winston.info('Generating videoList file');
   notifyEvent && notifyEvent.emit('Generating videoList file');
-  //Create a temportatry list file to concatenate videos (see https://trac.ffmpeg.org/wiki/Concatenate)
+  // Create a temporary list file to concatenate videos (see https://trac.ffmpeg.org/wiki/Concatenate)
   tempy.file.task(
     (file) => {
       const contents = videoPaths.map((videoPath) => `file '${videoPath}'`).join('\n');
