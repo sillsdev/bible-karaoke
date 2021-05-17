@@ -7,17 +7,10 @@ import { ConvertProject, ConvertBook } from '../../../../models/convertFormat.mo
 export const PROJECT_TYPE = 'hearThis';
 const DEFAULT_XML_NAME = 'info.xml';
 
-export function getProjectStructure(rootDirectories: string[] = []) {
-  try {
-    return flatten(
-      rootDirectories.map((directory) => {
-        return getDirectories(directory).map((name: string) => makeProject(name, directory));
-      })
-    );
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
+export function getProjectStructure(rootDirectories: string[] = []): ConvertProject[] {
+  return flatten(
+    rootDirectories.map((directory) => getDirectories(directory).map((name: string) => makeProject(name, directory)))
+  );
 }
 
 function makeProject(name: string, directory: string): ConvertProject {
