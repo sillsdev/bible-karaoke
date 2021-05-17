@@ -4,10 +4,10 @@ import { flatten } from 'lodash';
 import { getDirectories } from '../import-util';
 import { ConvertProject, ConvertBook } from '../../../../models/convertFormat.model';
 
-const PROJECT_TYPE = 'hearThis';
+export const PROJECT_TYPE = 'hearThis';
 const DEFAULT_XML_NAME = 'info.xml';
 
-export function getProjectStructure(rootDirectories: Array<string> = []) {
+export function getProjectStructure(rootDirectories: string[] = []) {
   try {
     return flatten(
       rootDirectories.map((directory) => {
@@ -22,7 +22,7 @@ export function getProjectStructure(rootDirectories: Array<string> = []) {
 
 function makeProject(name: string, directory: string): ConvertProject {
   const fullPath = path.join(directory, name);
-  const project: ConvertProject = { name: name, fullPath, books: [] };
+  const project: ConvertProject = { name, fullPath, books: [] };
   const bookNames = getDirectories(fullPath);
   project.books = bookNames
     .map((bookName: string) => makeBook(name, bookName, directory))
@@ -47,8 +47,3 @@ function makeBook(projectName: string, bookName: string, directory: string): Con
   });
   return book;
 }
-
-module.exports = {
-  PROJECT_TYPE,
-  getProjectStructure,
-};
