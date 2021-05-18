@@ -6,10 +6,10 @@ import os from 'os';
 import checkDev from '../utility/checkDev';
 
 // Sets up the logger. Should be called when opening the app.
-export async function prepareLogger(numLogsToKeep = 10, pathToLogDir = '') {
+export async function prepareLogger(numLogsToKeep = 10, pathToLogDir = ''): Promise<void> {
   // make sure the logging directory exists
   const homedir = os.homedir();
-  if (pathToLogDir == '') {
+  if (pathToLogDir === '') {
     switch (process.platform) {
       case 'darwin':
         pathToLogDir = join(homedir, 'Library', 'Logs', 'bible-karaoke');
@@ -30,7 +30,7 @@ export async function prepareLogger(numLogsToKeep = 10, pathToLogDir = '') {
   const entries = fs.readdirSync(pathToLogDir);
   while (entries && entries.length > numLogsToKeep) {
     const fileToRemove = entries.shift();
-    if (fileToRemove != undefined) {
+    if (fileToRemove != null) {
       const pathToFile = join(pathToLogDir, fileToRemove);
       fs.removeSync(pathToFile);
     } else {
