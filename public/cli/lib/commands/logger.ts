@@ -3,15 +3,10 @@ import fs from 'fs-extra';
 import { format as dateFormat } from 'date-fns';
 import winston from 'winston';
 import os from 'os';
+import checkDev from '../utility/checkDev';
 
-// Importing isDev causes an error running tests as we don't run in an
-// electron environment. Ava sets the NODE_ENV to 'test'.
-let isDev = false;
-if (process.env.NODE_ENV !== 'test') {
-  isDev = require('electron-is-dev');
-}
 // Sets up the logger. Should be called when opening the app.
-export function prepareLogger(numLogsToKeep = 10, pathToLogDir = '') {
+export async function prepareLogger(numLogsToKeep = 10, pathToLogDir = '') {
   // make sure the logging directory exists
   const homedir = os.homedir();
   if (pathToLogDir == '') {
@@ -62,6 +57,7 @@ export function prepareLogger(numLogsToKeep = 10, pathToLogDir = '') {
 
   // If we're not in production then log to the `console` with the format:
   // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+  const isDev = await checkDev();
   if (isDev) {
     winston.add(
       new winston.transports.Console({
@@ -78,6 +74,5 @@ export function prepareLogger(numLogsToKeep = 10, pathToLogDir = '') {
       })
     );
   }
-
   winston.info('Logger Initialized');
 }
