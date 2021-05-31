@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Box } from 'reflexbox';
 import { Popover } from '@blueprintjs/core';
-import { SketchPicker } from 'react-color';
+import { Color, ColorChangeHandler, SketchPicker } from 'react-color';
 
 const SWATCH_COLORS = [
   '#ff3b30',
@@ -38,19 +38,19 @@ const Swatch = styled(Box).attrs({
   borderRadius: 4,
 })`
   border: solid grey 1px;
-  ${(props) => {
+  ${(props: { disabled: boolean }): string => {
     return props.disabled ? 'cursor: not-allowed;' : '';
   }}
 `;
 
-const ColorPicker = ({ value, presetColors, disableAlpha, disabled, onChange, ...props }) => {
+export default function ColorPicker(prop: { value?: Color, presetColors?: { color: string; title: string }[] | string[], disableAlpha?: boolean, disabled?: boolean, onChange?: ColorChangeHandler, props?: any }): JSX.Element {
   return (
-    <Popover disabled={disabled}>
-      <Swatch {...props} bg={disabled ? undefined : value} disabled={disabled} />
-      <SketchPicker presetColors={presetColors} disableAlpha={disableAlpha} color={value} onChange={onChange} />
+    <Popover disabled={prop.disabled}>
+      <Swatch {...prop.props} bg={prop.disabled ? undefined : prop.value} disabled={prop.disabled} />
+      <SketchPicker presetColors={prop.presetColors} disableAlpha={prop.disableAlpha} color={prop.value} onChange={prop.onChange} />
     </Popover>
   );
-};
+}
 
 ColorPicker.propTypes = {
   value: PropTypes.string,
@@ -64,9 +64,7 @@ ColorPicker.defaultProps = {
   color: undefined,
   presetColors: SWATCH_COLORS,
   disableAlpha: true,
-  onChange: (color) => {
-    this.setState({ color: color.rgb });
-  },
+  onChange: (color: { rgb: string }): void => {
+    // this.setState({ color: color.rgb });
+  }
 };
-
-export default ColorPicker;

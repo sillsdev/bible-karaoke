@@ -9,7 +9,8 @@
     "preserveConstEnums": true,
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,
-    "jsx": "react"
+    "jsx": "react",
+    "resolveJsonModule": true
   },
   "include": ["public/*.ts", "public/**/*.ts", "typings"],
   "exclude": ["node_modules", "**/*.integration.ts"]

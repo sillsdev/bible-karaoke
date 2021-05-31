@@ -84,7 +84,7 @@ const HeaderWrapper = styled(Flex)`
   }
 `;
 
-export default function AppHeader() {
+export default function AppHeader(): JSX.Element {
   const { appState } = useStores();
   return useObserver(() => (
     <HeaderBackground>

@@ -98,6 +98,8 @@
     "@tsconfig/node16": "^1.0.1",
     "@types/lodash": "^4.14.168",
     "@types/puppeteer-core": "^5.4.0",
+    "@types/react-color": "^3.0.4",
+    "@types/reflexbox": "^4.0.2",
     "@types/shelljs": "^0.8.8",
     "@types/styled-components": "^5.1.9",
     "@typescript-eslint/eslint-plugin": "^2.34.0",

@@ -249,7 +249,7 @@ class ProjectList {
   }
 }
 
-class Progress {
+export class Progress {
   constructor() {
     ipcRenderer.on('on-progress', (_, progress) => {
       this.setProgress(progress);

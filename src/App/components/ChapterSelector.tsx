@@ -1,12 +1,17 @@
 import React from 'react';
 import { useObserver } from 'mobx-react';
 import _ from 'lodash';
+import styled from 'styled-components';
 import { Flex } from 'reflexbox';
 import { Intent, Alignment } from '@blueprintjs/core';
 import { H3, Checkbox, Button, Card } from '../blueprint';
 import { useStores } from '../store';
 
-export default function ChapterSelector(props) {
+const ChapterButton = styled(Button).attrs({
+  m: 1
+})``;
+
+export default function ChapterSelector(props: any): JSX.Element {
   const { appState } = useStores();
   return useObserver(() => {
     const book = _.get(appState.projects, ['activeProject', 'activeBook']);
@@ -19,21 +24,20 @@ export default function ChapterSelector(props) {
               <Checkbox
                 label={book.allSelected ? 'Un-select all' : 'Select all'}
                 alignIndicator={Alignment.RIGHT}
-                onChange={() => book.toggleAllChapters()}
+                onChange={(): void => { book.toggleAllChapters(); }}
                 checked={book.allSelected}
                 indeterminate={book.isSelected && !book.allSelected}
               />
             </Flex>
             <Flex flexWrap="wrap" m={-1}>
-              {book.chapterList.map((chapter) => (
-                <Button
+              {book.chapterList.map((chapter: any) => (
+                <ChapterButton
                   key={chapter.name}
-                  m={1}
-                  intent={chapter.isSelected ? Intent.PRIMARY : null}
-                  onClick={() => chapter.toggleIsSelected()}
+                  intent={chapter.isSelected ? Intent.PRIMARY : undefined}
+                  onClick={(): void => { chapter.toggleIsSelected(); }}
                 >
                   {chapter.name}
-                </Button>
+                </ChapterButton>
               ))}
             </Flex>
           </React.Fragment>
