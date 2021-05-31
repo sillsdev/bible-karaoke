@@ -2,7 +2,7 @@ import GoogleAnalytics from 'electron-ga-uuid';
 
 export interface AnalyticsInterface {
   isEnabled: boolean;
-  ga?: GoogleAnalytics;
+  ga?: GoogleAnalytics | null;
   resetClientId(): void;
   trackScreenview(screenName: string): Promise<void>;
   trackEvent(category: string, action: string, label?: string, value?: number): Promise<void>;

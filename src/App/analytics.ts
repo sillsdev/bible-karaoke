@@ -9,6 +9,7 @@ const TRACK_ID = 'UA-22170471-17';
 export default class Analytics implements AnalyticsInterface {
   constructor(settings: { enableAnalytics: boolean }) {
     this.isEnabled = !isDev && settings.enableAnalytics;
+    this.ga = null;
 
     const updateProxy = (enableAnalytics: boolean): void => {
       this.isEnabled = !isDev && enableAnalytics;
@@ -23,7 +24,7 @@ export default class Analytics implements AnalyticsInterface {
     );
   }
   isEnabled: boolean;
-  ga: GoogleAnalytics;
+  ga: GoogleAnalytics | null;
 
   resetClientId(): void {
     if (this.isEnabled) resetClientId();
