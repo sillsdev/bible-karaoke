@@ -71,7 +71,7 @@
     "electron-pack-win": "electron-builder -w",
     "electron-pack-linux": "electron-builder -l"
   },
-  "main": "start/electron.js",
+  "main": "start/public/electron.js",
   "bin": {
     "bbk": "./public/cli/index.js"
   },
