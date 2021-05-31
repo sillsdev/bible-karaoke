@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { xml2json } from 'xml-js';
-import shell from 'shelljs';
+import { spawnSync } from 'child_process';
+import { paths } from '../../path-constants';
 import { BKProject, BKChapter } from '../../../../models/projectFormat.model';
 import { ConvertProject, ConvertBook, ConvertChapter } from '../../../../models/convertFormat.model';
 
@@ -15,12 +16,7 @@ interface ScriptLine {
   HeadingType?: { _text: string };
 }
 
-async function convertChapter(
-  chapter: ConvertChapter,
-  book: ConvertBook,
-  project: ConvertProject,
-  ffprobePath: string
-): Promise<BKChapter> {
+async function convertChapter(chapter: ConvertChapter, book: ConvertBook, project: ConvertProject): Promise<BKChapter> {
   const chapterDetails: BKChapter = {
     book: book.name,
     chapter: chapter.name,
@@ -49,7 +45,7 @@ async function convertChapter(
 
     const segmentId = parseInt(scriptLine.LineNumber._text, 10);
     const audioPath: string = path.join(sourceChapterDir, `${segmentId - 1}.wav`);
-    const duration = await getAudioDurationInMilliseconds(audioPath, ffprobePath);
+    const duration = await getAudioDurationInMilliseconds(audioPath);
     // if only one audio file then simplify audio property
     if (chapterInfo.ChapterInfo.Recordings.ScriptLine.length === 1) {
       chapterDetails.audio = { filename: audioPath, length: duration };
@@ -71,12 +67,12 @@ async function convertChapter(
   return chapterDetails;
 }
 
-export async function bkImport(project: ConvertProject, ffprobePath: string): Promise<BKProject> {
+export async function bkImport(project: ConvertProject): Promise<BKProject> {
   const bkProject: BKProject = { dirName: project.fullPath, books: [] };
   for await (const book of project.books) {
     const chapters = [];
     for await (const chapter of book.chapters) {
-      const result = await convertChapter(chapter, book, project, ffprobePath);
+      const result = await convertChapter(chapter, book, project);
       chapters.push(result);
     }
     bkProject.books.push({ name: book.name, chapters });
@@ -85,10 +81,9 @@ export async function bkImport(project: ConvertProject, ffprobePath: string): Pr
 }
 
 // Adapted from https://github.com/caffco/get-audio-duration:
-async function getAudioDurationInMilliseconds(filePath: string, ffprobePath: string): Promise<number> {
-  const command = `${ffprobePath} -v error -select_streams a:0 -show_format -show_streams ${filePath}`;
-  const { stdout } = shell.exec(command, { silent: true });
-  const matched = stdout.match(/duration="?(\d*\.\d*)"?/);
+async function getAudioDurationInMilliseconds(filePath: string): Promise<number> {
+  const { output } = spawnSync(paths.ffprobe, ['-show_format', filePath], { stdio: 'pipe' });
+  const matched = output.toString().match(/duration="?(\d*\.\d*)"?/);
   if (matched && matched[1]) {
     return parseFloat(matched[1]) * 1000;
   } else {

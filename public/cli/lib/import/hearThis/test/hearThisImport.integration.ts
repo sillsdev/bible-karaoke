@@ -4,7 +4,6 @@ import { scenarios } from './scenarios';
 import { bkImport } from '../hearThisImport';
 import { BKProject } from '../../../../../models/projectFormat.model';
 import { ConvertProject } from '../../../../../models/convertFormat.model';
-import { paths } from '../../../path-constants';
 
 interface Scenario {
   input: { project: ConvertProject };
@@ -13,7 +12,7 @@ interface Scenario {
 
 const testScenario = async (scenario: Scenario, t: ExecutionContext<unknown>): Promise<void> => {
   const { input, output } = scenario;
-  const bkProject = await bkImport(input.project, paths.ffprobe);
+  const bkProject = await bkImport(input.project);
   output.books.forEach((book, i) => {
     book.chapters.forEach((chapter, j) => {
       const bkChapter = bkProject.books[i].chapters[j];
