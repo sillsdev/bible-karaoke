@@ -65,6 +65,6 @@ ColorPicker.defaultProps = {
   presetColors: SWATCH_COLORS,
   disableAlpha: true,
   onChange: (color: { rgb: string }): void => {
-    // this.setState({ color: color.rgb });
+    this.setState({ color: color.rgb });
   }
 };

@@ -3,8 +3,7 @@
   "compilerOptions": {
     "lib": ["dom", "es2019", "es2020.promise", "es2020.bigint", "es2020.string"],
     "module": "CommonJS",
-    "outDir": "start",
-    "resolveJsonModule": true
+    "outDir": "start"
   },
   "include": ["public/*.ts", "public/**/*.ts", "src/*.tsx", "src/**/*.tsx", "typings"],
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.integration.ts"]

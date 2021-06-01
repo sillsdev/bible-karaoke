@@ -20,7 +20,7 @@ export const EditRow = styled(Flex).attrs({
   alignItems: 'center',
 })``;
 
-export default function EditPopover(prop: { icon?: IconName | MaybeElement, title?: string | JSX.Element, children: JSX.Element, props: any }): JSX.Element {
+export default function EditPopover(prop: { icon?: IconName | MaybeElement, title?: string | JSX.Element, children: JSX.Element, props?: any }): JSX.Element {
   prop.icon = prop.icon || 'annotation';
 
   return useObserver(() => {

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Button, IconName, MaybeElement } from '@blueprintjs/core';
 import './FileSelector.scss';
 import { remote, OpenDialogOptions, SaveDialogOptions } from 'electron';
-// const { remote } = window.require('electron');
 
 const { dialog } = remote;
 

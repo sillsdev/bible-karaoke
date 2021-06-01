@@ -93,7 +93,7 @@ const Action = (prop: { icon: IconName | MaybeElement, intent: Intent, disabled:
       <ActionButton
         intent={_.get(progress, 'error') ? Intent.DANGER : prop.intent}
         disabled={prop.disabled}
-        onClick={appState.progress.inProgress ? (): void => { return; } : prop.onClick}
+        onClick={appState.progress.inProgress ? (): void => undefined : prop.onClick}
         active={inProgress}
       >
         {progress && <ProgressIndicator percent={progress.percent} />}

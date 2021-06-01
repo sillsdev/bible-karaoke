@@ -21,7 +21,7 @@ const StyleText = styled(Text).attrs({
   mb: 2,
 })``;
 
-export function AnalyticsProvider(settings: AnalyticsProviderSettings, children: any): JSX.Element {
+export function AnalyticsProvider(settings: AnalyticsProviderSettings, children: JSX.Element[] | JSX.Element): JSX.Element {
   const [analyticsNoticeDisplayed, setAnalyticsNoticeDisplayed] = React.useState(localStorage.analyticsNoticeDisplayed);
   const [analytics,] = React.useState<AnalyticsInterface>(new Analytics(settings));
 
@@ -60,6 +60,5 @@ AnalyticsProvider.propTypes = {
 };
 
 export function useAnalytics(): AnalyticsContext {
-  // analytics
   return React.useContext(analyticsContext);
 }

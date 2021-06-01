@@ -90,6 +90,13 @@ export function handleGetProjects(): void {
   });
 }
 
+export function handleSubmission(): void {
+  ipcMain.on('did-start-conversion', async (event: IpcMainEvent, args: string[]) => {
+    // TODO: implement conversion process here
+    event.sender.send('did-finish-conversion', []);
+  });
+}
+
 app.on('ready', (): void => {
   createWindow();
   handleGetProjects();
