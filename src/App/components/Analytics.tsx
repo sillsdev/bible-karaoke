@@ -10,7 +10,7 @@ interface AnalyticsContext {
   analytics: AnalyticsInterface
 }
 
-const analyticsContext = React.createContext<AnalyticsContext>({ analytics: new Analytics({ enableAnalytics: false }) });
+const analyticsContext = React.createContext<AnalyticsContext>({ analytics: new Analytics({ enableAnalytics: true }) });
 
 interface AnalyticsProviderSettings {
   enableAnalytics: boolean;
@@ -21,18 +21,18 @@ const StyleText = styled(Text).attrs({
   mb: 2,
 })``;
 
-export function AnalyticsProvider(settings: AnalyticsProviderSettings, children: JSX.Element[] | JSX.Element): JSX.Element {
+export function AnalyticsProvider(prop: {settings: AnalyticsProviderSettings, children: JSX.Element[] | JSX.Element}): JSX.Element {
   const [analyticsNoticeDisplayed, setAnalyticsNoticeDisplayed] = React.useState(localStorage.analyticsNoticeDisplayed);
-  const [analytics,] = React.useState<AnalyticsInterface>(new Analytics(settings));
+  const [analytics,] = React.useState<AnalyticsInterface>(new Analytics(prop.settings));
 
   const onClose = React.useCallback(
     (confirmed) => {
       setAnalyticsNoticeDisplayed(true);
       localStorage.setItem('analyticsNoticeDisplayed', 'true');
-      settings.setEnableAnalytics(confirmed);
+      prop.settings.setEnableAnalytics(confirmed);
       confirmed && analytics.trackEvent('Analytics', 'Opted In');
     },
-    [settings, analytics]
+    [prop.settings, analytics]
   );
 
   return (
@@ -49,7 +49,7 @@ export function AnalyticsProvider(settings: AnalyticsProviderSettings, children:
         <StyleText>We&apos;d like to use Google Analytics to help improve Bible Karaoke.</StyleText>
         <StyleText>Is this okay?</StyleText>
       </Alert>
-      {children}
+      {prop.children}
     </analyticsContext.Provider>
   );
 }

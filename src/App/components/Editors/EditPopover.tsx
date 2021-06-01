@@ -20,15 +20,13 @@ export const EditRow = styled(Flex).attrs({
   alignItems: 'center',
 })``;
 
-export default function EditPopover(prop: { icon?: IconName | MaybeElement, title?: string | JSX.Element, children: JSX.Element, props?: any }): JSX.Element {
-  prop.icon = prop.icon || 'annotation';
-
+export default function EditPopover(prop: { icon?: IconName | MaybeElement, title?: string | JSX.Element, children: JSX.Element, props: any }): JSX.Element {
   return useObserver(() => {
     return (
       <Wrapper top="8px" right="8px" {...prop.props}>
         <Popover position={PopoverPosition.RIGHT_TOP} interactionKind={PopoverInteractionKind.CLICK}>
           <Tooltip content={prop.title}>
-            <Button minimal icon={prop.icon} />
+            <Button minimal icon={prop.icon || "annotation"} />
           </Tooltip>
           <Box p={3}>
             <Title>{prop.title}</Title>

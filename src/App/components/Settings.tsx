@@ -24,54 +24,95 @@ const descriptionTextClass = classnames(Classes.TEXT_SMALL, Classes.TEXT_MUTED);
 const defaultHearThisDirectory = getDefaultHearThisDirectory();
 const defaultAppBuilderDirectory = getDefaultScriptureAppBuilderDirectory();
 
-const DirectoriesCard = ({ name, directories, onSetDirectories, defaultDirectory }) => {
-  const addDirectory = (folder) => {
-    onSetDirectories(_.uniq([...directories, folder]));
+const CardMb3 = styled(Card).attrs({
+  mb: 3
+})``;
+
+const H5Mb0 = styled(H5).attrs({
+  mb: 0
+})``;
+
+const H5Mb3 = styled(H5).attrs({
+  mb: 3
+})``;
+
+const ButtonMr2 = styled(Button).attrs({
+  mr: 2
+})``;
+
+const ButtonMt2 = styled(Button).attrs({
+  mt: 2
+})``;
+
+const TextPx2 = styled(Text).attrs({
+  tx: 2
+})``;
+
+const TextMy3 = styled(Text).attrs({
+  my: 3
+})``;
+
+const TextMt3 = styled(Text).attrs({
+  mt: 3,
+  textAlign: "center"
+})``;
+
+interface DirectoriesCardInterface {
+  name: string;
+  directories: string[];
+  onSetDirectories(directories: string[]): void;
+  defaultDirectory: string;
+}
+
+const DirectoriesCard = (prop: DirectoriesCardInterface): JSX.Element => {
+  const addDirectory = (folder: string): void => {
+    prop.onSetDirectories(_.uniq([...prop.directories, folder]));
   };
 
-  const removeDirectory = (folder) => {
-    onSetDirectories(_.without(directories, folder));
+  const removeDirectory = (folder: string): void => {
+    prop.onSetDirectories(_.without(prop.directories, folder));
   };
 
-  const resetDirectories = () => {
-    onSetDirectories([defaultDirectory]);
+  const resetDirectories = (): void => {
+    prop.onSetDirectories([prop.defaultDirectory]);
   };
 
   return (
-    <Card className="settings__card" mb={3}>
+    <CardMb3 className="settings__card">
       <Flex alignItems="center" justifyContent="space-between" mb={2}>
-        <H5 mb="0">{name} Projects Folders</H5>
+        <H5Mb0>{prop.name} Projects Folders</H5Mb0>
         <DirectoryHeading alignItems="center">
           <Tooltip content="Reset to default directory">
-            <Button mr={2} minimal icon="reset" onClick={resetDirectories} />
+            <ButtonMr2 minimal icon="reset" onClick={resetDirectories} />
           </Tooltip>
           <FileSelector
             buttonText="Add folder..."
             buttonIcon="folder-new"
             options={{
-              title: `Select ${name} folder`,
+              title: `Select ${prop.name} folder`,
               properties: ['openDirectory'],
             }}
             onFileSelected={addDirectory}
           />
         </DirectoryHeading>
       </Flex>
-      {directories.map((dir) => (
+      {prop.directories.map((dir: string) => (
         <Flex alignItems="center" key={dir}>
           <Icon icon="folder-close" />
-          <Text px={2} ellipsize title={dir}>
+          {/* <TextPx2 ellipsize title={dir}> */}
+          <TextPx2 ellipsize>
             {dir}
-          </Text>
+          </TextPx2>
           <Button
             minimal
             icon="cross"
-            onClick={() => {
+            onClick={(): void => {
               removeDirectory(dir);
             }}
           />
         </Flex>
       ))}
-    </Card>
+    </CardMb3>
   );
 };
 
@@ -82,7 +123,7 @@ DirectoriesCard.propTypes = {
   defaultDirectory: PropTypes.string,
 };
 
-export default function Settings() {
+export default function Settings(): JSX.Element {
   const { settings } = useStores();
   const { analytics } = useAnalytics();
   const repoUrl = repository.url.replace(/\.git$/, '');
@@ -110,8 +151,8 @@ export default function Settings() {
         onSetDirectories={settings.setScriptureAppBuilderRootDirectories}
         defaultDirectory={defaultAppBuilderDirectory}
       />
-      <Card mb={3}>
-        <H5 mb="3">Output</H5>
+      <CardMb3>
+        <H5Mb3>Output</H5Mb3>
         <FileSelector
           buttonText="Save videos to..."
           file={settings.outputDirectory}
@@ -121,35 +162,34 @@ export default function Settings() {
           }}
           onFileSelected={settings.setOutputDirectory}
         />
-      </Card>
-      <Card mb={3}>
+      </CardMb3>
+      <CardMb3>
         <Flex alignItems="center" justifyContent="space-between">
-          <H5 mb="0">Google Analytics</H5>
+          <H5Mb0>Google Analytics</H5Mb0>
         </Flex>
-        <Text my={3} className={descriptionTextClass}>
+        <TextMy3 className={descriptionTextClass}>
           Google Analytics helps us understand how Bible Karaoke is being used and when errors occur.
-        </Text>
+        </TextMy3>
         <Checkbox
           checked={settings.enableAnalytics}
-          onChange={(event) => {
+          onChange={(event): void => {
             settings.setEnableAnalytics(event.currentTarget.checked);
           }}
           label="Enable Google Analytics"
         />
-        <Button
+        <ButtonMt2
           text="Reset tracking ID"
-          mt={2}
           icon="reset"
           disabled={!settings.enableAnalytics}
           onClick={analytics.resetClientId}
         />
-      </Card>
-      <Text mt={3} className={descriptionTextClass} textAlign="center">
+      </CardMb3>
+      <TextMt3 className={descriptionTextClass}>
         This software is released under the{' '}
         <a target="_blank" rel="noopener noreferrer" href={`${repoUrl}/blob/master/LICENSE.md`}>
           MIT License
         </a>
-      </Text>
+      </TextMt3>
     </Flex>
   ));
 }
