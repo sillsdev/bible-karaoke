@@ -11,14 +11,10 @@ const FileSelector = (prop: {
   buttonText?: React.ReactNode,
   buttonIcon?: IconName | MaybeElement,
   disabled?: boolean,
-  file: string,
+  file?: string,
   options: SaveDialogOptions | OpenDialogOptions,
   onFileSelected: (file: string) => void,
 }) => {
-  prop.save = prop.save || false;
-  prop.buttonText = prop.buttonText || 'Select';
-  prop.disabled = prop.disabled || false;
-
   const selectFile = async () => {
     let filePath: string = "";
 
@@ -37,7 +33,7 @@ const FileSelector = (prop: {
   return (
     <div className="file-selector">
       <div className="file-selector__button">
-        <Button text={prop.buttonText} icon={prop.buttonIcon} onClick={selectFile} disabled={prop.disabled} />
+        <Button text={prop.buttonText || 'Select'} icon={prop.buttonIcon} onClick={selectFile} disabled={prop.disabled || false} />
       </div>
       <div className="file-selector__filename">{prop.file}</div>
     </div>

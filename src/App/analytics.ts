@@ -20,6 +20,11 @@ export default class Analytics implements AnalyticsInterface {
         updateProxy(enableAnalytics);
       }
     );
+
+    this.resetClientId = this.resetClientId.bind(this);
+    this.trackScreenview = this.trackScreenview.bind(this);
+    this.trackEvent = this.trackEvent.bind(this);
+    this.trackError = this.trackError.bind(this);
   }
   isEnabled: boolean;
   ga: GoogleAnalytics | undefined = undefined;
