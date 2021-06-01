@@ -22,7 +22,7 @@ export default class Analytics implements AnalyticsInterface {
     );
   }
   isEnabled: boolean;
-  ga: GoogleAnalytics;
+  ga: GoogleAnalytics | undefined = undefined;
 
   resetClientId(): void {
     if (this.isEnabled) resetClientId();

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Box } from 'reflexbox';
 import { Popover } from '@blueprintjs/core';
-import { Color, ColorChangeHandler, SketchPicker } from 'react-color';
+import { Color, ColorChangeHandler, ColorResult, SketchPicker } from 'react-color';
+import { isConstructorTypeNode } from 'typescript';
 
 const SWATCH_COLORS = [
   '#ff3b30',
@@ -43,28 +44,51 @@ const Swatch = styled(Box).attrs({
   }}
 `;
 
-export default function ColorPicker(prop: { value?: Color, presetColors?: { color: string; title: string }[] | string[], disableAlpha?: boolean, disabled?: boolean, onChange?: ColorChangeHandler, props?: any }): JSX.Element {
-  return (
-    <Popover disabled={prop.disabled}>
-      <Swatch {...prop.props} bg={prop.disabled ? undefined : prop.value} disabled={prop.disabled} />
-      <SketchPicker presetColors={prop.presetColors} disableAlpha={prop.disableAlpha} color={prop.value} onChange={prop.onChange} />
-    </Popover>
-  );
+interface ColorPickerSettings {
+  value?: Color,
+  presetColors?: { color: string; title: string }[] | string[],
+  disableAlpha?: boolean,
+  disabled?: boolean,
+  onChange?: ColorChangeHandler,
+  props?: any
 }
 
-ColorPicker.propTypes = {
-  value: PropTypes.string,
-  presetColors: PropTypes.arrayOf(PropTypes.string),
-  disableAlpha: PropTypes.bool,
-  disabled: PropTypes.bool,
-  onChange: PropTypes.func,
-};
+export default class ColorPicker extends React.Component<ColorPickerSettings> {
+  constructor(props: ColorPickerSettings) {
+    super(props);
 
-ColorPicker.defaultProps = {
-  color: undefined,
-  presetColors: SWATCH_COLORS,
-  disableAlpha: true,
-  onChange: (color: { rgb: string }): void => {
+    this.defaultOnChange = this.defaultOnChange.bind(this);
+  }
+
+  defaultOnChange(color: ColorResult): void {
     this.setState({ color: color.rgb });
   }
-};
+
+  get propTypes(): any {
+    return {
+      value: PropTypes.string,
+      presetColors: PropTypes.arrayOf(PropTypes.string),
+      disableAlpha: PropTypes.bool,
+      disabled: PropTypes.bool,
+      onChange: PropTypes.func
+    };
+  }
+
+  get defaultProps(): any {
+    return {
+      color: undefined,
+      presetColors: SWATCH_COLORS,
+      disableAlpha: true
+    };
+  }
+
+  render(): JSX.Element {
+    return (
+      <Popover disabled={this.props.disabled}>
+        <Swatch {...this.props.props} bg={this.props.disabled ? undefined : this.props.value} disabled={this.props.disabled} />
+        <SketchPicker presetColors={this.props.presetColors} disableAlpha={this.props.disableAlpha} color={this.props.value} onChange={this.props.onChange || this.defaultOnChange} />
+      </Popover>
+    );
+  }
+
+}
