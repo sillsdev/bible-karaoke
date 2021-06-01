@@ -2,6 +2,7 @@ import React from 'react';
 import fs from 'fs';
 import classnames from 'classnames';
 import styled from 'styled-components';
+import CSS from 'csstype';
 import _ from 'lodash';
 import { Flex, Box } from 'reflexbox';
 import { toJS } from 'mobx';
@@ -40,7 +41,7 @@ const PreviewVideo = styled.video.attrs({
 `;
 
 const Verses = styled(Box).attrs({
-  mt: '175px',
+  mt: '175px'
 })`
   &.subtitle {
     position: absolute;
@@ -74,20 +75,20 @@ const PreviewWord = styled.div`
   padding: 0 5px;
   margin: 0 -5px;
   display: inline-block;
-  ${({ isHighlighted, highlightColor }) => {
-    return `background-color: ${isHighlighted ? highlightColor || 'transparent' : 'transparent'};`;
+  ${(prop: { isHighlighted: boolean, highlightColor: string }): string => {
+    return `background-color: ${prop.isHighlighted ? prop.highlightColor || 'transparent' : 'transparent'};`;
   }}
 `;
 
 const HIGHLIGHT_VERSE_INDEX = 0;
 const HIGHLIGHT_WORD_INDEXES = [0, 1, 2];
 
-const getImageSrc = _.memoize((file) => {
+const getImageSrc = _.memoize((file: string): string => {
   if (!file) {
     return '';
   }
   try {
-    const ext = file.split('.').pop();
+    const ext: string = file.split('.').pop() || '';
     if (['png', 'jpg', 'jpeg', 'gif'].includes(ext)) {
       const img = fs.readFileSync(file).toString('base64');
       return `url(data:image/${ext};base64,${img})`;
@@ -98,25 +99,41 @@ const getImageSrc = _.memoize((file) => {
   return '';
 });
 
-const PreviewVerse = ({ verse, highlightVerse, highlightColor }) => {
-  return verse.split(' ').map((word, index) => {
-    const isHighlighted = highlightVerse && HIGHLIGHT_WORD_INDEXES.includes(index);
+const PreviewVerse = (prop: { verse: string, highlightVerse: boolean, highlightColor: string }): JSX.Element => {
+  return <>{prop.verse.split(' ').map((word, index) => {
+    const isHighlighted = prop.highlightVerse && HIGHLIGHT_WORD_INDEXES.includes(index);
     return (
       <React.Fragment key={index}>
-        <PreviewWord highlightColor={highlightColor} isHighlighted={isHighlighted}>
+        <PreviewWord highlightColor={prop.highlightColor} isHighlighted={isHighlighted}>
           {word}
         </PreviewWord>
         &nbsp;
       </React.Fragment>
     );
-  });
+  })}</>;
 };
 
-const Preview = () => {
+const Preview = (): JSX.Element => {
   const { appState } = useStores();
   return useObserver(() => {
     const firstChapter = _.get(appState, ['projects', 'firstSelectedChapter']);
     const { verses, background, speechBubble, text, textLocation } = appState;
+    const styleHeading: CSS.Properties = {
+      color: text.color || '#CCC',
+      fontFamily: text.fontFamily || 'Arial',
+      fontSize: `${text.fontSize}pt` || '20px',
+      fontWeight: 'bold',
+      fontStyle: text.italic ? 'italic' : undefined
+    };
+
+    const styleVerse: CSS.Properties = {
+      color: text.color || '#CCC',
+      fontFamily: text.fontFamily || 'Arial',
+      fontSize: `${text.fontSize}pt` || '20px',
+      fontWeight: text.bold ? 'bold' : undefined,
+      fontStyle: text.italic ? 'italic' : undefined,
+    };
+
     const styles = {
       background: {
         backgroundColor: background.color || 'transparent',
@@ -125,27 +142,14 @@ const Preview = () => {
       speechBubble: {
         opacity: speechBubble.opacity,
         backgroundColor: speechBubble.color || 'transparent',
-      },
-      verse: {
-        color: text.color || '#CCC',
-        fontFamily: text.fontFamily || 'Arial',
-        fontSize: `${text.fontSize}pt` || '20px',
-        fontWeight: text.bold ? 'bold' : undefined,
-        fontStyle: text.italic ? 'italic' : undefined,
-      },
-      heading: {
-        color: text.color || '#CCC',
-        fontFamily: text.fontFamily || 'Arial',
-        fontSize: `${text.fontSize}pt` || '20px',
-        fontWeight: 'bold',
-        fontStyle: text.italic ? 'italic' : undefined,
-      },
+      }
     };
-    let file = 'file:' + background.file;
-    const versesClassName = classnames({
+
+    const file: string = 'file:' + background.file;
+    const versesClassName: string = classnames({
       subtitle: textLocation.location === TEXT_LOCATION.subtitle,
     });
-    const getVerseClassName = (index) =>
+    const getVerseClassName = (index: number): string =>
       classnames({
         hide: textLocation.location === TEXT_LOCATION.subtitle && index !== HIGHLIGHT_VERSE_INDEX,
       });
@@ -156,11 +160,11 @@ const Preview = () => {
           <BackgroundEditor />
           {background.type === 'video' && <PreviewVideo src={file} id="myVideo" />}
           <Verses className={versesClassName}>
-            {verses.map((verse, index) => (
+            {verses.map((verse: any, index: number) => (
               <Verse
                 key={index}
                 className={getVerseClassName(index)}
-                style={verse.indexOf('<strong>') > -1 ? styles.heading : styles.verse}
+                style={verse.indexOf('<strong>') > -1 ? styleHeading : styleVerse}
               >
                 {index === HIGHLIGHT_VERSE_INDEX && (
                   <React.Fragment>

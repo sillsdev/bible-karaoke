@@ -24,7 +24,15 @@
     }
   },
   "rules": {
-    "ava/no-ignored-test-files": ["error", { "files": ["**/*.{spec,integration}.{ts,js}"] }],
+    "ava/no-ignored-test-files": [
+      "error",
+      {
+        "files": ["**/*.{spec,integration}.{ts,js}"]
+      }
+    ],
     "@typescript-eslint/no-use-before-define": "off"
+  },
+  "globals": {
+    "JSX": true
   }
 }

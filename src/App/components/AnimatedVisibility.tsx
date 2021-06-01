@@ -13,15 +13,23 @@ const Wrapper = styled(Box)`
   }
 `;
 
-export default function AnimatedVisibility({ visible, children }) {
+interface AnimatedVisibilityProps {
+  visible: boolean,
+  children: JSX.Element[] | JSX.Element;
+}
+
+export default function AnimatedVisibility(prop: AnimatedVisibilityProps): JSX.Element {
   return (
-    <Wrapper flex={1} className={classnames({ visible })}>
-      {children}
+    <Wrapper flex={1} className={classnames({ visible: prop.visible })}>
+      {prop.children}
     </Wrapper>
   );
 }
 
 AnimatedVisibility.propTypes = {
-  visible: PropTypes.string,
+  visible: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
   children: PropTypes.node,
 };

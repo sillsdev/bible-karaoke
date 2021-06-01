@@ -15,7 +15,7 @@ const EditRadio = styled(Radio).attrs({
   mb: 0,
 })``;
 
-export default function BackgroundEditor(props) {
+export default function BackgroundEditor(props: any): JSX.Element {
   const { appState } = useStores();
   return useObserver(() => {
     const { background } = appState;
@@ -25,7 +25,7 @@ export default function BackgroundEditor(props) {
           <EditRadio
             label="Image"
             checked={!background.color}
-            onChange={() => {
+            onChange={(): void => {
               appState.background.setFile('');
             }}
           />
@@ -44,14 +44,14 @@ export default function BackgroundEditor(props) {
           <EditRadio
             label="Solid color"
             checked={!!background.color}
-            onChange={() => {
+            onChange={(): void => {
               appState.background.setColor(DEFAULT_BG_COLOR);
             }}
           />
           <ColorPicker
             disabled={background.color === ''}
             value={background.color}
-            onChange={(color) => {
+            onChange={(color): void => {
               appState.background.setColor(color.hex);
             }}
           />

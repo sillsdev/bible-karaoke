@@ -249,7 +249,7 @@ class ProjectList {
   }
 }
 
-class Progress {
+export class Progress {
   constructor() {
     ipcRenderer.on('on-progress', (_, progress) => {
       this.setProgress(progress);
@@ -333,7 +333,7 @@ class AppState {
       (firstSelectedChapter) => {
         if (firstSelectedChapter) {
           ipcRenderer.send('did-start-getverses', {
-            sourceDirectory: firstSelectedChapter.fullPath,
+            sourceDirectory: firstSelectedChapter.fullPath, // TODO: verses.model.ts
           });
         } else {
           this.setVerses(SAMPLE_VERSES);

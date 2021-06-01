@@ -5,7 +5,7 @@ import { HTMLSelect } from '../blueprint';
 import { useStores } from '../store';
 import { useAnalytics } from './Analytics';
 
-export default function ProjectSelector() {
+export default function ProjectSelector(): JSX.Element {
   const { appState } = useStores();
   const { analytics } = useAnalytics();
   const onChange = React.useCallback(
@@ -22,7 +22,7 @@ export default function ProjectSelector() {
   return useObserver(() => {
     const projectOptions = [
       { value: '', label: 'Select a project...' },
-      ..._.map(appState.projects.list, (p) => ({ value: p.name, label: p.name }), []),
+      ..._.map(appState.projects.list, (p: any) => ({ value: p.name, label: p.name })),
     ];
     return (
       <HTMLSelect

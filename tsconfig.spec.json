@@ -10,11 +10,8 @@
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,
     "jsx": "react",
-    "baseUrl": "./",
-    "paths": {
-      "*": ["./typings/*"]
-    }
+    "resolveJsonModule": true
   },
-  "include": ["public/cli/**/*.ts"],
+  "include": ["public/*.ts", "public/**/*.ts", "typings"],
   "exclude": ["node_modules", "**/*.integration.ts"]
 }

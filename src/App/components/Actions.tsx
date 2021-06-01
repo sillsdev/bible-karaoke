@@ -2,8 +2,9 @@ import React from 'react';
 import _ from 'lodash';
 import styled from 'styled-components';
 import { useObserver } from 'mobx-react';
-import { Intent } from '@blueprintjs/core';
+import { Intent, IconName, MaybeElement } from '@blueprintjs/core';
 import { Flex, Box } from 'reflexbox';
+import { Progress } from '../store/AppState';
 import { useStores } from '../store';
 import { Button, Text, Icon } from '../blueprint';
 import AnimatedVisibility from './AnimatedVisibility';
@@ -14,8 +15,8 @@ const ProgressIndicator = styled(Box)`
   top: 0;
   bottom: 0;
   left: 0;
-  ${({ percent }) => {
-    return `right: ${100 - percent}%;`;
+  ${(prop: { percent: number }): string => {
+    return `right: ${100 - prop.percent}%;`;
   }}
   background-color: rgba(0,0,0,0.2);
 `;
@@ -43,7 +44,19 @@ const ButtonContent = styled(Flex).attrs({
 
 const ActionIcon = styled(Icon).attrs({
   iconSize: 48,
-  flex: 0,
+  flex: 0
+})``;
+
+const TextProgress = styled(Text).attrs({
+  my: 1
+})``;
+
+const TextMain = styled(Text).attrs({
+  fontSize: "200%"
+})``;
+
+const TextSub = styled(Text).attrs({
+  mt: 2
 })``;
 
 const TextWrapper = styled(Flex).attrs({
@@ -55,40 +68,44 @@ const TextWrapper = styled(Flex).attrs({
   flexDirection: 'column',
 })``;
 
-const ProgressText = ({ progress }) => {
-  if (progress.error) {
-    return <Text>{progress.error.toString()}</Text>;
+const ProgressText = (prop: { progress: Progress }): JSX.Element => {
+  if (prop.progress.error) {
+    return <Text>{prop.progress.error.toString()}</Text>;
   }
-  const progressText = progress.status.replace('% (', '%\n(').split('\n');
-  return progressText.map((line, index) => (
-    <Text key={index} my={1}>
-      {line}
-    </Text>
-  ));
+  const progressText = prop.progress.status.replace('% (', '%\n(').split('\n');
+  return <TextProgress>
+    {progressText}
+  </TextProgress>;
+  // NOTE: TextWrapper's children should be JSX.Element (not JSX.Element[])
+  // return progressText.map((line: string, index: number): JSX.Element => (
+  //   <TextProgress key={index}>
+  //     {line}
+  //   </TextProgress>
+  // ));
 };
 
-const Action = ({ icon, intent, disabled, onClick, combined, mainText, subText }) => {
+const Action = (prop: { icon: IconName | MaybeElement, intent: Intent, disabled: boolean, onClick: (event: React.MouseEvent<HTMLElement>) => void, combined: boolean, mainText: string, subText: string }): JSX.Element => {
   const { appState } = useStores();
   return useObserver(() => {
-    const progress = appState.progress.combined === combined ? appState.progress : null;
+    const progress: Progress = appState.progress.combined === prop.combined ? appState.progress : null;
     const inProgress = _.get(progress, 'inProgress');
     return (
       <ActionButton
-        intent={_.get(progress, 'error') ? Intent.DANGER : intent}
-        disabled={disabled}
-        onClick={appState.progress.inProgress ? null : onClick}
+        intent={_.get(progress, 'error') ? Intent.DANGER : prop.intent}
+        disabled={prop.disabled}
+        onClick={appState.progress.inProgress ? (): void => undefined : prop.onClick}
         active={inProgress}
       >
         {progress && <ProgressIndicator percent={progress.percent} />}
         <ButtonContent>
-          <ActionIcon icon={icon} />
+          <ActionIcon icon={prop.icon} />
           <TextWrapper>
             {inProgress ? (
               <ProgressText progress={progress} />
             ) : (
               <React.Fragment>
-                <Text fontSize="200%">{mainText}</Text>
-                <Text mt={2}>{subText}</Text>
+                <TextMain>{prop.mainText}</TextMain>
+                <TextSub>{prop.subText}</TextSub>
               </React.Fragment>
             )}
           </TextWrapper>
@@ -98,7 +115,7 @@ const Action = ({ icon, intent, disabled, onClick, combined, mainText, subText }
   });
 };
 
-export default function Actions() {
+export default function Actions(): JSX.Element {
   const { appState } = useStores();
   const { analytics } = useAnalytics();
 
@@ -120,15 +137,17 @@ export default function Actions() {
             combined={false}
             icon="applications"
             disabled={totalChapterCount === 1}
-            onClick={() => onGenerateVideo(false, totalChapterCount)}
+            intent={Intent.PRIMARY}
+            onClick={(): void => { onGenerateVideo(false, totalChapterCount); }}
             mainText={`Generate ${totalChapterCount} video${totalChapterCount > 1 ? 's' : ''}`}
             subText="(One video per chapter)"
           />
           <Action
             combined
             icon="application"
+            disabled={false}
             intent={Intent.PRIMARY}
-            onClick={() => onGenerateVideo(true)}
+            onClick={(): void => { onGenerateVideo(true); }}
             mainText="Generate a single video"
             subText={`(${totalChapterCount} chapter${totalChapterCount > 1 ? 's' : ''})`}
           />
