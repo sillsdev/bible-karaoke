@@ -483,6 +483,20 @@ function execute(done) {
                     }
                 }
             })
+
+            // read the dir again and get a list of all the frames that were generated:
+            var listFrames = fs.readdirSync(pathFrames, {withFileTypes:true});
+            listFrames = listFrames.filter((f)=> f.isFile() && f.name.indexOf("frame_") > -1)
+                .map((f)=>f.name)
+                .sort();
+            
+            // rename the frames from 0 - {length}
+            (listFrames ||[]).forEach((f, index)=>{
+                var newName = "frame_"+ `${index}`.padStart(11, "0")+ ".png";
+                if (newName != f) {
+                    fs.renameSync(path.join(pathFrames, f), path.join(pathFrames, newName))
+                }
+            })
             return pathFrames;
         })
         .then((pathFrames) => {
