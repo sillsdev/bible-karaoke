@@ -31,8 +31,8 @@ module.exports.record = async function(options) {
             );
 
         await options.render(browser, page, i);
-        const paddedIndex = `${i}`.padStart(6, "0");
-        let fileName = `frame_${paddedIndex}.png`;
+        const paddedIndex = `${i-1}`.padStart(6, "0");
+        let fileName = `slides_${paddedIndex}_.png`;
         let screenshot = await page.screenshot({
             omitBackground: true,
             path: path.join(outLocation, fileName)

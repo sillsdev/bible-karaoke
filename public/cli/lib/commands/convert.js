@@ -56,7 +56,7 @@ process.on('uncaughtException', function(error) {
 });
 
 
-shell.config.execPath = shell.which("node");
+shell.config.execPath = shell.which("node").toString();
 
 //
 // Build the Install Command
@@ -462,6 +462,28 @@ function execute(done) {
             Log("opt: ", opts);
             onProgress("Step 1 of 6: Rendering video frames...", 0);
             return Frames.run(opts);
+        })
+        .then((pathFrames) => {
+            var fps = Options.fps || 15;
+            var ffmpegExe = "ffmpeg";
+            if (Options.ffmpegPath) {
+                ffmpegExe = Options.ffmpegPath;
+            }
+            var listFiles = fs.readdirSync(pathFrames, {withFileTypes:true});
+            (listFiles || []).forEach((file)=>{
+                if (file.isFile()) {
+                    // name : slides_#_.png
+                    var num = file.name.split("_")[1];
+                    var fullPath = path.join(pathFrames, file.name);
+                    var results = shell.exec(
+                        `"${ffmpegExe}" -i "${fullPath}" -vf "loop=loop=${fps-1}:size=${fps}:start=0, crop=iw:ih/${fps}:iw:n*ih/${fps}" "${pathFrames}/frame_${num}%05d.png"`,
+                        );
+                    if (results.code !== 0) {
+                        Log(`>> error cropping images: ${results}`);
+                    }
+                }
+            })
+            return pathFrames;
         })
         .then((pathFrames) => {
             Log(`>> path to generated frames folder: ${pathFrames}`);

@@ -2,319 +2,353 @@
 <html id="html">
 
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Bible Karaoke</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <meta name="description" content="Bible Karaoke - Demo">
-    <style>
-        body {
-            background: #000;
-            font-family: 'Lato', sans-serif;
-            font-size: 1.5em;
-            line-height: 1.1em;
-            letter-spacing: .05em;
-            margin: 0
-        }
+   <meta charset='utf-8'>
+   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+   <title>Bible Karaoke</title>
+   <meta name='viewport' content='width=device-width, initial-scale=1'>
+   <meta name="description" content="Bible Karaoke - Demo">
+   <style>
+      body {
+         background: #000;
+         font-family: 'Lato', sans-serif;
+         font-size: 1.5em;
+         line-height: 1.1em;
+         letter-spacing: .05em;
+         margin: 0
+      }
 
-        .subs span {
-            color: white;
-            /* text-transform: capitalize; */
-            /* background-color: yellow; */
-        }
+      .subs span {
+         color: white;
+         /* text-transform: capitalize; */
+         /* background-color: yellow; */
+      }
 
-        .karaoke-caption {
-            font-size: CAPTION_FONT_SIZE;
-            padding-top: 175px;
-            font-family: "CAPTION_FONT_FAMILY";
-            font-weight: CAPTION_FONT_BOLD;
-            font-style: CAPTION_FONT_ITALIC;
-            margin: 0px 46px;
-            width: 628px;
-            position: absolute;
-        }
+      .karaoke-caption {
+         font-size: CAPTION_FONT_SIZE;
+         padding-top: 175px;
+         font-family: "CAPTION_FONT_FAMILY";
+         font-weight: CAPTION_FONT_BOLD;
+         font-style: CAPTION_FONT_ITALIC;
+         margin: 0px 46px;
+         width: 628px;
+         position: absolute;
+      }
 
-        .karaoke-caption .phrase {
-            padding: 15px 10px;
-            border-radius: 10px;
-            line-height: 40px;
-        }
+      .karaoke-caption .phrase {
+         padding: 15px 10px;
+         border-radius: 10px;
+         line-height: 40px;
+      }
 
-        .karaoke-caption .words {
-            color: CAPTION_FONT_COLOR;
-            line-height: 32px;
-            margin: 0 -5px;
-            padding: 0 5px;
-            /* border-radius: 10px; */
-        }
+      .karaoke-caption .words {
+         color: CAPTION_FONT_COLOR;
+         line-height: 32px;
+         margin: 0 -5px;
+         padding: 0 5px;
+         /* border-radius: 10px; */
+      }
 
-        .karaoke-caption .words {
-            display: inline-block;
-        }
+      .karaoke-caption .words {
+         display: inline-block;
+      }
 
-        #imgParent {
-            width: 720px;
-            height: 480px;
-            margin: 0 auto;
-            background: BG_COLOR;
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: 50% 50%;
-            position: relative;
-        }
-    </style>
-    <script>
-        var animations = [];
-
-        window.afterLoadKar = function(textObj, backgroundImage, fps, bgType, highlightColor, speechBubbleColor, speechBubbleOpacity, phraseLocation) {
-            var showSpeechBubble = true;
-            if (bgType == "image") {
-                let imageParent = document.getElementById("imgParent");
-                imageParent.style.backgroundImage = "url("+backgroundImage+")";
-            } else if (bgType == "video") {
-                document.getElementById("body").style = "background-color: transparent;";
-                document.getElementById("html").style = "background-color: transparent;";
-                document.getElementById("imgParent").style = "background-color: transparent;";
+      .imgParent {
+         width: 720px;
+         height: 480px;
+         margin: 0 auto;
+         background: BG_COLOR;
+         background-repeat: no-repeat;
+         background-size: cover;
+         background-position: 50% 50%;
+         position: relative;
+      }
+   </style>
+   <script>
+      var animations = [];
+      window.buildDOM = function(fps) {
+         /* need a bunch of these for each frame
+         <div class="imgParent">
+            <div class="line subs karaoke-caption" id="subtitles#FRAME#"></div>
+         </div>
+         */
+         var containerHTML = "";
+         for (var frame = 1; frame <= fps; frame++) {
+            containerHTML += `<div class="imgParent">
+                                 <div class="line subs karaoke-caption" id="subtitles${frame}"></div>
+                              </div>`;
+         }
+         document.getElementById("body").innerHTML = containerHTML;
+      }
+      window.afterLoadKar = function(textObj, backgroundImage, fps, bgType, highlightColor, speechBubbleColor, speechBubbleOpacity, phraseLocation) {
+         var showSpeechBubble = true;
+         if (bgType == "image") {
+            let imageParents = document.getElementsByClassName("imgParent");
+            for (var i = 0; i < imageParents.length; i++) {
+               imageParents[i].style.backgroundImage = "url(" + backgroundImage + ")";
             }
-
-            var subtitles = document.querySelector("#subtitles2");
-            var textObject = [];
-            var rawSubTitle = "";
-            var linePos = 0;
-            var highlightColor = highlightColor;
-            var speechBubbleColor = speechBubbleColor;
-            var speechBubbleOpacity = speechBubbleOpacity;
-
-            // take the JSON obj that has the text and timings and display them on the page with animation
-            function createSubtitle(textObject) {
-                
-                var lyrics = "";
-                var i = 0;
-                // we need to store these to access later easily when building the animations
-                wordTiming = [];
-                phraseTiming = [];
-                textObject.forEach((line) => {
-
-                    var line = line;
-                    var j = 0;
-                    text = "";
-                    
-                    // loop through the words and created containers for each word
-                    // also store the animation info for each word for later
-                    line.words.forEach(function(w) {
-                        var wordStart, word;
-                        word = w.word;
-                        wordStart = w.start;
-                        
-                        // concat the containers together for later
-                        text += "<div class='words w" + j + "'>" + word + "</div> ";
-                        // this makes the animation creation easier later
-                        wordTiming.push({word: word, index: j, start: wordStart, duration: line.end, line: i})
-                        j++;
-                    });
-                    
-                    // this makes the phrase timeing easier for later
-                    phraseTiming.push({id: "p"+i, start:line.start, end: line.end, next: "p"+(i+1)});
-                    // concat the lines together with all words inside
-                    lyrics += "<div class='phrase' id='p" + i + "'>" + text + "</div>";
-                    i++;
-                });
-                
-                // put the words onto the page
-                subtitles.innerHTML = lyrics;
-                
-                // get the page ready to show text at bottom of the screen
-                if (phraseLocation == "subtitle") {
-                    var phraseHeight = document.getElementById("p0").clientHeight;
-                    subtitles.style.paddingTop = 480 - phraseHeight - 35 + "px";
-                    document.querySelectorAll(".phrase").forEach((p) => {
-                        p.style.opacity = 0;
-                    });
-                }
-
-                // animate the highlighting of each word
-                var previousDuration = 0;
-                wordTiming.forEach(function(word) {
-                    highlight("w"+word.index, word.start, word.line, "p"+word.line-1, animations, previousDuration, word.duration);
-                    previousDuration = word.start;
-                });
-
-                // word animation function
-                function highlight(container, start, line, previousContainer, animations, previousDuration, duration) {
-
-                    var previousContainer = previousContainer;
-                    var currentLine = line;
-                    
-                    var elem = document.querySelector('#p'+line + ' .'+container);
-                    var wordAnimateOn = elem.animate({
-                        background: [highlightColor.replace(/,[^,]*$/, ",0)"), highlightColor],
-                    }, {
-                        duration: 250,
-                        delay: start,
-                        iterations: 1,
-                        fill: "forwards"
-                    });
-                    // pause the animation so the app can tell it when to run
-                    wordAnimateOn.pause();
-                    // store all animations so we can tell them all what to do later
-                    animations.push(wordAnimateOn);
-
-                    var wordAnimateOff = elem.animate({
-                        background: [highlightColor, highlightColor.replace(/,[^,]*$/, ",0)")],
-                    }, {
-                        duration: 500,
-                        delay: duration,
-                        iterations: 1,
-                        fill: "forwards"
-                    });
-                    // pause the animation so the app can tell it when to run
-                    wordAnimateOff.pause();
-                    // store all animations so we can tell them all what to do later
-                    animations.push(wordAnimateOff);
-
-                }
-                
-                // create the phrase timing animations
-                phraseTiming.forEach(function(phrase) {
-                    movePhrase(phrase)
-                });
-                
-                // phrase animation function
-                function movePhrase(phrase) {
-                    var elem = document.querySelector('#subtitles2');
-                    var line = document.querySelector('#'+phrase.id);
-                    var nextPos = line.clientHeight;
-                    var curPos = linePos;
-                    if (phraseLocation == "subtitle") {
-                        var nextLine = document.querySelector('#'+phrase.next);
-                        nextPos = nextLine ? nextLine.clientHeight : 0;
-                    }
-                    linePos -= nextPos; 
-                    var phraseAnimate = elem.animate([
-                        { 
-                            transform: 'translateY('+curPos+'px)'
-                        }, 
-                        { 
-                            transform: 'translateY('+(curPos - nextPos)+'px)'
-                        }
-                    ], {
-                        duration: 500,
-                        delay: phrase.end,
-                        iterations: 1,
-                        fill: "forwards"
-                    });
-                    // pause for playback later
-                    phraseAnimate.pause();
-                    // push them all into the main animations array
-                    animations.push(phraseAnimate);
-                    if (showSpeechBubble) {
-                        var phraseBackgroundOn = line.animate([
-                            { 
-                                background: speechBubbleColor.replace(/,[^,]*$/, ",0)")
-                            }, 
-                            { 
-                                background: speechBubbleColor.replace(/,[^,]*$/, ","+speechBubbleOpacity+")")
-                            }
-                        ], {
-                            duration: 500,
-                            delay: phrase.start,
-                            iterations: 1,
-                            fill: "forwards"
-                        });
-                        // pause for playback later
-                        phraseBackgroundOn.pause();
-                        // push them all into the main animations array
-                        animations.push(phraseBackgroundOn);
-                        var phraseBackgroundOff = line.animate([
-                            { 
-                                background: speechBubbleColor.replace(/,[^,]*$/, ","+speechBubbleOpacity+")")
-                            }, 
-                            { 
-                                background: speechBubbleColor.replace(/,[^,]*$/, ",0)")
-                            }
-                        ], {
-                            duration: 500,
-                            delay: phrase.end,
-                            iterations: 1,
-                            fill: "forwards"
-                        });
-                        // pause for playback later
-                        phraseBackgroundOff.pause();
-                        // push them all into the main animations array
-                        animations.push(phraseBackgroundOff);                        
-                    }
-                    if (phraseLocation == "subtitle") {
-                        var phraseFadeIn = line.animate([
-                            { 
-                                opacity: "0"
-                            }, 
-                            { 
-                                opacity: "1"
-                            }
-                        ], {
-                            duration: 500,
-                            delay: phrase.start,
-                            iterations: 1,
-                            fill: "forwards"
-                        });
-                        // pause for playback later
-                        phraseFadeIn.pause();
-                        // push them all into the main animations array
-                        animations.push(phraseFadeIn);
-                        var phraseFadeOut = line.animate([
-                            { 
-                                opacity: "1"
-                            }, 
-                            { 
-                                opacity: "0"
-                            }
-                        ], {
-                            duration: 500,
-                            delay: phrase.end,
-                            iterations: 1,
-                            fill: "forwards"
-                        });
-                        // pause for playback later
-                        phraseFadeOut.pause();
-                        // push them all into the main animations array
-                        animations.push(phraseFadeOut);                        
-
-                    }
-                }
-
+         } else if (bgType == "video") {
+            document.getElementById("body").style = "background-color: transparent;";
+            document.getElementById("html").style = "background-color: transparent;";
+            let imageParents = document.getElementsByClassName("imgParent");
+            for (var i = 0; i < imageParents.length; i++) {
+               imageParents[i].style = "background-color: transparent;";
             }
-            
-            // call the create fuction now
-            createSubtitle(textObj);
+         }
 
-        }
-        // the app will call this function and we will need to determin what the UI should
-        // look like at a given moment in time with the fps converted into a time in miliseconds
-        var curPos = 0;
-        function renderNextFrame(time) {
-            if (time) {
-                curPos = time;
-            } else {
-                curPos = 1000/fps + curPos;
-            }
-            // This is how you tell it to go to a specific time
-            animations.forEach((w) => {
-                // this makes the animation jump to this specific time in the overall animation
-                w.currentTime = curPos;
+         var subtitles = document.getElementsByClassName("karaoke-caption");
+         var textObject = [];
+         var rawSubTitle = "";
+         var linePos = 0;
+         var highlightColor = highlightColor;
+         var speechBubbleColor = speechBubbleColor;
+         var speechBubbleOpacity = speechBubbleOpacity;
+
+         // take the JSON obj that has the text and timings and display them on the page with animation
+         function createSubtitle(textObject) {
+
+            var lyrics = "";
+            var i = 0;
+            // we need to store these to access later easily when building the animations
+            wordTiming = [];
+            phraseTiming = [];
+            textObject.forEach((line) => {
+
+               var line = line;
+               var j = 0;
+               text = "";
+
+               // loop through the words and created containers for each word
+               // also store the animation info for each word for later
+               line.words.forEach(function(w) {
+                  var wordStart, word;
+                  word = w.word;
+                  wordStart = w.start;
+
+                  // concat the containers together for later
+                  text += "<div class='words w" + j + "'>" + word + "</div> ";
+                  // this makes the animation creation easier later
+                  wordTiming.push({
+                     word: word,
+                     index: j,
+                     start: wordStart,
+                     duration: line.end,
+                     line: i
+                  })
+                  j++;
+               });
+
+               // this makes the phrase timeing easier for later
+               phraseTiming.push({
+                  id: "p" + i,
+                  start: line.start,
+                  end: line.end,
+                  next: "p" + (i + 1)
+               });
+               // concat the lines together with all words inside
+               lyrics += "<div class='phrase p" + i + "'>" + text + "</div>";
+               i++;
             });
-        }
-    </script>
-    <!-- this comment get's replaced with content that has the background image
+
+            // put the words onto the page
+            for (var i = 0; i < subtitles.length; i++) {
+               subtitles[i].innerHTML = lyrics;
+            }
+
+            // get the page ready to show text at bottom of the screen
+            if (phraseLocation == "subtitle") {
+               var phraseHeight = document.querySelector(".p0").clientHeight;
+               for (var i = 0; i < subtitles.length; i++) {
+                  subtitles[i].style.paddingTop = 480 - phraseHeight - 35 + "px";
+               }
+               document.querySelectorAll(".phrase").forEach((p) => {
+                  p.style.opacity = 0;
+               });
+            }
+
+            // animate the highlighting of each word
+            var previousDuration = 0;
+            wordTiming.forEach(function(word) {
+               for (var frame = 1; frame <= fps; frame++) {
+                  highlight("w" + word.index, word.start, word.line, "p" + word.line - 1, animations, previousDuration, word.duration, frame);
+               }
+               previousDuration = word.start;
+            });
+
+            // word animation function
+            function highlight(container, start, line, previousContainer, animations, previousDuration, duration, frame) {
+
+               if (!Array.isArray(animations[frame])) animations[frame] = [];
+
+               var previousContainer = previousContainer;
+               var currentLine = line;
+
+               var elem = document.querySelector('#subtitles' + frame + ' .p' + line + ' .' + container);
+               var wordAnimateOn = elem.animate({
+                  background: [highlightColor.replace(/,[^,]*$/, ",0)"), highlightColor],
+               }, {
+                  duration: 250,
+                  delay: start,
+                  iterations: 1,
+                  fill: "forwards"
+               });
+               // pause the animation so the app can tell it when to run
+               wordAnimateOn.pause();
+               // store all animations so we can tell them all what to do later
+               animations[frame].push(wordAnimateOn);
+
+               var wordAnimateOff = elem.animate({
+                  background: [highlightColor, highlightColor.replace(/,[^,]*$/, ",0)")],
+               }, {
+                  duration: 500,
+                  delay: duration,
+                  iterations: 1,
+                  fill: "forwards"
+               });
+               // pause the animation so the app can tell it when to run
+               wordAnimateOff.pause();
+               // store all animations so we can tell them all what to do later
+               animations[frame].push(wordAnimateOff);
+
+            }
+
+            // create the phrase timing animations
+            phraseTiming.forEach(function(phrase) {
+               for (var frame = 1; frame <= fps; frame++) {
+                  movePhrase(phrase, frame);
+               }
+            });
+
+            // phrase animation function
+            function movePhrase(phrase, frame) {
+               var elem = document.querySelector('#subtitles' + frame);
+               var line = document.querySelector('#subtitles' + frame + ' .' + phrase.id);
+               var nextPos = line.clientHeight;
+               var curPos = elem.offsetTop;
+               if (phraseLocation == "subtitle") {
+                  var nextLine = document.querySelector('#subtitles' + frame + ' .' + phrase.next);
+                  nextPos = nextLine ? nextLine.clientHeight : 0;
+               }
+               linePos -= nextPos;
+               var phraseAnimate = elem.animate([{
+                     transform: 'translateY(' + curPos + 'px)'
+                  },
+                  {
+                     transform: 'translateY(' + (curPos - nextPos) + 'px)'
+                  }
+               ], {
+                  duration: 500,
+                  delay: phrase.end,
+                  iterations: 1,
+                  fill: "forwards"
+               });
+               // pause for playback later
+               phraseAnimate.pause();
+               // push them all into the main animations array
+               animations[frame].push(phraseAnimate);
+               if (showSpeechBubble) {
+                  var phraseBackgroundOn = line.animate([{
+                        background: speechBubbleColor.replace(/,[^,]*$/, ",0)")
+                     },
+                     {
+                        background: speechBubbleColor.replace(/,[^,]*$/, "," + speechBubbleOpacity + ")")
+                     }
+                  ], {
+                     duration: 500,
+                     delay: phrase.start,
+                     iterations: 1,
+                     fill: "forwards"
+                  });
+                  // pause for playback later
+                  phraseBackgroundOn.pause();
+                  // push them all into the main animations array
+                  animations[frame].push(phraseBackgroundOn);
+                  var phraseBackgroundOff = line.animate([{
+                        background: speechBubbleColor.replace(/,[^,]*$/, "," + speechBubbleOpacity + ")")
+                     },
+                     {
+                        background: speechBubbleColor.replace(/,[^,]*$/, ",0)")
+                     }
+                  ], {
+                     duration: 500,
+                     delay: phrase.end,
+                     iterations: 1,
+                     fill: "forwards"
+                  });
+                  // pause for playback later
+                  phraseBackgroundOff.pause();
+                  // push them all into the main animations array
+                  animations[frame].push(phraseBackgroundOff);
+               }
+               if (phraseLocation == "subtitle") {
+                  var phraseFadeIn = line.animate([{
+                        opacity: "0"
+                     },
+                     {
+                        opacity: "1"
+                     }
+                  ], {
+                     duration: 500,
+                     delay: phrase.start,
+                     iterations: 1,
+                     fill: "forwards"
+                  });
+                  // pause for playback later
+                  phraseFadeIn.pause();
+                  // push them all into the main animations array
+                  animations[frame].push(phraseFadeIn);
+                  var phraseFadeOut = line.animate([{
+                        opacity: "1"
+                     },
+                     {
+                        opacity: "0"
+                     }
+                  ], {
+                     duration: 500,
+                     delay: phrase.end,
+                     iterations: 1,
+                     fill: "forwards"
+                  });
+                  // pause for playback later
+                  phraseFadeOut.pause();
+                  // push them all into the main animations array
+                  animations[frame].push(phraseFadeOut);
+
+               }
+            }
+
+         }
+
+         // call the create fuction now
+         createSubtitle(textObj);
+
+      }
+      // the app will call this function and we will need to determin what the UI should
+      // look like at a given moment in time with the fps converted into a time in miliseconds
+      var curPos = 0;
+
+      function renderNextFrame(time) {
+         if (time) {
+            curPos = time;
+         } else {
+            curPos = 1000 / fps + curPos;
+         }
+         // This is how you tell it to go to a specific time
+         animations.forEach((f) => {
+            f.forEach((w) => {
+               // this makes the animation jump to this specific time in the overall animation
+               w.currentTime = curPos;
+            });
+            curPos = 1000 / fps + curPos
+         });
+      }
+   </script>
+   <!-- this comment get's replaced with content that has the background image
     and vtt file. It then calls `afterLoadKar` with the loaded values -->
-    <!-- replaced-HACK -->
-    <meta name="data-replace">
+   <!-- replaced-HACK -->
+   <meta name="data-replace">
 </head>
 
 <body id="body">
-    <div id="imgParent">
-        <div class="line subs karaoke-caption" id="subtitles2"></div>
-    </div>
-
 </body>
 
 </html>
