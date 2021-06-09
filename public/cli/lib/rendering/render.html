@@ -61,6 +61,7 @@
          background-size: cover;
          background-position: 50% 50%;
          position: relative;
+         overflow: hidden;
       }
    </style>
    <script>
@@ -223,12 +224,13 @@
                var elem = document.querySelector('#subtitles' + frame);
                var line = document.querySelector('#subtitles' + frame + ' .' + phrase.id);
                var nextPos = line.clientHeight;
-               var curPos = elem.offsetTop;
+               var curPos = linePos;
                if (phraseLocation == "subtitle") {
                   var nextLine = document.querySelector('#subtitles' + frame + ' .' + phrase.next);
                   nextPos = nextLine ? nextLine.clientHeight : 0;
                }
-               linePos -= nextPos;
+               if (frame == 15) 
+                  linePos -= nextPos;
                var phraseAnimate = elem.animate([{
                      transform: 'translateY(' + curPos + 'px)'
                   },
@@ -329,8 +331,6 @@
       function renderNextFrame(time) {
          if (time) {
             curPos = time;
-         } else {
-            curPos = 1000 / fps + curPos;
          }
          // This is how you tell it to go to a specific time
          animations.forEach((f) => {

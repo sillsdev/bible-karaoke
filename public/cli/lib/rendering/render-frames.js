@@ -55,8 +55,8 @@ async function render(timingFilePath, textLocation, bgType, bgFilePath, bgColor,
       prepare: async function(browser, page) {
          await page.setViewport({
             width: 720,
-            height: 480 * fps,
-            deviceScaleFactor: 2
+            height: 480 * fps
+            // deviceScaleFactor: 2
          });
          await page.setContent(htmlContent);
       },

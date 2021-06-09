@@ -248,7 +248,7 @@ function execute(done, err) {
       new Promise((resolve, reject) => {
 
          console.log("step 1");
-         const cropResize = new FFMpegProgress(["-i", Options.backgroundVideoUrl, "-vf", "crop=in_h*3/2:in_h,scale=-2:960", "-c:a", "copy", backgroundResized], {
+         const cropResize = new FFMpegProgress(["-i", Options.backgroundVideoUrl, "-vf", "crop=in_h*3/2:in_h,scale=-2:480", "-c:a", "copy", backgroundResized], {
             cmd: ffmpegExe
          });
          cropResize.on('progress', (data) => {
