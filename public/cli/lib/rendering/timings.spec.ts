@@ -22,8 +22,7 @@ test('timings.chapterFormatToTimings test', (t) => {
       },
       {
         segmentId: 2,
-        text:
-          'Now the earth was formless and empty, darkness was over the surface of the deep, and the Spirit of God was hovering over the waters.',
+        text: 'Now the earth was formless and empty, darkness was over the surface of the deep, and the Spirit of God was hovering over the waters.',
         verse: '2',
         startTime: 7040,
         length: 9300,

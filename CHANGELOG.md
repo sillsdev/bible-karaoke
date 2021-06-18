@@ -10,8 +10,8 @@
 
 This is a minor feature and bugfix release:
 
-* :thumbsup: Removed known security vulnerabilities
-* :boom: The program starts even if the specified background image file is empty or missing
+- :thumbsup: Removed known security vulnerabilities
+- :boom: The program starts even if the specified background image file is empty or missing
 
 ## v0.3.4
 

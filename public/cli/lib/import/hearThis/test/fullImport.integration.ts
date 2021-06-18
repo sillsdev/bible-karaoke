@@ -117,8 +117,7 @@ const expected = {
           segments: [
             {
               segmentId: 2,
-              text:
-                'Khǐ thayû̌ daô theingǎ nathû̌ bakyadò khǐ rwǎn ma dô̌ nathû̌ ngǎ cwaǐmǎ, dô̌ Wein Lò̌dikǐphao ngǎ dò pra cô̌ usûba khǐ lakhan lakhan ngǎ cwaǐmǎ arîkaǐ.',
+              text: 'Khǐ thayû̌ daô theingǎ nathû̌ bakyadò khǐ rwǎn ma dô̌ nathû̌ ngǎ cwaǐmǎ, dô̌ Wein Lò̌dikǐphao ngǎ dò pra cô̌ usûba khǐ lakhan lakhan ngǎ cwaǐmǎ arîkaǐ.',
               verse: '1',
               startTime: 0,
               length: 13600,
@@ -126,8 +125,7 @@ const expected = {
             },
             {
               segmentId: 3,
-              text:
-                'Khǐ rwǎn ma cwaǐdò nathû̌ thá ka nî̌ba tamamo, ka aòbloncǔ dò tabathá, ka aòbábwaǐ dò tanāpau byan raò́ cwaǐdò ka theingǎ byan Bweca ta-aòhu aòbî mè mwaǐ Khrī.',
+              text: 'Khǐ rwǎn ma cwaǐdò nathû̌ thá ka nî̌ba tamamo, ka aòbloncǔ dò tabathá, ka aòbábwaǐ dò tanāpau byan raò́ cwaǐdò ka theingǎ byan Bweca ta-aòhu aòbî mè mwaǐ Khrī.',
               verse: '2',
               startTime: 13600,
               length: 16500,
@@ -145,8 +143,7 @@ const expected = {
           segments: [
             {
               segmentId: 1,
-              text:
-                'Khǐ rwǎn ma cwaǐdò nathû̌ thá ka nî̌ba tamamo, ka aòbloncǔ dò tabathá, ka aòbábwaǐ dò tanāpau byan raò́ cwaǐdò ka theingǎ byan Bweca ta-aòhu aòbî mè mwaǐ Khrī.',
+              text: 'Khǐ rwǎn ma cwaǐdò nathû̌ thá ka nî̌ba tamamo, ka aòbloncǔ dò tabathá, ka aòbábwaǐ dò tanāpau byan raò́ cwaǐdò ka theingǎ byan Bweca ta-aòhu aòbî mè mwaǐ Khrī.',
               verse: '2',
               startTime: 0,
               length: 1400,
@@ -272,8 +269,7 @@ const expected = {
             },
             {
               segmentId: 4,
-              text:
-                'Khǐ yû̌ dô̌ nathû̌ nāhyû̌n ba hô̌ Bweca atamarî maraò́ dò atadaô lanba khǐ dô̌ nathû̌ ngǎ rîkaǐ dò Bweca daô nāpau khǐ ta-aò hu aòbi dô̌ tadaôlaô̌ akaǔ thamǎ mè khǐ tyan ba hô̌ nathû̌ cwaǐ kakhau nu laki .',
+              text: 'Khǐ yû̌ dô̌ nathû̌ nāhyû̌n ba hô̌ Bweca atamarî maraò́ dò atadaô lanba khǐ dô̌ nathû̌ ngǎ rîkaǐ dò Bweca daô nāpau khǐ ta-aò hu aòbi dô̌ tadaôlaô̌ akaǔ thamǎ mè khǐ tyan ba hô̌ nathû̌ cwaǐ kakhau nu laki .',
               verse: '2~3',
               startTime: 23200,
               length: 10100,

@@ -2,14 +2,15 @@ import { app, ipcMain, shell, Menu, BrowserWindow, Event, IpcMainEvent } from 'e
 import { map, flatten } from 'lodash';
 import fontList from 'font-list';
 import path from 'path';
-import isDev from 'electron-is-dev';
+import checkDev from './cli/lib/utility/checkDev';
 import SourceIndex from './sources/index';
 import { Project, getSampleVerses } from './sources/util';
 import { Verses } from './models/verses.model';
 
 let mainWindow: BrowserWindow | null;
 
-export function createWindow(): void {
+export async function createWindow(): Promise<void> {
+  const isDev = await checkDev();
   mainWindow = new BrowserWindow({
     width: 1100,
     height: 970,
@@ -39,22 +40,19 @@ export function createWindow(): void {
 }
 
 export function handleGetFonts(): void {
-  ipcMain.on(
-    'did-start-getfonts',
-    async (event: IpcMainEvent): Promise<void> => {
-      console.log('Getting system fonts');
-      try {
-        const fonts = await fontList.getFonts();
-        event.sender.send(
-          'did-finish-getfonts',
-          // Font names with spaces are wrapped in quotation marks
-          fonts.map((font: string) => font.replace(/^"|"$/g, '')).sort()
-        );
-      } catch (err) {
-        event.sender.send('did-finish-getfonts', err);
-      }
+  ipcMain.on('did-start-getfonts', async (event: IpcMainEvent): Promise<void> => {
+    console.log('Getting system fonts');
+    try {
+      const fonts = await fontList.getFonts();
+      event.sender.send(
+        'did-finish-getfonts',
+        // Font names with spaces are wrapped in quotation marks
+        fonts.map((font: string) => font.replace(/^"|"$/g, '')).sort()
+      );
+    } catch (err) {
+      event.sender.send('did-finish-getfonts', err);
     }
-  );
+  });
 }
 
 export function handleGetSampleVerses(): void {
